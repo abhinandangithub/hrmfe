@@ -1,0 +1,36 @@
+.show-button {
+  margin-bottom: 8px;
+  margin-top: 4px;
+}
+
+.uploadbtn {
+  margin-top: 15px;
+}
+
+.editable-cell {
+  position: relative;
+}
+
+.editable-cell-value-wrap {
+  cursor: pointer;
+  padding: 5px 12px;
+}
+
+.editable-row:hover .editable-cell-value-wrap {
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  padding: 4px 11px;
+}
+
+[data-theme="dark"] .editable-row:hover .editable-cell-value-wrap {
+  border: 1px solid #434343;
+}
+
+.pointer-location {
+  cursor: pointer !important;
+}
+
+.editable-cell-value-wrap {
+  border-radius: 5px !important;
+  height: 35px;
+}

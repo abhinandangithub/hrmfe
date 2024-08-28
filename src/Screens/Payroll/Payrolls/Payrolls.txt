@@ -1,0 +1,292 @@
+import { SettingOutlined } from '@ant-design/icons'
+import { Col, message, Modal, Popover, Row } from 'antd'
+import _ from 'lodash'
+import moment from 'moment'
+import { useEffect, useState } from 'react'
+import FooterActions from '../../../Components/FooterActions'
+import TableBox from '../../../Components/TableBox/TableBox'
+import FilterLayout from '../../../Layout/FilterLayout'
+import apiClient from '../../../Util/apiClient'
+import { GET_DATA, SET_DATA } from '../../../Util/Util'
+import GeneratePayslip from '../Paymaster/GeneratePayslip'
+import PayrollFilter from './PayrollFilter'
+
+export default function Payrolls() {
+  const [selectedPayroll, setSelectedPayroll] = useState(null)
+  const [payrolls, setPayrolls] = useState([])
+  const [selectedRows, setSelectedRows] = useState(GET_DATA('payrolls.selectedRows') || [])
+
+  useEffect(() => {
+    const filterCache = GET_DATA('payrolls.filterData')
+    getData(filterCache || {}, 'Show')
+  }, [])
+
+  const getData = (filterObj, type) => {
+    const params = _.omit(filterObj, 'date')
+
+    if (filterObj.date) {
+      params.month = moment(filterObj.date).format('M')
+      params.year = moment(filterObj.date).format('YYYY')
+    }
+
+    if (type === 'Show') {
+      apiClient.get('payroll/getAll', { params }).then(({ data }) => {
+        if (data && data.result) {
+          SET_DATA('payrolls.filterData', { ...filterObj, ...data.result.pageData })
+          setPayrolls(data.result)
+        }
+      })
+    }
+  }
+
+  const generatePayrolls = async (shouldApprove = false) => {
+    try {
+      const { data } = await apiClient.post('payroll/generate-payrolls', {
+        month: moment().format('M'),
+        year: moment().format('YYYY'),
+        shouldApprove
+      })
+
+      if (data.pageData) {
+        SET_DATA('payrolls.selectedRows', data.pageData)
+      }
+
+      if (data.result) {
+        message.success('Payroll generated successfully')
+        setPayrolls([...data.result])
+      }
+    } catch (error) {
+      console.error('GENERATE_PAYROLLS_ERROR', error)
+    }
+  }
+
+  const approvePayroll = async (payroll) => {
+    try {
+      const { data } = await apiClient.put(`payroll/update-payroll/${payroll.id}`, { isApproved: true })
+
+      if (data && data.result) {
+        const payrollData = payrolls.map((val) => {
+          if (val.id === data.result?.id) {
+            return { ...val, isApproved: true }
+          }
+
+          return val
+        })
+        setPayrolls(payrollData)
+        message.success('Payroll approved successfully')
+      }
+    } catch (error) {
+      console.error('APPROVE_PAYROLL_ERROR', error)
+    }
+  }
+
+  const regeneratePayroll = async (payroll) => {
+    const regenerateData = {
+      user: payroll.user,
+      month: payroll.month,
+      year: payroll.year,
+      employeePaymasterId: payroll.employeePaymasterId
+    }
+
+    try {
+      const { data } = await apiClient.put('payroll/regenerate-payroll', regenerateData)
+
+      if (data && data.result) {
+        const payrollData = payrolls.map((val) => {
+          if (val.id === data.result?.id) {
+            return { ...val, payrollData: data.result?.payrollData }
+          }
+
+          return val
+        })
+        setPayrolls(payrollData)
+        message.success('Payroll regenerated successfully')
+      }
+    } catch (error) {
+      console.error('REGENERATE_PAYROLL_ERROR', error)
+    }
+  }
+
+  const tableContent = (row) => (
+    <div className="action-buttons">
+      <ul>
+        <li onClick={() => setSelectedPayroll(row)}>
+          <i className="flaticon-eye" /> View
+        </li>
+        <li onClick={() => regeneratePayroll(row)}>
+          <i className="flaticon-eye" /> Regenerate
+        </li>
+        {!row.isApproved && (
+          <li onClick={() => approvePayroll(row)}>
+            <i className="flaticon-eye" /> Approve
+          </li>
+        )}
+      </ul>
+    </div>
+  )
+
+  const onChangePage = (pageData) => {
+    const filterCache = GET_DATA('payrolls.filterData')
+    getData({ ...(filterCache || {}), ...pageData }, 'Show')
+  }
+
+  const onFilter = (data, type) => {
+    getData(data, type)
+    setSelectedRows([])
+  }
+
+  const columns = [
+    {
+      title: 'Employee ID',
+      dataIndex: 'employeeNo',
+      render: (v, row) => (
+        <div onClick={() => setSelectedPayroll(row)}>
+          <a>{v}</a>
+        </div>
+      )
+    },
+    {
+      title: 'Employee Name',
+      dataIndex: 'name'
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email'
+    },
+    {
+      title: 'Approval Status',
+      dataIndex: 'isApproved',
+      render: (v) => (v ? 'Approved' : 'Pending')
+    },
+    {
+      title: 'Month',
+      dataIndex: 'month'
+    },
+    {
+      title: 'Year',
+      dataIndex: 'year'
+    },
+    {
+      title: 'Last Generated',
+      dataIndex: 'updatedAt',
+      render: (text) => moment(text).format('DD-MMM-YYYY HH:mm')
+    },
+    {
+      title: 'Action',
+      dataIndex: 'custom_action',
+      render: (text, row) => (
+        <Popover placement="rightTop" content={tableContent(row)} trigger="click">
+          <div className="btn-group">
+            <button type="button" className="btn glow dropdown-toggle">
+              <SettingOutlined /> <span className="caret" />
+            </button>
+          </div>
+        </Popover>
+      )
+    }
+  ]
+
+  // const onDownloadPayslip = (id) => {
+  //   const ids = id ? [id] : selectedRows.map((val) => val.id)
+  //   const exeFn = (printType) =>
+  //     apiClient
+  //       .post('payroll/downloadPayslip', { ids, printType }, { responseType: 'blob' })
+  //       .then(({ status, data, headers }) => {
+  //         if (status === 200) {
+  //           const a = document.createElement('a')
+  //           a.href = window.URL.createObjectURL(data)
+  //           a.download = JSON.parse(headers['content-disposition'].split('filename=')[1].split(';')[0])
+  //           document.body.appendChild(a)
+  //           a.click()
+  //           a.remove()
+  //         }
+  //       })
+
+  //   if (ids.length > 1) {
+  //     ConfirmationBox({
+  //       title: 'Download Payslip',
+  //       description: 'Select how you wants to download!',
+  //       acceptText: 'Single',
+  //       acceptText1: 'Multiple',
+  //       cancelText: 'Cancel',
+  //       acceptFn: () => exeFn('Single'),
+  //       acceptFn1: () => exeFn('Multiple')
+  //     })
+  //   } else {
+  //     exeFn('Single')
+  //   }
+  // }
+
+  // const onViewPayrolls = () => {
+  //   if (selectedRows.length > 0) {
+  //     const ids = selectedRows.map((val) => val.id)
+  //     props.history.push(`/app/payrolls/${ids.join(',')}`)
+  //   } else {
+  //     message.error('Please select a row')
+  //   }
+  // }
+
+  return (
+    <FilterLayout filter={<PayrollFilter onFilter={onFilter} dataMonth={payrolls?.[0]?.month} />}>
+      <Row>
+        <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 12 }} lg={{ span: 12 }}>
+          <div className="top-filter-options">
+            <h2>Payroll Overview</h2>
+          </div>
+        </Col>
+        {/* <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 12 }} lg={{ span: 12 }}>
+          <div style={{ float: 'right' }}>
+            {selectedRows.length > 0 && (
+              <div className="top-filter-options">
+                <ButtonBox onClick={onRegeneratePayroll}>Regenerate</ButtonBox>&nbsp;
+                <ButtonBox onClick={onDownloadPayslip}>Download</ButtonBox>&nbsp;
+                <ButtonBox onClick={() => onViewPayrolls()}>View</ButtonBox>
+              </div>
+            )}
+          </div>
+        </Col> */}
+      </Row>
+      <TableBox
+        dataSource={payrolls}
+        columns={columns}
+        onSelect={(selected) => {
+          SET_DATA('payrolls.selectedRows', selected)
+          setSelectedRows(selected)
+        }}
+        selectedRows={selectedRows}
+        pageData={GET_DATA('payrolls.filterData')}
+        onChangePage={onChangePage}
+      />
+      <FooterActions
+        centerActions={[
+          {
+            prefix: 'flaticon-writing',
+            label: 'Generate Payslips',
+            onClick: () => generatePayrolls()
+          }
+        ]}
+        rightActions={[
+          {
+            prefix: 'flaticon-security',
+            label: 'Generate & Approve',
+            onClick: () => generatePayrolls(true)
+          }
+        ]}
+      />
+      <Modal
+        closable
+        footer={null}
+        visible={selectedPayroll}
+        title="Payslip View"
+        width="80%"
+        onCancel={() => setSelectedPayroll(null)}
+        destroyOnClose>
+        <GeneratePayslip
+          payrollDefinition={selectedPayroll?.payrollData?.payrollDefinition}
+          payrollComponents={selectedPayroll?.payrollData?.payrollComponents}
+          employeeDetails={selectedPayroll}
+        />
+      </Modal>
+    </FilterLayout>
+  )
+}

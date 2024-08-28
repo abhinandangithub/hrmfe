@@ -1,0 +1,16 @@
+// .asset-inventory-form {
+.inventory-card {
+  color: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  justify-content: center;
+  padding: 10px;
+  text-align: center;
+
+  .value {
+    font-size: 25px;
+    font-weight: bold;
+  }
+}

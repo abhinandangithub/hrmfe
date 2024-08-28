@@ -1,0 +1,35 @@
+.careers {
+  width: 100%;
+
+  .ant-space.ant-space-vertical {
+    width: 100%;
+
+    .ant-space-item {
+      margin-bottom: 18px !important;
+    }
+  }
+
+  .ant-collapse-header {
+    font-size: 19px;
+    font-weight: bold;
+    text-transform: capitalize;
+
+    span {
+      background-color: var(--light-gray);
+      border-radius: 20px;
+      height: 28px;
+      text-align: center;
+      width: 28px;
+
+      svg {
+        margin-top: 10px;
+      }
+    }
+  }
+
+  .ant-collapse {
+    .ant-collapse-item {
+      background: var(--white) !important;
+    }
+  }
+}

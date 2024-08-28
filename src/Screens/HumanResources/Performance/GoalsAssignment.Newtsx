@@ -1,0 +1,345 @@
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useHistory } from 'react-router-dom'
+import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
+import TableBox from '../../../Components/TableBoxGrid/TableBox'
+import { FormInputDropdown } from '../../../Components/TableBoxGrid/form-component/FormInputDropdown'
+import { FormInputText } from '../../../Components/TableBoxGrid/form-component/FormInputText'
+import { MASTER_OPTION_TYPES } from '../../../Util/Options'
+import { GET_DATA, SET_DATA, validateAccess } from '../../../Util/Util'
+import apiClient from '../../../Util/apiClient'
+
+interface filterFormValues {
+  GoallName: string
+  employeeName: string
+  overallStatus: string
+  showYesNo: string
+}
+const Filters = ({ filterData }: { filterData: (e: filterFormValues) => void }) => {
+  const { handleSubmit, control, reset } = useForm<filterFormValues>({
+    defaultValues: {
+      GoallName: '',
+      employeeName: '',
+      overallStatus: '',
+      showYesNo: ''
+    }
+  })
+  function resetForm() {
+    reset()
+    filterData({
+      GoallName: '',
+      employeeName: '',
+      overallStatus: '',
+      showYesNo: ''
+    })
+  }
+  function onSubmit(param: filterFormValues) {
+    filterData(param)
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="GoallName" control={control} label="Goal  Name" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="employeeName" control={control} label="Employee Name" />
+        </Grid>
+        <Grid item sm={2} xs={12} sx={{ marginTop: 2 }}>
+          <FormInputDropdown
+            name="overallStatus"
+            control={control}
+            label="Overall Status"
+            options={MASTER_OPTION_TYPES}
+          />
+        </Grid>
+        <Grid item sm={2} xs={12} sx={{ marginTop: 2 }}>
+          <FormInputDropdown
+            name="showYesNo"
+            control={control}
+            label="show(Yes/No)"
+            options={MASTER_OPTION_TYPES}
+          />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 4 }}>
+          <Button
+            variant="outlined"
+            type="button"
+            onClick={() => resetForm()}
+            color="secondary"
+            sx={{
+              borderColor: '#319cc4',
+              color: '#319cc4',
+              '&:hover': {
+                borderColor: '#319cc4',
+                color: '#319cc4'
+              },
+              textTransform: 'none'
+            }}>
+            Clear
+          </Button>
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              ml: '20px',
+              py: 2,
+              bgcolor: '#319cc4',
+              boxShadow: 1,
+              '&:hover': {
+                backgroundColor: '#319cc4'
+              },
+              textTransform: 'none'
+            }}>
+            Search
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+export default function GoalsAssignment() {
+  const [GoalsAssignment, setGoalsAssignment] = useState([])
+  const [assignment, setassignment] = useState([])
+  const history = useHistory()
+
+  function tableAction(param: any) {
+    if (param.TYPE === 'EDIT') {
+      history.push(`/app/job-sequence/${param.id}`)
+    }
+  }
+  const onFilter = (params = {}) => {
+    apiClient.get('asset/export', { params }).then(({ data }) => {
+      if (data.result) {
+        SET_DATA('options.filterData', { ...params, ...data.pageData })
+        setGoalsAssignment(data.result)
+        setassignment(data.result)
+      }
+    })
+  }
+  function onFilterData(e: any) {
+    const isEmpty = Object.values(e).every((x) => x === null || x === '')
+    if (isEmpty) {
+      setassignment(GoalsAssignment)
+      return
+    }
+    const final = GoalsAssignment.filter((value) =>
+      Object.entries(value).some(
+        ([key, value]) =>
+          typeof value === 'string' && e[key] && value.toLowerCase().includes(e[key].toLowerCase())
+      )
+    )
+    setassignment(final)
+  }
+  const GoalsAssignmentjson = {
+    title: 'Assign New Goal',
+    table: {
+      header: [
+        {
+          flex: 0.25,
+          minWidth: 180,
+          field: 'goalName',
+          headerClassName: 'super-app-theme--header',
+
+          headerName: 'Goal Name',
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { goalName } = row
+
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontWeight: 500,
+                      textDecoration: 'none',
+                      color: 'text.secondary',
+                      '&:hover': { color: 'primary.main' }
+                    }}>
+                    {goalName}
+                  </Typography>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        {
+          flex: 0.25,
+          minWidth: 180,
+          field: 'employeeName',
+          headerName: 'Employee Name',
+          headerClassName: 'super-app-theme--header',
+
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { employeeName } = row
+
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontWeight: 500,
+                      textDecoration: 'none',
+                      color: 'text.secondary',
+                      '&:hover': { color: 'primary.main' }
+                    }}>
+                    {employeeName}
+                  </Typography>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        {
+          flex: 0.25,
+          minWidth: 180,
+          field: 'overallStatus',
+          headerName: 'Overall Status',
+          headerClassName: 'super-app-theme--header',
+
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { overallStatus } = row
+
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontWeight: 500,
+                      textDecoration: 'none',
+                      color: 'text.secondary',
+                      '&:hover': { color: 'primary.main' }
+                    }}>
+                    {overallStatus}
+                  </Typography>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        {
+          flex: 0.25,
+          minWidth: 180,
+          field: 'hrRating',
+          headerName: 'HR Rating',
+          headerClassName: 'super-app-theme--header',
+
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { hrRating } = row
+
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontWeight: 500,
+                      textDecoration: 'none',
+                      color: 'text.secondary',
+                      '&:hover': { color: 'primary.main' }
+                    }}>
+                    {hrRating}
+                  </Typography>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        {
+          flex: 0.25,
+          minWidth: 180,
+          field: 'showYesNo',
+          headerName: 'Show(Yes/No)',
+          headerClassName: 'super-app-theme--header',
+
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { showYesNo } = row
+
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontWeight: 500,
+                      textDecoration: 'none',
+                      color: 'text.secondary',
+                      '&:hover': { color: 'primary.main' }
+                    }}>
+                    {showYesNo}
+                  </Typography>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        validateAccess('edit-job-sequence') && {
+          flex: 0.1,
+          minWidth: 100,
+          sortable: false,
+          headerClassName: 'super-app-theme--header',
+
+          disableColumnMenu: true,
+          field: 'actions',
+          headerName: 'Actions',
+          renderCell: ({ row }: any) => <RowOptions id={row.id} tableAction={(e: any) => tableAction(e)} />
+        }
+      ],
+      dataSource: assignment
+    },
+    export: {
+      header: ['Goal Name', 'Employee Name', 'Overall Status', 'HR Rating', 'Show(Yes/No)'],
+      data: assignment?.map((x: any) => ({
+        goalName: x.goalName,
+        employeeName: x.employeeName,
+        overallStatus: x.overallStatus,
+        hrRating: x.hrRating,
+        showYesNo: x.showYesNo
+      })),
+      btnTitle: 'Add Sequence'
+    },
+    filters: <Filters filterData={(e: any) => onFilterData(e)} />
+  }
+
+  useEffect(() => {
+    onFilter(GET_DATA('employeePaymaster.filterData'))
+  }, [])
+  const onChangePage = (pageData: any) => {
+    const filterCache = GET_DATA('employeePaymaster.filterData')
+    onFilter({ ...(filterCache || {}), ...pageData })
+  }
+  const emitData = (param: any) => {
+    switch (param.TYPE) {
+      case 'NEW':
+        return history.push('/app/assign-goal')
+      default:
+        console.log('test')
+        break
+    }
+    console.log('param', param)
+  }
+  return (
+    <Grid container spacing={6} sx={{ height: '100%', padding: 2 }}>
+      <Grid item xs={12} sx={{ pb: 5 }}>
+        <TableBox
+          tableConfig={GoalsAssignmentjson}
+          pageData={GET_DATA('options.filterData')}
+          onChangePage={onChangePage}
+          emitData={emitData}
+        />
+      </Grid>
+    </Grid>
+  )
+}

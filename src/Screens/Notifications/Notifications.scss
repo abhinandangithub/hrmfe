@@ -1,0 +1,119 @@
+.notification-section {
+  border: 1px solid var(--gray);
+  border-radius: 6px;
+  width: 100%;
+}
+
+.notification-section .notification-list {
+  border-top: 1px solid var(--gray);
+  display: flex;
+  flex-direction: row;
+  padding: 1.6rem 1.2rem;
+}
+
+.notification-section .notification-list .image {
+  width: 100px;
+}
+
+.notification-section .notification-list .image i {
+  border-radius: 50%;
+  color: var(--primary);
+  display: inline-block;
+  font-size: 23px;
+  font-weight: bold;
+  height: 53px;
+  line-height: 1.3;
+  padding: 12px;
+  text-align: center;
+  width: 53px;
+}
+
+.notification-section .notification-list.unread .image i {
+  background: var(--white);
+  color: var(--secondary);
+}
+
+.notification-section .notification-list .image i {
+  background: var(--gray);
+}
+
+.notification-section .notification-list .time-delete {
+  text-align: center;
+  width: 70px;
+}
+
+.notification-section .notification-list .time-delete span {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.notification-section .notification-list .time-delete i {
+  margin-right: 0;
+}
+
+.notification-section .notification-list .time-delete button {
+  background: none;
+  border: 0;
+  color: var(--primary);
+  cursor: pointer;
+  display: block;
+  font-size: 17px;
+  text-align: center;
+  width: 100%;
+}
+
+.notification-section .notification-list.unread {
+  align-items: center;
+  background: var(--unread);
+}
+
+.notification-section .notification-list:first-child {
+  border-top: 0;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.notification-section .notification-list:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.notification-section .notification-list.unread .details h3 {
+  color: var(--primary);
+}
+
+.notification-section .notification-list .details {
+  padding: 0 10px;
+}
+
+.notification-section .notification-list .details h3 {
+  color: var(--black);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.notification-section .notification-list .details p {
+  font-size: 15px;
+  line-height: 150%;
+  margin-bottom: 0;
+}
+
+.ant-popover-inner-content .action-items {
+  width: 122px;
+}
+
+.ant-popover-inner-content .action-items a {
+  color: var(--black);
+  display: block;
+  font-size: 15px;
+  padding: 5px 10px;
+}
+
+.ant-popover-inner-content .action-items a i {
+  margin-right: 8px;
+}
+
+.ant-popover-inner-content button.ant-btn-sm {
+  height: 25px;
+}

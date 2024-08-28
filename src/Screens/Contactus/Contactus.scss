@@ -1,0 +1,70 @@
+.contact-us {
+  background-image: url("../../assets/images/accqrate-shape-half-blue.svg");
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  background-size: 32%;
+  padding: var(--padding-desktop);
+
+  h1 {
+    font-size: 35px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  p {
+    font-size: 23px;
+    line-height: 180%;
+    margin: 0 auto;
+    margin-bottom: 36px;
+    text-align: center;
+
+    @media (max-width: 900px) {
+      font-size: 16px;
+    }
+  }
+
+  .form-fields {
+    margin-bottom: 20px;
+
+    label {
+      color: var(--black);
+      display: block;
+      margin-bottom: 9px;
+      width: 100%;
+
+      span {
+        color: #f44336;
+      }
+    }
+  }
+
+  .form-fields.submit-button {
+    text-align: center;
+
+    button {
+      background: var(--secondary);
+      border: transparent;
+      border-radius: 3px;
+      color: var(--white);
+      font-size: 15px;
+      height: auto;
+      padding: 12px 31px;
+      width: 100%;
+    }
+  }
+}
+
+// responsive starts
+
+@media (max-width: 900px) {
+  .contact-us h1 {
+    font-size: 25px;
+    font-weight: bold;
+  }
+}
+
+@media (max-width: 500px) {
+  .contact-us button {
+    width: 100%;
+  }
+}

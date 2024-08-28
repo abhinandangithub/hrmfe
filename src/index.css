@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap');
+
+body {
+  font-family:"Museo Sans", sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  background-color: rgb(248, 247, 250);
+}
+
+select option { color: rgba(0, 0, 0, 0.6); }
+
+.MuiTypography-root {
+  font-family: "Museo Sans", sans-serif !important;
+}

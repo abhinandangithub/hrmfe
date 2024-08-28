@@ -1,0 +1,80 @@
+import { SettingOutlined } from '@ant-design/icons'
+import { Popconfirm, Popover } from 'antd'
+import { Link, useHistory } from 'react-router-dom'
+import TableBox from '../../../Components/TableBox/TableBox'
+import FilterLayout from '../../../Layout/FilterLayout'
+import TableLayout from '../../../Layout/TableLayout'
+import GoalsAssignmentFilter from './GoalsAssignmentFilter'
+
+export default function GoalsAssignment() {
+  const history = useHistory()
+
+  const columns = [
+    {
+      title: 'Goal Name',
+      dataIndex: 'goalName'
+    },
+    {
+      title: 'Employee Name',
+      dataIndex: 'employeeName'
+    },
+    {
+      title: 'Overall Status',
+      dataIndex: 'overallStatus'
+    },
+    {
+      title: 'HR Rating',
+      dataIndex: 'hrRating'
+    },
+    {
+      title: 'Show(Yes/No)',
+      dataIndex: 'showYesNo'
+    },
+    {
+      title: 'Action',
+      dataIndex: 'custom_action',
+      render: (text, row) => (
+        <Popover placement="bottomRight" content={tableActions(row)} trigger="click">
+          <div className="btn-group">
+            <button type="button" className="btn glow dropdown-toggle">
+              <SettingOutlined /> <span className="caret" />
+            </button>
+          </div>
+        </Popover>
+      )
+    }
+  ]
+
+  const tableActions = () => (
+    <div className="action-buttons">
+      <ul>
+        <li>
+          <Link to="#">
+            <i className="flaticon-edit-1" /> Edit
+          </Link>
+        </li>
+        <li>
+          <Popconfirm title="Sure to delete?">
+            <Link to="#">
+              <i className="flaticon-delete-2" /> Delete
+            </Link>
+          </Popconfirm>
+        </li>
+      </ul>
+    </div>
+  )
+
+  return (
+    <FilterLayout
+      addButton={{
+        title: 'Assign New Goal',
+        onClick: () => history.push('/app/assign-goal'),
+        access: 'add-goals'
+      }}
+      filter={<GoalsAssignmentFilter />}>
+      <TableLayout title="Assign Goals" exportUrl="asset/export">
+        <TableBox columns={columns} />
+      </TableLayout>
+    </FilterLayout>
+  )
+}

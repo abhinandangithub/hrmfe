@@ -1,0 +1,80 @@
+.company-list {
+  width: 100%;
+
+  .list {
+    float: left;
+
+    // display: inline-block;
+    padding: 10px;
+    width: 50%;
+
+    i.company {
+      background: var(--gradient-background);
+      border-radius: 50%;
+      color: var(--white);
+      display: block;
+      font-size: 40px;
+      height: 74px;
+      line-height: 73px;
+      text-align: center;
+      width: 74px;
+    }
+
+    .details {
+      border-radius: 5px;
+      box-shadow: var(--default-box-shadow);
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+
+    img {
+      display: block;
+      margin: 0 auto;
+      width: 52px;
+    }
+
+    h4 {
+      color: var(--black);
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .other-specs {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .ant-col {
+      .other-specs:last-child {
+        margin-bottom: 20px;
+      }
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .company-list {
+    .list {
+      float: left;
+      width: 33.333%;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .company-list {
+    .list {
+      float: left;
+      width: 50%;
+    }
+  }
+}
+
+@media (max-width: 400px) {
+  .company-list {
+    .list {
+      float: left;
+      width: 100%;
+    }
+  }
+}

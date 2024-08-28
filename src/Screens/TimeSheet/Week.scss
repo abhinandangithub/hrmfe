@@ -1,0 +1,173 @@
+// table header starts
+
+.week-view-table {
+  border-collapse: separate;
+  color: #666;
+  font-size: 15px;
+  position: relative;
+  width: 100%;
+}
+
+table.week-view-table {
+  z-index: 1;
+}
+
+.week-view-table thead td {
+  position: sticky;
+  top: -5px;
+  z-index: 300;
+}
+
+.week-view-table thead td {
+  border-top: 1px solid #dfdfdf;
+  padding: 0;
+}
+
+.week-view-table thead td,
+.week-view-table tfoot td {
+  background-image: linear-gradient(#f6f6f6, #e6e6e6);
+  position: relative;
+  text-shadow: 0 1px 0 var(--white);
+}
+
+.week-view-table thead .name {
+  border-left: 1px solid var(--chinese-silver);
+  border-top-left-radius: 6px;
+}
+
+.week-view-table thead .day > a {
+  color: #666;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px;
+  position: relative;
+  text-decoration: none;
+}
+
+.week-view-table thead .day span {
+  display: block;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 16px;
+}
+
+.week-view-table thead td.name div,
+.week-view-table thead td.total div,
+.week-view-table thead td.delete div {
+  padding: 2px 5px 1px;
+}
+
+.week-view-table thead .delete {
+  border-right: 1px solid var(--chinese-silver);
+  border-top-right-radius: 6px;
+}
+
+.week-view-table td {
+  border-bottom: 1px solid var(--chinese-silver);
+  line-height: 1.2;
+  margin: 0;
+  padding: 12px 5px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.week-view-table .name {
+  padding-left: 10px;
+  text-align: left;
+}
+
+.week-view-table .total {
+  color: #999;
+  width: 66px;
+}
+
+.week-view-table .delete {
+  padding-right: 10px;
+  width: 44px;
+}
+
+// table header ends
+
+// table body starts
+
+.week-view-entry .project-client {
+  color: #222;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 600;
+  margin-bottom: 3px;
+  width: 425px;
+}
+
+.week-view-entry .project-client {
+  font-size: 16px;
+}
+
+.week-view-entry .client {
+  margin-left: 6px;
+}
+
+.week-view-entry .task {
+  display: flex;
+  font-size: 16px;
+}
+
+.week-view-entry .day .custom-input-box input {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 600;
+  outline: none;
+  padding: 0 5px 0 0;
+  text-align: right;
+}
+
+// table body ends
+
+// tfoot starts
+
+.week-view-table tfoot .name {
+  border-bottom-left-radius: 6px;
+  border-left: 1px solid var(--chinese-silver);
+}
+
+.week-view-table tfoot .name .pds-button-primary,
+.week-view-table tfoot .name .pds-button:first-child {
+  margin-right: 10px;
+}
+
+.week-view-table tfoot .name .pds-button span[role="img"] {
+  margin-right: 5px;
+}
+
+.week-view-table tfoot .day {
+  color: #999;
+  padding-left: 0;
+  padding-right: 10px;
+}
+
+.week-view-table tfoot .delete {
+  border-bottom-right-radius: 6px;
+  border-right: 1px solid var(--chinese-silver);
+}
+
+.week-view-table tfoot .total {
+  color: var(--dark-charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 600;
+}
+
+// tfoot ends
+
+@media (max-width: 900px) {
+  .week-view-entry .project-client {
+    width: 247px;
+  }
+}
+
+@media (max-width: 500px) {
+  .week-view-table thead td {
+    padding: 3px 14px;
+  }
+}

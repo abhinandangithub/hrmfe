@@ -1,0 +1,107 @@
+.filter-approval {
+  width: 100%;
+}
+
+.filter-approval h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.filter-approval .ant-row .ant-col:last-child {
+  text-align: right;
+}
+
+.filter-approval .approval-date {
+  display: inline-block;
+  margin-left: 16px;
+}
+
+.filter-approval .approval-date p {
+  font-size: 20px;
+  margin: 0;
+}
+
+.filter-approval .approval-date .upto {
+  background: #ff9800;
+  border-radius: 50%;
+  color: var(--white);
+  display: inline-block;
+  font-size: 16px;
+  height: 27px;
+  line-height: 1.8;
+  text-align: center;
+  width: 27px;
+}
+
+// employee filter
+
+.filter-by-employee {
+  width: 260px;
+}
+
+.filter-by-employee .search-employee {
+  border-bottom: 1px solid #d9d9d9;
+  padding: 10px;
+}
+
+.filter-by-employee .employee-list {
+  width: 100%;
+}
+
+.filter-by-employee .employee-list ul {
+  list-style: none;
+  padding: 10px 0;
+}
+
+.filter-by-employee .employee-list ul li a {
+  color: #000;
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 5px 10px;
+  width: 100%;
+}
+
+.filter-by-employee .employee-list ul li:hover a {
+  background: #508fff;
+  color: var(--white);
+}
+
+// approval listing
+
+.approvals-listing {
+  margin-top: 15px;
+  width: 100%;
+}
+
+.approvals-listing .ant-space {
+  width: 100%;
+}
+
+.approvals-listing .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  font-size: 17px;
+  font-weight: bold;
+  line-height: 100%;
+}
+
+.approvals-listing .approve-timesheet {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.approvals-listing .ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+  top: 41%;
+}
+
+@media (max-width: 1024px) {
+  .approvals-listing .ant-collapse-content-box {
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .filter-approval .approval-date p {
+    font-weight: bold;
+  }
+}

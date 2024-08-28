@@ -1,0 +1,162 @@
+@import "../../../Style/mixin";
+
+.drive-panel {
+  display: flex;
+  position: relative;
+
+  .ant-tree-treenode {
+    white-space: nowrap !important;
+  }
+
+  .filter-section {
+    height: 100vh !important;
+    overflow: scroll;
+    padding-right: 10px;
+  }
+
+  .drive-sider {
+    position: fixed;
+    z-index: 9;
+
+    .filter-section {
+      button {
+        @include fullWidth;
+      }
+    }
+  }
+
+  .side-header {
+    background: var(--very-light-gray);
+    font-weight: 600;
+    padding: 10px;
+
+    .close-outlined {
+      float: right;
+
+      :hover {
+        padding: 2px;
+      }
+    }
+  }
+
+  .drive-table {
+    margin-right: 10px;
+    padding: 0 !important;
+  }
+}
+
+.ant-dropdown-menu {
+  img {
+    &.folder-icon {
+      margin-right: 10px;
+      width: 20px;
+    }
+  }
+}
+
+.drive-container,
+.drive-breadcrumb,
+.tree-folder-view {
+  @include fullWidth;
+}
+
+.drive-container {
+  padding: 25px;
+  position: relative;
+
+  .drive-header-section,
+  .ant-affix {
+    background: var(--white);
+    z-index: 99;
+  }
+
+  .drive-header-section,
+  .drive-body-section {
+    @include fullWidth;
+  }
+
+  .drive-body-section {
+    position: relative;
+    top: 14px;
+  }
+
+  .drive-title {
+    h2 {
+      @include HeadingStyle;
+    }
+  }
+}
+
+.drive-breadcrumb {
+  ul {
+    font-size: 15px;
+    list-style: none;
+
+    .list {
+      cursor: pointer;
+      line-height: 11px;
+      margin-right: 10px;
+      padding-right: 24px;
+      position: relative;
+
+      &::after {
+        @include afterIcon;
+
+        color: var(--dark-blue);
+        content: "\f139";
+        transform: rotate(181deg);
+      }
+
+      &:last-child {
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+// Folder overview
+.drive-folder-details {
+  .folder-overview {
+    @include grayBorder;
+
+    border-radius: 5px;
+
+    .icon {
+      img {
+        height: 26px;
+      }
+    }
+
+    .title {
+      @include titleOverflowHide;
+    }
+  }
+}
+
+// file overview
+.drive-file-details {
+  .files-overview {
+    @include grayBorder;
+
+    border-radius: 5px;
+
+    .image-holder {
+      img {
+        display: block;
+        margin: 0 auto;
+        width: 32%;
+      }
+    }
+
+    .document-details {
+      .title {
+        @include titleOverflowHide;
+
+        width: -webkit-calc(100% - 20px);
+        width: calc(100% - 20px);
+      }
+    }
+  }
+}

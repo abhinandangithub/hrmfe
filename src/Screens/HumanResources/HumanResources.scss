@@ -1,0 +1,85 @@
+.individual-employee-details {
+  .ant-tabs-nav .ant-tabs-tab-btn {
+    font-size: 15px;
+  }
+
+  .ant-tabs-tab {
+    margin: 0 15px 0 0;
+  }
+
+  .panel-title {
+    color: var(--primary);
+    text-transform: uppercase;
+  }
+
+  .panel-layout {
+    .panel-design {
+      .panel-body {
+        padding: 25px;
+
+        .form-field {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}
+
+.months-company-calendar {
+  color: #1c58c6;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.weekdays {
+  background-color: #e7d6d6;
+  border-radius: 11px;
+}
+
+.holidays {
+  background-color: #afd7ff;
+  border-radius: 10px;
+}
+
+.holidaydates {
+  background-color: #a6ff55;
+  border-radius: 10px;
+}
+
+.pendingleave {
+  background-color: #e7eb0b;
+  border-radius: 10px;
+}
+
+.half-day {
+  background-color: chocolate;
+  border-radius: 10px;
+}
+
+.ant-col-md-20 {
+  margin: 0 auto;
+}
+
+.ant-picker-date-panel .ant-picker-body {
+  padding: 8px 7px;
+}
+
+.ant-picker-calendar .ant-picker-panel .ant-picker-body {
+  padding: 8px 13px;
+}
+
+.months-company-calendar .ant-picker-cell::before {
+  position: relative !important;
+}
+
+.employee-details {
+  .basic-details {
+    span {
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 13px;
+      font-weight: normal !important;
+    }
+  }
+}

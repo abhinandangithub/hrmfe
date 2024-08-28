@@ -1,0 +1,54 @@
+{
+  "extends": "stylelint-config-standard-scss",
+  "ignoreFiles": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+  "plugins": ["stylelint-order", "stylelint-scss"],
+  "rules": {
+    "alpha-value-notation": null,
+    "at-rule-no-vendor-prefix": null,
+    "color-function-notation": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "function-linear-gradient-no-nonstandard-direction": null,
+    "indentation": 2,
+    "keyframes-name-pattern": null,
+    "no-descending-specificity": null,
+    "no-duplicate-selectors": null,
+    "no-empty-source": null,
+    "number-max-precision": null,
+    "order/order": [
+      "custom-properties",
+      "dollar-variables",
+      {
+        "name": "extend",
+        "type": "at-rule"
+      },
+      {
+        "hasBlock": false,
+        "name": "include",
+        "type": "at-rule"
+      },
+      "declarations",
+      {
+        "hasBlock": true,
+        "name": "include",
+        "type": "at-rule"
+      },
+      "rules",
+      "at-rules"
+    ],
+    "order/properties-alphabetical-order": true,
+    "property-no-vendor-prefix": null,
+    "scss/at-mixin-pattern": null,
+    "scss/no-global-function-names": null,
+    "selector-class-pattern": [
+      "^(?:(?:o|c|u|t|s|is|has|_|js|qa)-)?[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*(?:__[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*)?(?:--[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*)?(?:\\[.+\\])?$",
+      {
+        "message": "Class names should match the SUIT CSS naming convention"
+      }
+    ],
+    "selector-id-pattern": null,
+    "selector-no-vendor-prefix": null,
+    "value-keyword-case": null,
+    "value-no-vendor-prefix": null
+  }
+}

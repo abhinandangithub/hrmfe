@@ -1,0 +1,47 @@
+@mixin HeadingStyle {
+  color: var(--primary);
+  font-size: 20px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+@mixin fullWidth {
+  width: 100%;
+}
+
+@mixin afterIcon {
+  font-family: Flaticon;
+  line-height: 12px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 13px;
+}
+
+@mixin titleOverflowHide {
+  -webkit-align-self: center;
+  align-self: center;
+  -webkit-box-flex: 1 1 auto;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  padding-right: 12px;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: -webkit-calc(100% - 56px);
+  width: calc(100% - 56px);
+}
+
+@mixin grayBorder {
+  border: 1px solid var(--border-color);
+}
+
+@mixin antInputFocus {
+  border: 1px solid var(--chinese-silver);
+  box-shadow: none;
+}

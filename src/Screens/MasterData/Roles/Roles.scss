@@ -1,0 +1,81 @@
+.main-title-section {
+  border-bottom: 1px solid #d6d6d6;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  width: 100%;
+
+  h2 {
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+
+  .ant-col:last-child {
+    text-align: right;
+  }
+}
+
+// role mapping starts
+
+.role-mapping {
+  font-size: 13px;
+  width: 100%;
+
+  thead tr {
+    color: var(--primary);
+    font-size: 14px;
+  }
+
+  .roles-access {
+    width: 100%;
+
+    .main-title {
+      background: #f7f7f7;
+      border: 1px solid #dedede;
+      height: 35px;
+      margin-bottom: 10px;
+      margin-top: 20px;
+      padding: 7px 10px;
+
+      td {
+        font-weight: bold;
+        padding: 5px 10px !important;
+      }
+    }
+  }
+
+  .title-label {
+    color: var(--secondary);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  table.roles-access thead {
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    width: calc(100% - 1em);
+    z-index: 1;
+  }
+
+  .roles-access-action {
+    border-bottom: 1px solid #d3d3d3 !important;
+
+    td:first-child {
+      font-size: 15px;
+    }
+  }
+}
+
+.role-management {
+  height: calc(100vh - 250px);
+  overflow: hidden;
+  padding-right: 9px;
+
+  &:hover {
+    overflow-y: auto;
+  }
+}

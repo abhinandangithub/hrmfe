@@ -1,0 +1,40 @@
+.code-verification-field {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+
+  .undefined {
+    display: block;
+    margin: 0 auto;
+    width: auto;
+  }
+}
+
+.login-register {
+  .login-register-fields {
+    position: relative;
+
+    .resend-code {
+      display: block;
+      margin-top: 26px;
+      text-align: center;
+
+      a {
+        font-size: 20px;
+      }
+    }
+
+    .form-fields {
+      margin-bottom: 14px;
+
+      button {
+        height: 40px;
+        width: 100%;
+      }
+    }
+
+    .form-fields:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

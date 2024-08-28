@@ -1,0 +1,174 @@
+import { SettingOutlined } from '@ant-design/icons'
+import { Col, message, Popover, Row } from 'antd'
+import moment from 'moment'
+import { useEffect, useState } from 'react'
+import ButtonBox from '../../../Components/ButtonBox/ButtonBox'
+import TableBox from '../../../Components/TableBox/TableBox'
+import FilterLayout from '../../../Layout/FilterLayout'
+import apiClient from '../../../Util/apiClient'
+import {
+  convertMinutesToHours,
+  convertQueryStr,
+  GET_DATA,
+  removeEmptyKeys,
+  SET_DATA
+} from '../../../Util/Util'
+import TimeReportFilter from './TimeReportFilter'
+
+const expandedRowRender = (row) => {
+  const columns = [
+    { title: 'Project', dataIndex: 'name' },
+    {
+      title: 'Total Hours',
+      dataIndex: 'totalProjectMinutes',
+      render: (text) => convertMinutesToHours(text || 0)
+    }
+  ]
+
+  return <TableBox columns={columns} dataSource={row.projects || []} />
+}
+
+export default function TimeReports(props) {
+  const [times, setTimes] = useState([])
+  const [selectedRows, setSelectedRows] = useState(GET_DATA('timeReport.selectedRows') || [])
+
+  useEffect(() => {
+    const filterCache = GET_DATA('timeReport.filterData')
+
+    if (filterCache) {
+      onFilter(filterCache, 'Show')
+    }
+  }, [])
+
+  const onFilter = (obj) => {
+    const filterObj = { ...obj }
+
+    if (obj.date) {
+      filterObj.month = moment(obj.date).format('M')
+      filterObj.year = moment(obj.date).format('YYYY')
+      delete filterObj.date
+    }
+
+    const filterData = removeEmptyKeys(filterObj)
+
+    if (Object.keys(filterData).length === 0) {
+      message.info('Please select filter')
+
+      return true
+    }
+
+    apiClient.post('timeEntries/getMothlyReport', removeEmptyKeys(filterObj)).then(({ data }) => {
+      if (data && data.result) {
+        SET_DATA('timeReport.filterData', { ...obj, ...data.pageData })
+        setTimes(data.result)
+
+        if (data.result.length === 0) {
+          message.info('No data found')
+        }
+      }
+    })
+  }
+
+  const tableContent = (row) => (
+    <div className="action-buttons">
+      <ul>
+        <li>
+          <div onClick={() => onView(row.id)}>
+            <i className="flaticon-eye" /> View
+          </div>
+        </li>
+      </ul>
+    </div>
+  )
+
+  const onView = (id) => {
+    if (selectedRows.length > 0 || id) {
+      const ids = id ? [id] : selectedRows.map((val) => val.id)
+      const objStr = { ids }
+      const filterCache = GET_DATA('timeReport.filterData')
+
+      if (filterCache.projectIds && filterCache.projectIds.length > 0) {
+        objStr.project = filterCache.projectIds
+      }
+
+      if (filterCache.clientIds) {
+        objStr.client = filterCache.clientIds
+      }
+
+      props.history.push(`/app/time-reports-view?${convertQueryStr(objStr)}`)
+    } else {
+      message.error('Please select a row')
+    }
+  }
+
+  const onChangePage = (pageData) => {
+    const filterCache = GET_DATA('timeReport.filterData')
+    onFilter({ ...(filterCache || {}), ...pageData })
+  }
+
+  const columns = [
+    {
+      title: 'Employee ID',
+      dataIndex: 'employeeData',
+      render: (text, row) => (
+        <div onClick={() => onView(row.id)}>
+          <a>{text?.employeeNo}</a>
+        </div>
+      )
+    },
+    { title: 'Employee Name', dataIndex: 'employeeData', render: (text) => (text ? text.name : '') },
+    { title: 'Month', dataIndex: 'month' },
+    { title: 'Year', dataIndex: 'year' },
+    {
+      title: 'Total Hours',
+      dataIndex: 'totalMinutes',
+      render: (text) => convertMinutesToHours(text || 0)
+    },
+    {
+      title: 'Action',
+      dataIndex: 'custom_action',
+      render: (text, row) => (
+        <Popover placement="rightTop" content={tableContent(row)} trigger="click">
+          <div className="btn-group">
+            <button type="button" className="btn glow dropdown-toggle">
+              <SettingOutlined /> <span className="caret" />
+            </button>
+          </div>
+        </Popover>
+      )
+    }
+  ]
+
+  return (
+    <FilterLayout filter={<TimeReportFilter onFilter={onFilter} />}>
+      <Row>
+        <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 12 }} lg={{ span: 12 }}>
+          <div className="top-filter-options">
+            <h2>Time Reports Overview</h2>
+          </div>
+        </Col>
+        <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 12 }} lg={{ span: 12 }}>
+          <div style={{ float: 'right' }}>
+            {selectedRows.length > 0 && (
+              <div className="top-filter-options">
+                <ButtonBox onClick={() => onView()}>View</ButtonBox>
+              </div>
+            )}
+          </div>
+        </Col>
+      </Row>
+      <TableBox
+        expandable={{ expandedRowRender }}
+        dataSource={times}
+        columns={columns}
+        onSelect={(selectedRows) => {
+          SET_DATA('timeReport.selectedRows', selectedRows)
+          setSelectedRows(selectedRows)
+        }}
+        selectedRows={selectedRows}
+        pageData={GET_DATA('timeReport.filterData')}
+        onChangePage={onChangePage}
+      />
+    </FilterLayout>
+  )
+}

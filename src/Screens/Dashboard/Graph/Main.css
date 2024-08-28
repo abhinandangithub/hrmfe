@@ -1,0 +1,231 @@
+/* .mainContent{
+    margin: 16px 26px 0 26px;
+} */
+
+/* dark theme with border */
+
+/* General Styles */
+
+/* General Styles */
+.mainWrapper {
+    margin: 0 26px 0 26px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    position:relative;
+  }
+  
+  
+  /* side bar style */
+  @media (min-width:1200px) {
+    .mainWrapper {
+      margin: 0 26px 0 26px;
+      /* padding-left: 250px !important; */
+    }
+    
+  }
+  
+  
+  
+  
+  
+  
+  /* darkTheme with border and text color */
+  .darkMain {
+    background-color: #2f3349;
+    color:rgb(182, 190, 227);
+  }
+  
+  /* dark bg text color */
+  .darkText{
+    color:rgb(182, 190, 227);
+  }
+  
+  /* white bg text color */
+  .whiteText {
+    color:#6f6b7d;
+  }
+
+
+  
+
+.darkTheme {
+    box-shadow: 0 0 0 1px #434968!important;
+    background-color: #2f3349!important;
+    color:#b6bee3!important;
+ }
+
+/* dark bg text color */
+.darkText{
+    color:rgb(182, 190, 227)!important;
+}
+
+/* dark bg no border only text color */
+.darkBg {
+    background-color: #2f3349!important;
+    color:rgb(182, 190, 227)!important;
+}
+
+/* text color for white bg */
+.whiteText {
+    color:#6f6b7d !important;
+}
+
+/* card style */
+
+/* border style of earning reports */
+.dotBorder{
+    /* box-shadow: 0 0 0 1px #434968; */
+    border:1px dotted #434968;
+}
+
+.order {
+    width:5rem;
+    height:5rem;
+}
+
+.whiteBorder {
+    box-shadow: 0 0 0 1px #6f6b7d;
+}
+
+
+/* circular progress bar styles*/
+
+.radialBar {
+    width:30px;
+    height:30px;
+    box-sizing: border-box;
+}
+
+.CircularProgressbar {
+    /* it will affect drop show effect since it will be hidden inside the block of radialBar div */
+    overflow:visible;
+}
+
+.CircularProgressbar-path {
+    /* stroke: rgb(221, 255, 219) !important; */
+    stroke: rgb(13, 255, 0) !important;
+    stroke-width: 5px;
+    filter:drop-shadow(0 0 0.8rem  rgb(255, 255, 255));
+}
+
+.CircularProgressbar-trail {
+    stroke: none !important;    
+} 
+
+/* .CircularProgressbar-text {
+    stroke: rgb(0, 0, 0) !important;
+    font-size: medium !important;  
+} */
+
+
+/* Table status styles*/
+
+.verified{
+    color:green;
+    background-color: rgb(195, 246, 205);
+}
+
+.pending{
+    color:rgb(27, 31, 27);
+    background-color: rgb(203, 200, 200);
+}
+
+.rejected{
+    color:rgb(255, 0, 0);
+    background-color: rgb(243, 168, 168);
+}
+
+/* .tableDark {
+    background-color: #2f3349;
+    color:rgb(182, 190, 227);
+} */
+
+
+
+
+
+/* time line list style */
+.timeline{
+    position:relative;
+}
+
+.timelineList {
+    position:relative;
+    /* margin:0;
+    padding:0; */
+}
+
+.timelineList::before {
+    content:'';
+    position: absolute;
+    top:10px;
+    left: 4px;
+    width:2px;
+    height:100%;
+    background-color: #ccc;
+}
+
+/* timeline bulletin icons */
+.timelineIconWarning {
+    position:absolute;
+    top:0;
+    left:0;
+    background-color: orange;
+    box-shadow: 0 0 5px 3px rgb(255, 228, 179);
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+.timelineIconPrimary {
+    position:absolute;
+    top:0;
+    left:0;
+    background-color: rgb(32, 94, 230);
+    box-shadow: 0 0 5px 3px rgb(184, 206, 254);
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+.timelineIconlightBlue {
+    position:absolute;
+    top:0;
+    left:0;
+    background-color: lightblue;
+    box-shadow: 0 0 5px 3px rgb(239, 251, 255);
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+.timelineIconSecondary {
+    position:absolute;
+    top:0;
+    left:0;
+    background-color: rgb(149, 149, 149);
+    box-shadow: 0 0 5px 3px rgb(241, 239, 239);
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+.timelineContent {
+    margin-left: 30px;
+    padding:0;
+}
+
+
+
+/* avatar */
+
+.aLogo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+
+.man{
+    color:#ffc123;
+}

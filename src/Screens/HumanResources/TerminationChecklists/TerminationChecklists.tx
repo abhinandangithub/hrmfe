@@ -1,0 +1,90 @@
+import { SettingOutlined } from '@ant-design/icons'
+import { Popover } from 'antd'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import TableBox from '../../../Components/TableBox/TableBox'
+import FilterLayout from '../../../Layout/FilterLayout'
+import apiClient from '../../../Util/apiClient'
+import { GET_DATA, SET_DATA, validateAccess } from '../../../Util/Util'
+import TerminationChecklistFilter from './TerminationChecklistFilter'
+
+export default function TerminationChecklists() {
+  const [terminationChecklists, setTerminationChecklist] = useState([])
+
+  const onFilter = (params = {}) => {
+    apiClient.get('termination-checklists/get', { params }).then(({ data }) => {
+      if (data.result) {
+        SET_DATA('terminationChecklists.filterData', { ...params, ...data.pageData })
+        setTerminationChecklist(data.result)
+      }
+    })
+  }
+
+  useEffect(() => {
+    onFilter(GET_DATA('terminationChecklists.filterData'))
+  }, [])
+
+  const onChangePage = (pageData) => {
+    const filterCache = GET_DATA('terminationChecklists.filterData')
+    onFilter({ ...(filterCache || {}), ...pageData })
+  }
+
+  const tableContent = (row) => (
+    <div className="action-buttons">
+      <ul>
+        <li>
+          <Link to={`/app/edit-termination-checklist/${row.id}`}>
+            <i className="flaticon-edit-1" /> Edit
+          </Link>
+        </li>
+      </ul>
+    </div>
+  )
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      render: (v, r) => <Link to={`/app/edit-termination-checklist/${r.id}`}>{v}</Link>
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description'
+    },
+
+    {
+      title: 'Status',
+      dataIndex: 'status'
+    },
+    {
+      ...(validateAccess('edit-termination-checklist') && {
+        title: 'Action',
+        dataIndex: 'custom_action',
+        render: (text, row) => (
+          <Popover placement="bottomRight" content={tableContent(row)} trigger="click">
+            <div className="btn-group">
+              <button type="button" className="btn glow dropdown-toggle">
+                {' '}
+                <SettingOutlined /> <span className="caret" />
+              </button>
+            </div>
+          </Popover>
+        )
+      })
+    }
+  ]
+
+  return (
+    <FilterLayout filter={<TerminationChecklistFilter onFilter={onFilter} />}>
+      <div className="top-filter-options">
+        <h2>Terminaiton Checklist</h2>
+      </div>
+      <TableBox
+        dataSource={terminationChecklists}
+        columns={columns}
+        pageData={GET_DATA('terminationChecklists.filterData')}
+        onChangePage={onChangePage}
+      />
+    </FilterLayout>
+  )
+}

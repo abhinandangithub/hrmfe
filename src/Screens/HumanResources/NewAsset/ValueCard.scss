@@ -1,0 +1,31 @@
+.ant-col {
+  .value-card {
+    border: 2px solid red;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+
+    .label {
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .cost {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+
+  &:nth-child(2) {
+    .value-card {
+      border-color: yellow;
+    }
+  }
+
+  &:nth-child(3) {
+    .value-card {
+      border-color: greenyellow;
+    }
+  }
+}

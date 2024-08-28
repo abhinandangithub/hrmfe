@@ -1,0 +1,61 @@
+.applied-dashboard {
+  .info-card-pending {
+    background-color: #576eed;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+
+    .count {
+      font-size: 40px;
+    }
+
+    .anticon {
+      font-size: 40px;
+    }
+  }
+
+  .info-card-shortlisted {
+    background-color: var(--primary);
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+
+    .count {
+      font-size: 40px;
+    }
+
+    .anticon {
+      font-size: 40px;
+    }
+  }
+
+  .info-card-accepted {
+    background-color: #73cb57;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+
+    .count {
+      font-size: 40px;
+    }
+
+    .anticon {
+      font-size: 40px;
+    }
+  }
+
+  .info-card-rejected {
+    background-color: var(--secondary);
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+
+    .count {
+      font-size: 40px;
+    }
+
+    .anticon {
+      font-size: 40px;
+    }
+  }
+}

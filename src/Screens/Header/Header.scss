@@ -1,0 +1,163 @@
+.accounting-menu {
+  background: var(--white);
+  display: block;
+  left: 0;
+  max-width: 100%;
+  padding: 16px 0 15px;
+  width: 100%;
+  z-index: 10;
+}
+
+.accounting-logo {
+  img {
+    height: 40px;
+  }
+}
+
+.center-menu {
+  text-align: right;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: inline-block;
+      list-style: none;
+
+      a {
+        color: var(--black);
+        display: block;
+        font-size: 18px;
+        font-weight: 500;
+        padding: 3px 20px;
+
+        @media (max-width: 900px) {
+          font-size: 17px;
+          padding: 9px 49px;
+        }
+      }
+    }
+  }
+}
+
+.login-and-translate {
+  display: flex;
+  justify-content: flex-end;
+  line-height: 34px;
+}
+
+.login-menu {
+  padding: 0 10px;
+  text-align: right;
+
+  a {
+    background: var(--secondary);
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 500;
+    padding: 6px 20px;
+
+    &:hover {
+      color: var(--white);
+    }
+  }
+
+  // @media (max-width: 900px){
+
+  // }
+}
+
+// language
+.translate {
+  .language-translate {
+    line-height: 19px;
+    position: relative;
+    width: 30px;
+
+    .anticon {
+      font-size: 26px;
+    }
+
+    .language-selected {
+      background: red;
+      border-radius: 100%;
+      color: var(--white);
+      height: 20px;
+      position: absolute;
+      right: -5px;
+      text-align: center;
+      top: -5px;
+      width: 20px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    padding-right: 13px;
+  }
+}
+
+.mobile-menu-trigger {
+  display: none;
+
+  @media (max-width: 900px) {
+    cursor: pointer;
+    display: block;
+    float: right;
+    font-size: 21px;
+    margin-top: 4px;
+  }
+}
+
+.responsive-menu {
+  @media (max-width: 900px) {
+    border-top: 2px solid var(--dark-blue);
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+}
+
+.ant-dropdown {
+  .sign-in-details {
+    background: var(--white);
+    border-radius: 5px;
+    box-shadow: 1px 0 13px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    position: relative;
+    width: 332px;
+
+    p {
+      font-size: 16px;
+    }
+
+    a {
+      color: var(--dark-blue);
+      display: block;
+      font-weight: 600;
+    }
+  }
+
+  .sign-in-details::before {
+    color: var(--white);
+    content: "\25b2";
+    font-size: 20px;
+    position: absolute;
+    right: 13px;
+    top: -19px;
+  }
+}
+
+// responsive
+@media (max-width: 900px) {
+  .responsive-menu .center-menu,
+  .responsive-menu .center-menu ul,
+  .responsive-menu .center-menu ul li {
+    display: block;
+    text-align: left;
+    width: 100%;
+  }
+}

@@ -1,0 +1,514 @@
+.day-timesheet-header {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.pds-button {
+  align-items: center;
+  background: linear-gradient(var(--white), #f0f0f0);
+  border: 0;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(34, 34, 34, 0.25);
+  color: #545454;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 15px;
+  font-weight: 400;
+  height: 35px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0 16px;
+  position: relative;
+  text-decoration: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: auto;
+}
+
+.pds-button-link {
+  background: transparent;
+  border: 0;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.pds-button-primary {
+  background: linear-gradient(var(--secondary), var(--secondary));
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+  color: var(--white);
+  font-weight: 500;
+}
+
+.pds-button.pds-button-primary:hover,
+.pds-button.pds-button-success:hover {
+  background: linear-gradient(var(--primary), var(--primary));
+}
+
+.pds-button-primary i,
+.pds-button-primary span {
+  margin-right: 8px;
+}
+
+.pds-button.pds-button-success {
+  background: linear-gradient(#14a000, var(--success));
+  color: var(--white);
+  font-weight: 500;
+}
+
+.pds-button:hover {
+  background: linear-gradient(#fcfcfc, #e8e8e8);
+}
+
+.pds-button-large,
+.pds-button-lg {
+  font-size: 16px;
+  height: 38px;
+}
+
+.pds-button-sm,
+.pds-button-small {
+  font-size: 13px;
+  height: 29px;
+  padding: 0 8px;
+}
+
+.edit-button i {
+  margin-right: 0;
+}
+
+.pds-button.pds-date .ant-picker {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  outline: none;
+}
+
+.pds-button.btn-selected,
+.pds-button.btn-selected:hover {
+  background: #e6e6e6;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15), inset 0 1px 3px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+
+.pds-button-icon {
+  padding: 0;
+  width: 34px;
+}
+
+.timesheet-group .pds-button:first-child {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  margin-right: -1px;
+}
+
+.timesheet-group .pds-button:last-child {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.day-timesheet-header .left-section {
+  display: flex;
+}
+
+.day-timesheet-header .left-section .today-date {
+  font-size: 24px;
+  margin-left: 10px;
+}
+
+.day-timesheet-header .left-section .today-date .week-status {
+  color: #0f00d1;
+  font-size: 16px;
+}
+
+.day-timesheet-header .left-section .today-date span.title,
+.day-timesheet-header .left-section .today-date span.selected-date {
+  font-weight: bold;
+}
+
+.day-timesheet-header .right-section {
+  text-align: right;
+}
+
+.main-day-view-controls {
+  display: flex;
+  float: right;
+}
+
+.main-day-view-controls .add-new-calendar {
+  padding-right: 10px;
+}
+
+.main-day-view-controls .add-new-calendar button {
+  margin-right: 10px;
+}
+
+.main-day-view-controls .add-new-calendar button:last-child {
+  margin-right: 0;
+}
+
+.main-day-view-controls .ant-picker-input {
+  width: 92px;
+}
+
+.add-new-calendar .pds-date {
+  padding: 5px;
+}
+
+// day view table starts
+
+.time-table .day-view-entry-list:nth-child(2n + 1) {
+  background: var(--very-light-gray);
+}
+
+.day-view-entry-list {
+  width: 100%;
+}
+
+.day-view-entry-list .day-view-entry {
+  border-bottom: 1px solid var(--chinese-silver);
+  padding: 16px 14px;
+  transition: background 0.1s linear;
+}
+
+.day-view-entry .project-client,
+.day-view-entry .start-time {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.entry-info .project-client {
+  font-size: 16px;
+}
+
+.entry-info .task-notes {
+  display: flex;
+  font-size: 16px;
+}
+
+.day-view-entry .ndash {
+  float: left;
+  padding: 0 7px;
+}
+
+.entry-info .task-notes p {
+  margin-bottom: 0;
+}
+
+.day-view-entry .entry-action-timer {
+  display: flex;
+  float: right;
+}
+
+.day-view-entry .entry-time {
+  font-size: 22px;
+  font-weight: bold;
+  padding-right: 13px;
+  padding-top: 3px;
+}
+
+.day-view-entry .entry-button {
+  padding-right: 21px;
+}
+
+.day-view-entry .entry-button i {
+  font-size: 20px;
+}
+
+.day-view-entry .edit-button {
+  padding-top: 5px;
+}
+
+// day view table ends
+
+.day-view-summary .day-view-total {
+  color: #888;
+  font-size: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  padding: 15px 166px;
+  text-align: right;
+}
+
+.day-view-summary .day-view-total > span {
+  color: #222;
+  display: inline-block;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  font-weight: bold;
+  width: 100px;
+}
+
+// timesheet submission starts
+
+.day-view-timesheet-submission {
+  color: #626262;
+  line-height: 30px;
+  margin-top: 20px;
+  text-align: right;
+}
+
+// timesheet submission starts
+
+// weekly timesheet navigation starts
+
+.day-view-week-nav table,
+.day-view-week-nav table tr {
+  width: 100%;
+}
+
+.day-view-week-nav table tr td:first-child .pds-button {
+  border-top-left-radius: 3px;
+}
+
+.day-view-week-nav .pds-button {
+  border-radius: 0;
+  color: #626262;
+  display: block;
+  flex-direction: column;
+  font-size: 14px;
+  height: 54px;
+  line-height: 1.2;
+  padding: 10px 15px;
+  text-align: left;
+  width: 103%;
+}
+
+.day-view-week-nav .time-day-label {
+  font-weight: 600;
+  margin-bottom: 2px;
+  width: 100%;
+}
+
+.day-view-week-nav .time-day-total {
+  font-size: 12px;
+  font-weight: 400;
+  width: 100%;
+}
+
+.day-view-week-nav #day-view-week-nav-total {
+  background-image: linear-gradient(#eee, #e4e4e4);
+  border-top-right-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  color: #888;
+  cursor: default;
+  font-size: 14px;
+  font-weight: 400;
+  height: 54px;
+  line-height: 42px;
+  min-width: 118px;
+  padding: 6px 15px;
+  text-align: center;
+  width: 100%;
+}
+
+// weekly timesheet navigation ends
+
+// empty timesheet
+
+.empty-timesheet {
+  background: #fbfbfb;
+  border: 1px solid #b6b6b6;
+}
+
+.empty-timesheet.no-data {
+  border-radius: 6px;
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  color: #626262;
+  font-size: 20px;
+  padding: 40px 64px;
+  text-align: center;
+}
+
+.approval .empty-timesheet.no-data {
+  border-top: 1px solid #b6b6b6;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.approval .empty-timesheet.no-data img {
+  width: 61%;
+}
+
+.empty-timesheet.no-data img {
+  display: block;
+  margin: 0 auto;
+  width: 50%;
+}
+
+.empty-timesheet.no-data h2 {
+  margin-top: 20px;
+}
+
+// employee time details
+
+.employee-details {
+  display: inline-block;
+  width: 100%;
+}
+
+.employee-details .employee-name,
+.employee-details .total-time-spent {
+  float: left;
+  width: 50%;
+}
+
+.employee-details .total-time-spent {
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: normal;
+  text-align: right;
+}
+
+.employee-details .total-time-spent span {
+  font-size: 18px;
+  margin-right: 5px;
+}
+
+// status-watermark starts
+
+.timetable-container {
+  position: relative;
+}
+
+.timetable-container .status-watermark {
+  display: block;
+  position: absolute;
+  top: 50px;
+  width: 100%;
+}
+
+.timetable-container .status-watermark img {
+  display: block;
+  height: 100%;
+  margin: 0 auto;
+  opacity: 0.1;
+  transform: rotate(-40deg);
+  width: 260px;
+}
+
+.timetable-container .week-timesheet .empty-timesheet.no-data {
+  border-radius: 0;
+}
+
+// responsive starts
+@media (max-width: 1024px) {
+  .day-timesheet-header .left-section .timesheet-group {
+    margin-bottom: 10px;
+  }
+
+  .main-day-view-controls .add-new-calendar {
+    margin-bottom: 10px;
+  }
+
+  .time-table {
+    overflow-y: auto;
+  }
+
+  // .day-view-week-nav .time-day-label {
+  //     width: 2ch;
+  //     overflow: hidden;
+  //     white-space: nowrap;
+  // }
+  // .day-view-week-nav .time-day-total {
+  //     width: 5ch;
+  //     overflow: hidden;
+  //     white-space: nowrap;
+  // }
+
+  .timetable-container .week-timesheet {
+    overflow-y: scroll;
+    padding: 10px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .day-timesheet-header .right-section {
+    margin-top: 20px;
+    text-align: left;
+  }
+
+  .day-timesheet-header .main-day-view-controls {
+    float: left;
+  }
+
+  .day-view-week-nav table tr td {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 500px) {
+  .day-view-entry .entry-action-timer {
+    float: left;
+  }
+
+  .day-timesheet-header .left-section,
+  .day-timesheet-header .main-day-view-controls,
+  .day-timesheet-header .left-section .timesheet-group,
+  .day-timesheet-header .left-section .today-date {
+    // display: block;
+    width: 100%;
+  }
+
+  .week-status,
+  .main-day-view-controls {
+    display: block;
+  }
+
+  .day-timesheet-header .left-section {
+    border-bottom: 1px solid #dadada;
+    padding-bottom: 10px;
+    text-align: left;
+  }
+
+  .day-timesheet-header .left-section .today-date {
+    font-size: 20px;
+    line-height: 1.5;
+    margin-left: 0;
+  }
+
+  // .day-view-week-nav #day-view-week-nav-total {
+  // padding: 6px 3px;
+  // }
+
+  .day-view-week-nav .pds-button {
+    // padding: 10px 2px;
+    width: 107%;
+  }
+
+  .main-day-view-controls .add-new-calendar button {
+    margin-bottom: 10px;
+  }
+
+  .main-day-view-controls .add-new-calendar {
+    display: flex;
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+
+  .day-view-week-nav table tr td {
+    display: inline-block;
+    width: 32.333%;
+  }
+
+  .day-view-summary .day-view-total {
+    font-weight: bold;
+    padding-right: 13px !important;
+  }
+
+  .day-view-week-nav #day-view-week-nav-total {
+    min-width: 107%;
+  }
+
+  .approval .empty-timesheet.no-data img {
+    width: 90%;
+  }
+
+  .empty-timesheet.no-data {
+    padding: 25px 30px;
+  }
+}
