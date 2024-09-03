@@ -1,13 +1,13 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import TableBox from '../../../Components/TableBox/TableBox'
 import apiClient from '../../../Util/apiClient'
 import { SET_DATA } from '../../../Util/Util'
 
 export default function LabourMinistryRegulatory({ filterData, companyInfo }) {
-  const history = useHistory()
+  const history = useNavigate()
   const [tableData, setTableData] = useState([])
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function LabourMinistryRegulatory({ filterData, companyInfo }) {
       bankData: {}
     }
     SET_DATA('expenses.cacheData', expenseObj)
-    history.push('/app/add-expense/Invoice')
+    history('/app/add-expense/Invoice')
   }
 
   const columns = [

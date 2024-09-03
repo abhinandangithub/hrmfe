@@ -340,7 +340,7 @@ export default withFormik({
       })
       apiClient.put(`asset-depreciation/by-asset-id/${id}`, values).then(({ status }) => {
         if (status === 200) {
-          history.push(`/app/new-assets/depreciation/${id}`)
+          history(`/app/new-assets/depreciation/${id}`)
         }
       })
     }

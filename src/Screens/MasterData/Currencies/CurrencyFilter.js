@@ -28,7 +28,7 @@ const CurrencyFilter = (props) => {
       {validateAccess('add-currency') && (
         <Button
           type="button"
-          onClick={() => history.push('/app/add-currency')}
+          onClick={() => history('/app/add-currency')}
           className="btn-block"
           variant="primary">
           <i className="flaticon-plus" />

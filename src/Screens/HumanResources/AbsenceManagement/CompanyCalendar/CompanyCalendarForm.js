@@ -165,12 +165,12 @@ function CompanyCalendarForm1({
     <Form>
       <Row justify="center" className="inner-contents">
         <Col xs={22} md={20}>
-          <PanelLayout title={t('Holiday Calender')}>
+          <PanelLayout title={t('Holiday Calendar')}>
             <Panel title={t('Calendar')}>
               <Row justify="left" gutter={(12, 10)}>
                 <Col xs={24} sm={24} md={8} lg={8}>
                   <div className="form-field">
-                    <Field name="name" label="Calendar Year" />
+                    <Field name="name" label="Calendar Year" as="date" mode="year" isYearFormat />
                   </div>
                 </Col>
                 <Col xs={24} sm={24} md={8} lg={8}>
@@ -304,9 +304,10 @@ export default withFormik({
     }
   ) => {
     if (id) {
-      apiClient.post(`yearly-calender/update/${id}`, data).then(({ data }) => {
+      const formatData = { ...data, name: data.name.format('YYYY') }
+      apiClient.post(`yearly-calender/update/${id}`, formatData).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/company-calendar')
+          history('/app/company-calendar')
         }
 
         if (data.success === false) {
@@ -314,9 +315,11 @@ export default withFormik({
         }
       })
     } else {
-      apiClient.post('yearly-calender/add', data).then(({ data }) => {
+      const formatData = { ...data, name: data.name.format('YYYY') }
+      // console.log('typeof', typeof formatData.name)
+      apiClient.post('yearly-calender/add', formatData).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/company-calendar')
+          history('/app/company-calendar')
         }
 
         if (data.success === false) {

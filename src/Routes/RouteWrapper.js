@@ -1,11 +1,11 @@
 import { Helmet } from 'react-helmet'
 import { connect } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Footer from '../Screens/Footer/Footer'
 import Header from '../Screens/Header/Header'
 
 function RouteWrapper(props) {
-  const history = useHistory()
+  const history = useNavigate()
 
   history.listen(() => {
     const appView = document.getElementById('app-view')

@@ -5,115 +5,7 @@ const MENUS = (companyInfo, userInfo) => [
     children: [
       {
         label: 'Masters Setup',
-        type: 'submenu',
-        children: [
-          {
-            label: 'Companies',
-            value: '/app/companies',
-            access: [
-              { label: 'Add', value: 'add-company' },
-              { label: 'Edit', value: 'edit-company' }
-            ],
-            notInMenu: true
-          },
-          {
-            label: 'Roles',
-            value: '/app/roles',
-            access: [
-              { label: 'View', value: 'roles' },
-              { label: 'Add', value: 'add-role' },
-              { label: 'Edit', value: 'edit-role' }
-            ]
-          },
-          {
-            label: 'Users',
-            value: '/app/users',
-            access: [
-              { label: 'View', value: 'users' },
-              { label: 'Add', value: 'add-user' },
-              { label: 'Edit', value: 'edit-user' }
-            ]
-          },
-          {
-            label: 'Customers',
-            value: '/app/customers',
-            access: [
-              { label: 'View', value: 'customers' },
-              { label: 'Add', value: 'add-customer' },
-              { label: 'Edit', value: 'edit-customer' }
-            ]
-          },
-          {
-            label: 'Currencies',
-            value: '/app/currencies',
-            access: [
-              { label: 'View', value: 'currencies' },
-              { label: 'Add', value: 'add-currency' },
-              { label: 'Edit', value: 'edit-currency' }
-            ]
-          },
-          {
-            label: 'Exchange Rate',
-            value: '/app/exchange-rates',
-            access: [
-              { label: 'View', value: 'exchange-rates' },
-              { label: 'Add', value: 'add-exchange-rate' },
-              { label: 'Edit', value: 'edit-exchange-rate' }
-            ]
-          },
-          {
-            label: 'Categories',
-            value: '/app/categories',
-            access: [
-              { label: 'View', value: 'categories' },
-              { label: 'Add', value: 'add-category' },
-              { label: 'Edit', value: 'edit-category' }
-            ]
-          },
-          {
-            label: 'Options',
-            value: '/app/options',
-            access: [
-              { label: 'View', value: 'options' },
-              { label: 'Add', value: 'add-option' },
-              { label: 'Edit', value: 'edit-option' }
-            ]
-          },
-          {
-            label: 'Custom Template',
-            value: '/app/custom-templates',
-            access: [
-              { label: 'View', value: 'custom-templates' },
-              { label: 'Add', value: 'add-custom-template' },
-              { label: 'Edit', value: 'edit-custom-template' }
-            ]
-          },
-          {
-            label: 'Master Upload',
-            value: '/app/master-upload',
-            access: [{ label: 'Full', value: 'master-upload' }]
-          },
-          {
-            label: 'Numbering Series',
-            value: '/app/numbering-series',
-            access: [{ label: 'Full', value: 'numbering-series' }]
-          },
-          {
-            label: 'Company Configurations',
-            value: '/app/company-configurations',
-            access: [{ label: 'Full', value: 'company-configurations' }]
-          },
-          {
-            label: 'Translator',
-            value: '/app/translate',
-            access: [{ label: 'Full', value: 'translator' }]
-          },
-          {
-            label: 'Cost Center',
-            value: '/app/Cost-Center',
-            access: [{ label: 'Full', value: 'translator' }]
-          }
-        ]
+        value: '/app/master'
       },
       {
         label: 'Enterprise Setup',
@@ -187,68 +79,96 @@ const MENUS = (companyInfo, userInfo) => [
     children: [
       {
         label: 'Projects',
-        type: 'submenu',
-        children: [
-          {
-            label: 'Projects',
-            value: '/app/projects',
-            access: [
-              { label: 'View', value: 'projects' },
-              { label: 'Add', value: 'add-project' },
-              { label: 'Edit', value: 'edit-projects' }
-            ]
-          },
-          {
-            label: 'Project Rate',
-            value: '/app/project-employee-rates',
-            access: [
-              { label: 'View', value: 'project-employee-rates' },
-              { label: 'Add', value: 'add-project-employee-rate' },
-              { label: 'Edit', value: 'edit-project-employee-rate' }
-            ]
-          }
+        value: '/app/projects',
+        access: [
+          { label: 'View', value: 'projects' },
+          { label: 'Add', value: 'add-project' },
+          { label: 'Edit', value: 'edit-projects' }
         ]
       },
       {
-        label: 'Process',
-        type: 'submenu',
-        children: [
-          {
-            label: 'Time Entry',
-            value: '/app/time-entries',
-            access: [{ label: 'Full', value: 'time-entries' }]
-          },
-          // {
-          //   label: 'From Timesheet',
-          //   value: '/app/from-timesheet',
-          //   access: [{ label: 'Full', value: 'from-timesheet' }]
-          // },
-          {
-            label: 'Expense Claims',
-            value: '/app/expense-claims',
-            access: [{ label: 'Full', value: 'expense-claims' }]
-          }
+        label: 'Project Rate',
+        value: '/app/project-employee-rates',
+        access: [
+          { label: 'View', value: 'project-employee-rates' },
+          { label: 'Add', value: 'add-project-employee-rate' },
+          { label: 'Edit', value: 'edit-project-employee-rate' }
         ]
       },
       {
-        label: 'Reports',
-        type: 'submenu',
-        children: [
-          {
-            label: 'Time Report',
-            value: '/app/time-reports',
-            access: [
-              { label: 'View', value: 'time-reports', view: 'time-reports-view' },
-              { label: 'Full', value: 'time-reports-all' }
-            ]
-          },
-          {
-            label: 'Project Report',
-            value: '/app/project-reports',
-            access: [{ label: 'View', value: 'project-reports' }]
-          }
-        ]
+        label: 'Project Report',
+        value: '/app/project-reports',
+        access: [{ label: 'View', value: 'project-reports' }]
       }
+      // {
+      //   label: 'Projects',
+      //   type: 'submenu',
+      //   children: [
+      //     {
+      //       label: 'Projects',
+      //       value: '/app/projects',
+      //       access: [
+      //         { label: 'View', value: 'projects' },
+      //         { label: 'Add', value: 'add-project' },
+      //         { label: 'Edit', value: 'edit-projects' }
+      //       ]
+      //     },
+      //     {
+      //       label: 'Project Rate',
+      //       value: '/app/project-employee-rates',
+      //       access: [
+      //         { label: 'View', value: 'project-employee-rates' },
+      //         { label: 'Add', value: 'add-project-employee-rate' },
+      //         { label: 'Edit', value: 'edit-project-employee-rate' }
+      //       ]
+      //     },
+      //     {
+      //       label: 'Project Report',
+      //       value: '/app/project-reports',
+      //       access: [{ label: 'View', value: 'project-reports' }]
+      //     }
+      //   ]
+      // },
+      // {
+      //   label: 'Process',
+      //   type: 'submenu',
+      //   children: [
+      //     {
+      //       label: 'Time Entry',
+      //       value: '/app/time-entries',
+      //       access: [{ label: 'Full', value: 'time-entries' }]
+      //     },
+      //     // {
+      //     //   label: 'From Timesheet',
+      //     //   value: '/app/from-timesheet',
+      //     //   access: [{ label: 'Full', value: 'from-timesheet' }]
+      //     // },
+      //     {
+      //       label: 'Expense Claims',
+      //       value: '/app/expense-claims',
+      //       access: [{ label: 'Full', value: 'expense-claims' }]
+      //     }
+      //   ]
+      // },
+      // {
+      //   label: 'Reports',
+      //   type: 'submenu',
+      //   children: [
+      //     {
+      //       label: 'Time Report',
+      //       value: '/app/time-reports',
+      //       access: [
+      //         { label: 'View', value: 'time-reports', view: 'time-reports-view' },
+      //         { label: 'Full', value: 'time-reports-all' }
+      //       ]
+      //     },
+      //     // {
+      //     //   label: 'Project Report',
+      //     //   value: '/app/project-reports',
+      //     //   access: [{ label: 'View', value: 'project-reports' }]
+      //     // }
+      //   ]
+      // }
     ]
   },
   {
@@ -272,8 +192,8 @@ const MENUS = (companyInfo, userInfo) => [
           {
             label: 'Employee Self Service',
             value: '/app/edit-employee',
-            notInMenu: userInfo.userType === 'Admin',
-            isSelf: userInfo.userType !== 'Admin'
+            notInMenu: userInfo?.userType === 'Admin',
+            isSelf: userInfo?.userType !== 'Admin'
           },
 
           {
@@ -419,6 +339,47 @@ const MENUS = (companyInfo, userInfo) => [
         label: 'Leave Report',
         value: '/app/leave-report',
         access: [{ label: 'View', value: 'leave-report' }]
+      },
+      {
+        label: 'Annual Leave Cash-Out',
+        value: '/app/cash-out-form',
+        notInMenu: userInfo?.userType === 'Admin',
+        isSelf: userInfo?.userType !== 'Admin',
+        access: [{ label: 'Full', value: 'cash-out-form' }]
+      },
+      {
+        label: 'Purchase Leave Form',
+        value: '/app/purchase-leave-form',
+        notInMenu: userInfo?.userType === 'Admin',
+        isSelf: userInfo?.userType !== 'Admin',
+        access: [{ label: 'Full', value: 'purchase-leave-form' }]
+      },
+      {
+        label: 'Time Entry',
+        value: '/app/time-entries',
+        access: [{ label: 'Full', value: 'time-entries' }]
+      },
+      {
+        label: 'Expense Claims',
+        value: '/app/expense-claims',
+        access: [{ label: 'Full', value: 'expense-claims' }]
+      },
+      {
+        label: 'Time Report',
+        value: '/app/time-reports',
+        access: [
+          { label: 'View', value: 'time-reports', view: 'time-reports-view' },
+          { label: 'Full', value: 'time-reports-all' }
+        ]
+      },
+      {
+        label: 'Work Schedule',
+        value: '/app/work-schedules',
+        access: [
+          { label: 'View', value: 'work-schedules' },
+          { label: 'Add', value: 'add-work-schedules' },
+          { label: 'Edit', value: 'edit-work-schedules' }
+        ]
       }
     ]
   },
@@ -464,9 +425,9 @@ const MENUS = (companyInfo, userInfo) => [
     label: 'Documents',
     type: 'group',
     children: [
-      {
-        label: 'Docu Sign'
-      },
+      // {
+      //   label: 'Docu Sign'
+      // },
       {
         label: 'Worker Document',
         value: '/app/drive',

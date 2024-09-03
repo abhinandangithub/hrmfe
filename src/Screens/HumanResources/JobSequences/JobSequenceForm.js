@@ -2,7 +2,7 @@ import { Col, Row } from 'antd'
 import { withFormik } from 'formik'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import * as Yup from 'yup'
 import FooterActions from '../../../Components/FooterActions'
 import { Field, Form } from '../../../Components/Formik'
@@ -54,7 +54,7 @@ function JobSequenceForm({
   },
   submitForm
 }) {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   const getData = () => {
@@ -130,7 +130,7 @@ function JobSequenceForm({
                 prefix: 'flaticon-back',
                 label: 'Back',
                 onClick: () => {
-                  history.push('/app/job-sequences')
+                  history('/app/job-sequences')
                 }
               }
             ]}
@@ -171,13 +171,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`job-sequences/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/job-sequences')
+          history('/app/job-sequences')
         }
       })
     } else {
       apiClient.post('job-sequences/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/job-sequences')
+          history('/app/job-sequences')
         }
       })
     }

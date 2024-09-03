@@ -1,6 +1,6 @@
 // ** React Imports
 import { ElementType, Fragment } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -65,7 +65,7 @@ const HorizontalNavLink = (props: Props) => {
 
   // ** Hook & Vars
 
-  const router = useHistory()
+  const router = useNavigate()
   const { navSubItemIcon, menuTextTruncate, skin } = themeConfig
 
   const icon = item.icon ? item.icon : navSubItemIcon

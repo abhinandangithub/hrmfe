@@ -17,4 +17,5 @@ export interface FormInputProps {
       object?: any
     }
   }
+  required?: boolean
 }

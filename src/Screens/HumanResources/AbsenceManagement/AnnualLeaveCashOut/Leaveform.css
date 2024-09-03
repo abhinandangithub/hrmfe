@@ -1,0 +1,47 @@
+.leave-form {    
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #000;
+    margin-left: 5px;
+    width: 200px !important;
+    background-color: rgb(248, 247, 250);
+    height:15px !important;
+}
+
+.block-head {
+    height:30px;
+    background-color: rgb(4, 4, 93);
+    color:white;
+}
+
+.forms-leave h1 {
+    font-size: 1.5rem;
+    color: rgb(5, 5, 64);
+}
+
+.bor {
+    border-width: 2px 0 2px 0;
+    border-style: solid;
+    border-color: rgb(4, 4, 93);
+    border-collapse: collapse;
+}
+
+.text-color {
+    color:  rgb(4, 4, 93) !important;
+}
+
+/* purchase leave */
+
+.pur-leave {
+    color: rgb(37, 98, 196) !important;
+}
+
+.leave-form-purchase {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #000;
+    margin-left: 5px;
+    width: 150px !important;
+    /* background-color: rgb(248, 247, 250); */
+    height:12px !important;
+}

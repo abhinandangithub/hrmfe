@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../Components/TableBoxGrid/TableBox'
 
@@ -11,11 +11,11 @@ export default function Translator() {
 
   const { i18n, t } = useTranslation()
   const lang = i18n.language
-  const history = useHistory()
+  const history = useNavigate()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-translate/${param.id}`)
+      history(`/app/edit-translate/${param.id}`)
     }
   }
 
@@ -117,7 +117,7 @@ export default function Translator() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-translate')
+        return history('/app/add-translate')
       default:
         console.log('test')
         break

@@ -7,7 +7,7 @@ import FooterActions from '../../../Components/FooterActions'
 import { Field, Form } from '../../../Components/Formik'
 import { useSelector } from '../../../Hooks/redux'
 import PanelLayout from '../../../Layout/PanelLayout'
-import { history } from '../../../Routes'
+import { useNavigate } from 'react-router-dom';
 import apiClient from '../../../Util/apiClient'
 import { ASSET_TYPE, DEPRECIATION_METHOD, TRACKING_TYPE } from '../../../Util/Options'
 import { convertSelectOptions } from '../../../Util/Util'
@@ -412,13 +412,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`new-asset/update/${id}`, values).then(({ status }) => {
         if (status === 200) {
-          history.push('/app/new-assets')
+          history('/app/new-assets')
         }
       })
     } else {
       apiClient.post('new-asset/add', values).then(({ status, data }) => {
         if (status === 200 && data && data.success) {
-          history.push(`/app/edit-new-asset/${data.result.id}`)
+          history(`/app/edit-new-asset/${data.result.id}`)
         } else {
           message.error(data?.message || '')
         }

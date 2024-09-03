@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 import { validateAccess } from '../../../Util/Util'
@@ -13,12 +13,12 @@ import { validateAccess } from '../../../Util/Util'
 export default function EmployeeLoans() {
   const [overview] = useState([])
 
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-employee-loan/${param.id}`)
+      history(`/app/edit-employee-loan/${param.id}`)
     }
   }
 
@@ -323,7 +323,7 @@ export default function EmployeeLoans() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-employee-loan')
+        return history('/app/add-employee-loan')
       default:
         console.log('test')
         break

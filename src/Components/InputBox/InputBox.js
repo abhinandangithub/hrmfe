@@ -1,6 +1,6 @@
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'
 import { Input } from 'antd'
-import React, { PureComponent } from 'react'
+import { PureComponent } from 'react'
 import { arabicRegex } from '../../Util/Options'
 import { emailValidate, numberValidate, urlValidate } from '../../Util/Util'
 
@@ -138,6 +138,7 @@ class InputBox extends PureComponent {
           />
         ) : (
           <Input
+            style={this.props.style}
             dir={arabicRegex.test(this.props.value?.toString()) ? 'rtl' : 'ltr'}
             title={this.props.title}
             id={this.props.id}
@@ -149,6 +150,7 @@ class InputBox extends PureComponent {
             onChange={this.onChange}
             onBlur={this.onBlur}
             disabled={this.props.disabled}
+            checked={this.props.checked}
             prefix={this.props.prefix ? <i className={this.props.prefix} /> : null}
             suffix={
               this.props.type === 'password' ? (

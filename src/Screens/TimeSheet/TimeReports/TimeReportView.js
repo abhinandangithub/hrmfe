@@ -136,7 +136,7 @@ export default function TimeReportView(props) {
             {
               prefix: 'flaticon-back',
               label: 'Back',
-              onClick: () => props.history.push('/app/time-reports')
+              onClick: () => props.history('/app/time-reports')
             }
           ]}
           rightActions={[

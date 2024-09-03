@@ -3,67 +3,73 @@ import { withFormik } from 'formik'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as Yup from 'yup'
-import Button from '../../../../Components/Button'
 import FooterActions from '../../../../Components/FooterActions'
-import { Field, FieldArray, Form } from '../../../../Components/Formik'
+import { Field, Form } from '../../../../Components/Formik'
 import Panel from '../../../../Layout/Panel'
 import PanelLayout from '../../../../Layout/PanelLayout'
 import apiClient from '../../../../Util/apiClient'
-import { DEFAULT_LEAVE_TYPES } from '../../../../Util/Options'
-import SingleLeaveconfig from './SingleLeaveconfig'
+import {
+  EMPLOYEE_GROUP,
+  EMPLOYEE_SUBGROUP,
+  JOB_LEVEL,
+  LEAVE_BUCKET,
+  LEAVE_CATEGORY,
+  LOCATIONS
+} from '../../../../Util/Options'
 
 const Schema = Yup.object().shape({
   calenderName: Yup.string().required(),
-  leaveTypes: Yup.array()
-    .of(
-      Yup.object().shape({
-        type: Yup.string().required(),
-        description: Yup.string().required(),
-        roles: Yup.array().required(),
-        leavePerYear: Yup.number().decimal().required()
-      })
-    )
-    .required()
+  category: Yup.string().required(),
+  bucket: Yup.string().required(),
+  roles: Yup.array().required(),
+  type: Yup.string().required(),
+  description: Yup.string(),
+  leavePerYear: Yup.number().decimal().required(),
+  location: Yup.array().required(),
+  jobLevel: Yup.array().required(),
+  employeeGroup: Yup.array().required(),
+  employeeSubgroup: Yup.array().required(),
+  previousPerYear: Yup.number().decimal().required()
 })
 
 function LeaveConfigurationForm({
-  values,
   setValues,
-  setFieldValue,
   history,
   match: {
-    params: { id }
+    params: { id, index }
   }
 }) {
-  const [prevyear, setPrevyear] = useState([])
-  const [editable, setEditable] = useState(!id)
+  // const [prevyear, setPrevyear] = useState([])
   const [calender, setcalender] = useState([])
+  const [category] = useState(LEAVE_CATEGORY)
+  const [bucket] = useState(LEAVE_BUCKET)
   const { t } = useTranslation()
 
   const getData = () => {
     if (id) {
       apiClient.get(`leave-types/by-calender-year?calenderYear=${id}`).then(({ data }) => {
         if (data.result) {
-          setValues(data.result)
-          setEditable(false)
+          const updateParam = data.result.leaveTypes[index]
+          const patchParam = { ...updateParam, ...data.result }
+          setValues(patchParam)
         }
       })
     }
   }
 
-  const previouscalendar = () => {
-    if (values.previouscalender) {
-      apiClient
-        .get(`leave-types/by-calender-year?calenderYear=${values.previouscalender}`)
-        .then(({ data }) => {
-          if (data) {
-            setFieldValue('leaveTypes', data.result.leaveTypes)
-          }
-        })
-    } else {
-      message.error('Please select the year')
-    }
-  }
+  // const previouscalendar = () => {
+  //   if (values.previouscalender) {
+  //     apiClient
+  //       .get(`leave-types/by-calender-year?calenderYear=${values.previouscalender}`)
+  //       .then(({ data }) => {
+  //         if (data) {
+  //           setFieldValue('leaveTypes', data.result.leaveTypes)
+  //         }
+  //       })
+  //   } else {
+  //     message.error('Please select the year')
+  //   }
+  // }
 
   const calendar = () => {
     apiClient.get('yearly-calender/get-year-ids').then(({ data }) => {
@@ -78,23 +84,22 @@ function LeaveConfigurationForm({
     })
   }
 
-  const getpreviousyear = () => {
-    apiClient.get('leave-types/get-year-ids').then(({ data }) => {
-      if (data && data.result) {
-        //  setFieldValue('previouscalender', data.calenderYear)
-        setPrevyear(
-          data.result.map((item) => ({
-            label: item.calenderData.name,
-            value: item.calenderYear,
-            ...item
-          }))
-        )
-      }
-    })
-  }
+  // const getpreviousyear = () => {
+  //   apiClient.get('leave-types/get-year-ids').then(({ data }) => {
+  //     if (data && data.result) {
+  //       //  setFieldValue('previouscalender', data.calenderYear)
+  //       setPrevyear(
+  //         data.result.map((item) => ({
+  //           label: item.calenderData.name,
+  //           value: item.calenderYear,
+  //           ...item
+  //         }))
+  //       )
+  //     }
+  //   })
+  // }
 
   useEffect(() => {
-    getpreviousyear()
     calendar()
   }, [])
   useEffect(() => {
@@ -113,8 +118,53 @@ function LeaveConfigurationForm({
                     <Field name="calenderName" label="Calendar Year" as="select" options={calender} />
                   </div>
                 </Col>
+                <Col xs={24} md={12} lg={4} xl={8}>
+                  <div className="form-field">
+                    <Field name="category" label="Leave Category" as="select" options={category} />
+                  </div>
+                </Col>
+                <Col xs={24} md={12} lg={4} xl={8}>
+                  <div className="form-field">
+                    <Field name="bucket" label="Leave Bucket" as="select" options={bucket} />
+                  </div>
+                </Col>
+                <Col xs={24} md={12} lg={4} xl={8}>
+                  <div className="form-field">
+                    <Field
+                      name="roles"
+                      label="Roles"
+                      as="paged-select"
+                      mode="multiple"
+                      endPoint="roles/get-active"
+                    />
+                  </div>
+                </Col>
+                <Col xs={24} md={12} lg={4} xl={8}>
+                  <div className="form-field">
+                    <Field name="type" label="Leave Type" />
+                  </div>
+                </Col>
+                <Col xs={24} md={12} lg={4} xl={8}>
+                  <div className="form-field">
+                    <Field name="description" label="Leave Description" />
+                  </div>
+                </Col>
+                <Col xs={24} md={12} lg={4} xl={8}>
+                  <div className="form-field">
+                    <Field type="number" name="leavePerYear" label="Current Year Leaves" />
+                  </div>
+                </Col>
+                <Col xs={24} md={12} lg={4} xl={8}>
+                  <div className="form-field">
+                    <Field
+                      type="number"
+                      name="previousPerYear"
+                      label="Previous Year Carry Over Leave Limit"
+                    />
+                  </div>
+                </Col>
 
-                {editable && (
+                {/* {editable && (
                   <>
                     <Col
                       xs={24}
@@ -152,19 +202,59 @@ function LeaveConfigurationForm({
                       </div>
                     </Col>
                   </>
-                )}
+                )} */}
               </Row>
-              <Panel title={t('Leave Type Entries')}>
-                <FieldArray
-                  name="leaveTypes"
-                  loaderCount={8}
-                  defaultValues={DEFAULT_LEAVE_TYPES}
-                  additionalValues={{
-                    type: values.type
-                  }}
-                  editable>
-                  {SingleLeaveconfig}
-                </FieldArray>
+              <Panel title={t('Eligibility Criteria')}>
+                <Row gutter={[20, 10]}>
+                  <Col xs={24} md={12} lg={4} xl={8}>
+                    <div className="form-field">
+                      <Field
+                        name="location"
+                        label="Location"
+                        as="paged-select"
+                        mode="multiple"
+                        endPoint=""
+                        options={LOCATIONS}
+                      />
+                    </div>
+                  </Col>
+                  <Col xs={24} md={12} lg={4} xl={8}>
+                    <div className="form-field">
+                      <Field
+                        name="jobLevel"
+                        label="Job Level"
+                        as="paged-select"
+                        mode="multiple"
+                        endPoint=""
+                        options={JOB_LEVEL}
+                      />
+                    </div>
+                  </Col>
+                  <Col xs={24} md={12} lg={4} xl={8}>
+                    <div className="form-field">
+                      <Field
+                        name="employeeGroup"
+                        label="Employee Group"
+                        as="paged-select"
+                        mode="multiple"
+                        endPoint=""
+                        options={EMPLOYEE_GROUP}
+                      />
+                    </div>
+                  </Col>
+                  <Col xs={24} md={12} lg={4} xl={8}>
+                    <div className="form-field">
+                      <Field
+                        name="employeeSubgroup"
+                        label="Employee Sub Group"
+                        as="paged-select"
+                        mode="multiple"
+                        endPoint=""
+                        options={EMPLOYEE_SUBGROUP}
+                      />
+                    </div>
+                  </Col>
+                </Row>
               </Panel>
             </Space>
           </PanelLayout>
@@ -192,7 +282,6 @@ function LeaveConfigurationForm({
 
 export default withFormik({
   mapPropsToValues: () => ({
-    leaveTypes: [],
     calenderName: '',
     previouscalender: ''
   }),
@@ -202,20 +291,21 @@ export default withFormik({
     {
       props: {
         match: {
-          params: { id }
+          params: { id, index }
         },
         history
       }
     }
   ) => {
     if (id) {
-      apiClient.post('leave-types/update', data).then(() => {
-        history.push('/app/leave-configuration')
+      const updateparam = { ...data, index }
+      apiClient.post('leave-types/update', updateparam).then(() => {
+        history('/app/leave-configuration')
       })
     } else {
       apiClient.post('leave-types/add', data).then((data) => {
         if (data.data.success === true) {
-          history.push('/app/leave-configuration')
+          history('/app/leave-configuration')
         } else {
           message.warning(data.data.message)
         }

@@ -1,13 +1,13 @@
 import { HomeOutlined } from '@ant-design/icons'
 import { Breadcrumb } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import apiClient from '../../../Util/apiClient'
 import './Drive.scss'
 
 export default function DriveBreadcrumb({ parentId }) {
   const [navigations, setNavigations] = useState([])
-  const history = useHistory()
+  const history = useNavigate()
 
   useEffect(() => {
     const endpoint = parentId
@@ -21,7 +21,7 @@ export default function DriveBreadcrumb({ parentId }) {
   }, [parentId])
 
   const onNavigate = (id) => {
-    history.push(id ? `/app/drive/${id}` : '/app/drive')
+    history(id ? `/app/drive/${id}` : '/app/drive')
   }
 
   return (

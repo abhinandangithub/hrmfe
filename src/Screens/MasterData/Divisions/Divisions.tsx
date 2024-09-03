@@ -5,17 +5,17 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useEffect } from 'react'
 import { useTranslation, withTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 
 function Divisions(props: any) {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-division/${param.id}`)
+      history(`/app/edit-division/${param.id}`)
     }
   }
 
@@ -154,14 +154,14 @@ function Divisions(props: any) {
 
   useEffect(() => {
     if (props?.companyInfo?.configurations?.division !== 'Yes') {
-      history.push('/app/dashboard')
+      history('/app/dashboard')
     }
   }, [])
 
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-division')
+        return history('/app/add-division')
       default:
         console.log('test')
         break

@@ -20,6 +20,7 @@ function DatePicker({
   hideLabel,
   altValue,
   altInput,
+  mode,
   ...props
 }: TDatePicker) {
   const { t } = useTranslation()
@@ -40,6 +41,7 @@ function DatePicker({
         </Col>
       </Row>
       <DatePickerField
+        picker={mode}
         style={{
           width: '100%',
           ...style

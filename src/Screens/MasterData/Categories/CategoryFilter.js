@@ -23,7 +23,7 @@ const CategotyFilter = (props) => {
       {validateAccess('add-category') && (
         <button
           type="button"
-          onClick={() => history.push('/app/add-category')}
+          onClick={() => history('/app/add-category')}
           className="btn-glow btn-block primary">
           Add new category
         </button>

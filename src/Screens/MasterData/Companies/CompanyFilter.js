@@ -38,7 +38,7 @@ export default class CompanyFilter extends React.Component {
         {validateAccess('add-company') && (
           <button
             type="button"
-            onClick={() => this.props.history.push('/app/add-company')}
+            onClick={() => this.props.history('/app/add-company')}
             className="btn-glow btn-block primary">
             Add new company
           </button>

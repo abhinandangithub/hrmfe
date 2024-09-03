@@ -1,158 +1,155 @@
 import { Col, message, Row } from 'antd'
 import { withFormik } from 'formik'
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as Yup from 'yup'
-import { getWarehouseCodes } from '../../../Actions/UserAction'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import Panel from '../../../Layout/Panel'
 import PanelLayout from '../../../Layout/PanelLayout'
 import apiClient from '../../../Util/apiClient'
 import { removeEmptyKeys } from '../../../Util/Util'
+// const ADDITIONAL_FIELDS_INCOMES = [
+//   { label: 'Location', value: 'location' },
+//   { label: 'Premise', value: 'premise' },
+//   { label: 'Slip No', value: 'slipNo' },
+//   { label: 'Project', value: 'project' },
+//   { label: 'Project Name', value: 'projectName' },
+//   { label: 'Contract No', value: 'contractNo' },
+//   { label: 'Contract Title', value: 'contractTitle' },
+//   { label: 'Contract Period', value: 'contractPeriod' },
+//   { label: 'Contract Value', value: 'contractValue' },
+//   { label: 'Period Of Payment', value: 'periodOfPayment' },
+//   { label: 'Vendor ID', value: 'vendorId' },
+//   { label: 'Vendor No', value: 'vendorNo' },
+//   { label: 'SES No', value: 'sesNo' },
 
-const ADDITIONAL_FIELDS_INCOMES = [
-  { label: 'Location', value: 'location' },
-  { label: 'Premise', value: 'premise' },
-  { label: 'Slip No', value: 'slipNo' },
-  { label: 'Project', value: 'project' },
-  { label: 'Project Name', value: 'projectName' },
-  { label: 'Contract No', value: 'contractNo' },
-  { label: 'Contract Title', value: 'contractTitle' },
-  { label: 'Contract Period', value: 'contractPeriod' },
-  { label: 'Contract Value', value: 'contractValue' },
-  { label: 'Period Of Payment', value: 'periodOfPayment' },
-  { label: 'Vendor ID', value: 'vendorId' },
-  { label: 'Vendor No', value: 'vendorNo' },
-  { label: 'SES No', value: 'sesNo' },
+//   { label: 'Subject', value: 'subject' },
+//   { label: 'Description', value: 'description' },
+//   { label: 'Discount', value: 'discount' },
+//   { label: 'Retention', value: 'retention' },
+//   { label: 'Charge', value: 'charge' },
+//   { label: 'Amount', value: 'amount' },
+//   { label: 'Account', value: 'account' },
+//   { label: 'Free of cost', value: 'freeOfCost' }
+// ]
 
-  { label: 'Subject', value: 'subject' },
-  { label: 'Description', value: 'description' },
-  { label: 'Discount', value: 'discount' },
-  { label: 'Retention', value: 'retention' },
-  { label: 'Charge', value: 'charge' },
-  { label: 'Amount', value: 'amount' },
-  { label: 'Account', value: 'account' },
-  { label: 'Free of cost', value: 'freeOfCost' }
-]
+// const ADDITIONAL_FIELDS = [
+//   { label: 'Project', value: 'project' },
+//   { label: 'Description', value: 'description' },
+//   { label: 'Discount', value: 'discount' },
+//   { label: 'Retention', value: 'retention' },
+//   { label: 'Charge', value: 'charge' }
+// ]
 
-const ADDITIONAL_FIELDS = [
-  { label: 'Project', value: 'project' },
-  { label: 'Description', value: 'description' },
-  { label: 'Discount', value: 'discount' },
-  { label: 'Retention', value: 'retention' },
-  { label: 'Charge', value: 'charge' }
-]
+// const FIELDS_TO_TRANSLATE = [
+//   { label: 'Billing Street', value: 'billingStreet' },
+//   { label: 'Billing City', value: 'billingCity' },
+//   { label: 'Billing Country', value: 'billingCountry' },
+//   { label: 'Invoice - Item - Product', value: 'itemProduct' },
+//   { label: 'Invoice - Item - Description', value: 'itemDescription' },
+//   { label: 'Invoice - Item - Notes', value: 'itemNotes' },
+//   { label: 'Invoice - Client Name', value: 'invoiceClientName' },
+//   { label: 'Invoice - Subject', value: 'invoiceSubject' },
+//   { label: 'Invoice - Premise', value: 'invoicePremise' },
+//   { label: 'Invoice - Notes', value: 'invoiceNotes' }
+// ]
 
-const FIELDS_TO_TRANSLATE = [
-  { label: 'Billing Street', value: 'billingStreet' },
-  { label: 'Billing City', value: 'billingCity' },
-  { label: 'Billing Country', value: 'billingCountry' },
-  { label: 'Invoice - Item - Product', value: 'itemProduct' },
-  { label: 'Invoice - Item - Description', value: 'itemDescription' },
-  { label: 'Invoice - Item - Notes', value: 'itemNotes' },
-  { label: 'Invoice - Client Name', value: 'invoiceClientName' },
-  { label: 'Invoice - Subject', value: 'invoiceSubject' },
-  { label: 'Invoice - Premise', value: 'invoicePremise' },
-  { label: 'Invoice - Notes', value: 'invoiceNotes' }
-]
-
-const ADDITIONAL_QUOTATION_FIELDS = [
-  { label: 'Source', value: 'source' },
-  { label: 'Destination', value: 'destination' },
-  { label: 'Trade Term', value: 'tradeTerm' },
-  { label: 'Terms Of Payment', value: 'termsOfPayment' },
-  { label: 'Delivery Time', value: 'deliveryTime' },
-  { label: 'Remarks', value: 'remarks' },
-  { label: 'Notes', value: 'notes' },
-  { label: 'Net Quantity', value: 'netQuantity' },
-  { label: 'Buffer', value: 'buffer' },
-  { label: 'Area', value: 'area' },
-  { label: 'Dimension1', value: 'dimension1' },
-  { label: 'Dimension2', value: 'dimension2' },
-  { label: 'Project', value: 'project' },
-  { label: 'Warranty', value: 'warranty' },
-  { label: 'Validity', value: 'validity' },
-  { label: 'Subject', value: 'subject' }
-]
-const ADDITIONAL_SALES_ORDER_FIELDS = [
-  { label: 'Source', value: 'source' },
-  { label: 'Destination', value: 'destination' },
-  { label: 'Trade Term', value: 'tradeTerm' },
-  { label: 'Terms Of Payment', value: 'termsOfPayment' },
-  { label: 'Delivery Time', value: 'deliveryTime' },
-  { label: 'Remarks', value: 'remarks' },
-  { label: 'Notes', value: 'notes' },
-  { label: 'Net Quantity', value: 'netQuantity' },
-  { label: 'Buffer', value: 'buffer' },
-  { label: 'Area', value: 'area' },
-  { label: 'Dimension1', value: 'dimension1' },
-  { label: 'Dimension2', value: 'dimension2' },
-  { label: 'Project', value: 'project' },
-  { label: 'Warranty', value: 'warranty' },
-  { label: 'Validity', value: 'validity' },
-  { label: 'Subject', value: 'subject' }
-]
-const ADDITIONAL_PURCHASE_ORDER_FIELDS = [
-  { label: 'Source', value: 'source' },
-  { label: 'Destination', value: 'destination' },
-  { label: 'Trade Term', value: 'tradeTerm' },
-  { label: 'Terms Of Payment', value: 'termsOfPayment' },
-  { label: 'Delivery Time', value: 'deliveryTime' },
-  { label: 'Remarks', value: 'remarks' },
-  { label: 'Notes', value: 'notes' },
-  { label: 'Net Quantity', value: 'netQuantity' },
-  { label: 'Buffer', value: 'buffer' },
-  { label: 'Area', value: 'area' },
-  { label: 'Dimension1', value: 'dimension1' },
-  { label: 'Dimension2', value: 'dimension2' },
-  { label: 'Project', value: 'project' },
-  { label: 'Warranty', value: 'warranty' },
-  { label: 'Validity', value: 'validity' },
-  { label: 'Subject', value: 'subject' }
-]
+// const ADDITIONAL_QUOTATION_FIELDS = [
+//   { label: 'Source', value: 'source' },
+//   { label: 'Destination', value: 'destination' },
+//   { label: 'Trade Term', value: 'tradeTerm' },
+//   { label: 'Terms Of Payment', value: 'termsOfPayment' },
+//   { label: 'Delivery Time', value: 'deliveryTime' },
+//   { label: 'Remarks', value: 'remarks' },
+//   { label: 'Notes', value: 'notes' },
+//   { label: 'Net Quantity', value: 'netQuantity' },
+//   { label: 'Buffer', value: 'buffer' },
+//   { label: 'Area', value: 'area' },
+//   { label: 'Dimension1', value: 'dimension1' },
+//   { label: 'Dimension2', value: 'dimension2' },
+//   { label: 'Project', value: 'project' },
+//   { label: 'Warranty', value: 'warranty' },
+//   { label: 'Validity', value: 'validity' },
+//   { label: 'Subject', value: 'subject' }
+// ]
+// const ADDITIONAL_SALES_ORDER_FIELDS = [
+//   { label: 'Source', value: 'source' },
+//   { label: 'Destination', value: 'destination' },
+//   { label: 'Trade Term', value: 'tradeTerm' },
+//   { label: 'Terms Of Payment', value: 'termsOfPayment' },
+//   { label: 'Delivery Time', value: 'deliveryTime' },
+//   { label: 'Remarks', value: 'remarks' },
+//   { label: 'Notes', value: 'notes' },
+//   { label: 'Net Quantity', value: 'netQuantity' },
+//   { label: 'Buffer', value: 'buffer' },
+//   { label: 'Area', value: 'area' },
+//   { label: 'Dimension1', value: 'dimension1' },
+//   { label: 'Dimension2', value: 'dimension2' },
+//   { label: 'Project', value: 'project' },
+//   { label: 'Warranty', value: 'warranty' },
+//   { label: 'Validity', value: 'validity' },
+//   { label: 'Subject', value: 'subject' }
+// ]
+// const ADDITIONAL_PURCHASE_ORDER_FIELDS = [
+//   { label: 'Source', value: 'source' },
+//   { label: 'Destination', value: 'destination' },
+//   { label: 'Trade Term', value: 'tradeTerm' },
+//   { label: 'Terms Of Payment', value: 'termsOfPayment' },
+//   { label: 'Delivery Time', value: 'deliveryTime' },
+//   { label: 'Remarks', value: 'remarks' },
+//   { label: 'Notes', value: 'notes' },
+//   { label: 'Net Quantity', value: 'netQuantity' },
+//   { label: 'Buffer', value: 'buffer' },
+//   { label: 'Area', value: 'area' },
+//   { label: 'Dimension1', value: 'dimension1' },
+//   { label: 'Dimension2', value: 'dimension2' },
+//   { label: 'Project', value: 'project' },
+//   { label: 'Warranty', value: 'warranty' },
+//   { label: 'Validity', value: 'validity' },
+//   { label: 'Subject', value: 'subject' }
+// ]
 
 const YES_NO_OPTIONS = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' }
 ]
 
-const POS_USAGE_OPTIONS = [
-  { label: 'Products', value: 'Products' },
-  { label: 'Services', value: 'Services' },
-  { label: 'Both', value: '' }
-]
+// const POS_USAGE_OPTIONS = [
+//   { label: 'Products', value: 'Products' },
+//   { label: 'Services', value: 'Services' },
+//   { label: 'Both', value: '' }
+// ]
 
-const BARCODE_OPTIONS = [
-  { label: 'CODE39', value: 'CODE39' },
-  { label: 'CODE128', value: 'CODE128' }
-]
+// const BARCODE_OPTIONS = [
+//   { label: 'CODE39', value: 'CODE39' },
+//   { label: 'CODE128', value: 'CODE128' }
+// ]
 
-const MATERIAL_BARCODE_FIELDS = [
-  { label: 'Material Code', value: 'materialCode' },
-  { label: 'Material Desc.', value: 'materialDescription' },
-  { label: 'Material Type', value: 'materialType' },
-  { label: 'Material Group', value: 'materialGroup' },
-  { label: 'Stock UOM', value: 'unit' },
-  { label: 'Batch', value: 'batch' },
-  { label: 'Serial', value: 'serial' },
-  { label: 'Purchase UOM', value: 'purchaseUnit' },
-  { label: 'Sales UOM', value: 'salesUnit' },
-  { label: 'Retail Price / Last Sales Price', value: 'salesPrice' },
-  { label: 'Wholesale Price / Last Purchase Price', value: 'purchasePrice' },
-  { label: 'Tax of Sales', value: 'salesTax' },
-  { label: 'Tax of Purchase', value: 'purchaseTax' },
-  { label: 'Standard Cost', value: 'cost' }
-]
+// const MATERIAL_BARCODE_FIELDS = [
+//   { label: 'Material Code', value: 'materialCode' },
+//   { label: 'Material Desc.', value: 'materialDescription' },
+//   { label: 'Material Type', value: 'materialType' },
+//   { label: 'Material Group', value: 'materialGroup' },
+//   { label: 'Stock UOM', value: 'unit' },
+//   { label: 'Batch', value: 'batch' },
+//   { label: 'Serial', value: 'serial' },
+//   { label: 'Purchase UOM', value: 'purchaseUnit' },
+//   { label: 'Sales UOM', value: 'salesUnit' },
+//   { label: 'Retail Price / Last Sales Price', value: 'salesPrice' },
+//   { label: 'Wholesale Price / Last Purchase Price', value: 'purchasePrice' },
+//   { label: 'Tax of Sales', value: 'salesTax' },
+//   { label: 'Tax of Purchase', value: 'purchaseTax' },
+//   { label: 'Standard Cost', value: 'cost' }
+// ]
 
-const DIVISION_LEVEL = [{ label: 'Header', value: 'Header' }]
+// const DIVISION_LEVEL = [{ label: 'Header', value: 'Header' }]
 
-const INVOICE_TRANSMISSION_TYPE_OPTIONS = [{ label: 'ZATCA', value: 'ZATCA' }]
+// const INVOICE_TRANSMISSION_TYPE_OPTIONS = [{ label: 'ZATCA', value: 'ZATCA' }]
 
-const ADDITIONAL_MATERIAL_TRANSFER_STATUS = [
-  { label: 'Release', value: 'Release' },
-  { label: 'Receive', value: 'Receive' }
-]
+// const ADDITIONAL_MATERIAL_TRANSFER_STATUS = [
+//   { label: 'Release', value: 'Release' },
+//   { label: 'Receive', value: 'Receive' }
+// ]
 
 const Schema = Yup.object().shape({
   division: Yup.string().required(),
@@ -183,30 +180,31 @@ const Schema = Yup.object().shape({
       then: (schema) => schema.required()
     }),
   inventoryCountScanAutoSave: Yup.string().required(),
-  freeOfCost: Yup.string().required()
+  freeOfCost: Yup.string().required(),
+  workingHours: Yup.number().required()
 })
 
-function CompanyConfigurations({ values, setFieldValue }) {
-  const [warehouses, setWarehouses] = useState([])
-  const [roles, setRoles] = useState([])
+function CompanyConfigurations() {
+  // const [warehouses, setWarehouses] = useState([])
+  // const [roles, setRoles] = useState([])
   const { t } = useTranslation()
 
-  const defaultWarehouses = warehouses.filter((item) => values.POSWarehouses.includes(item.value))
+  // const defaultWarehouses = warehouses.filter((item) => values.POSWarehouses.includes(item.value))
 
-  const getData = () => {
-    apiClient.get('roles/get-roles').then(({ data }) => {
-      if (data.success) {
-        setRoles(data.result.map((x) => ({ label: x.name, value: x.name })))
-      }
-    })
-  }
+  // const getData = () => {
+  //   apiClient.get('roles/get-roles').then(({ data }) => {
+  //     if (data.success) {
+  // setRoles(data.result.map((x) => ({ label: x.name, value: x.name })))
+  //     }
+  //   })
+  // }
 
-  useEffect(() => {
-    getWarehouseCodes().then((data) => {
-      setWarehouses(data)
-    })
-    getData()
-  }, [])
+  // useEffect(() => {
+  // getWarehouseCodes().then((data) => {
+  // setWarehouses(data)
+  // })
+  // getData()
+  // }, [])
 
   return (
     <Form>
@@ -259,7 +257,22 @@ function CompanyConfigurations({ values, setFieldValue }) {
                 </Col>
               </Row>
             </Panel>
-            <Panel title={t('Invoice')}>
+            <Panel title={t('Working Hours')}>
+              <Row gutter={[20, 10]}>
+                <Col xs={24} sm={24} md={12} lg={6}>
+                  <div style={{ fontSize: 14 }}>Company Target Working Hours</div>
+                </Col>
+                <Col xs={24} sm={24} md={12} lg={6}>
+                  <div className="form-field">
+                    <Field type="number" name="workingHours" />
+                  </div>
+                </Col>
+                <Col xs={24} sm={24} md={12} lg={6}>
+                  <div style={{ fontSize: 14 }}>hours per week</div>
+                </Col>
+              </Row>
+            </Panel>
+            {/* <Panel title={t('Invoice')}>
               <Row gutter={[20, 10]}>
                 <Col xs={24} sm={24} md={12} lg={6}>
                   <div style={{ fontSize: 14 }}>
@@ -764,7 +777,7 @@ function CompanyConfigurations({ values, setFieldValue }) {
                   </div>
                 </Col>
               </Row>
-            </Panel>
+            </Panel> */}
           </PanelLayout>
 
           <div className="save-changes">
@@ -827,7 +840,8 @@ export default withFormik({
     materialBarcodeBreath: configurations?.materialBarcodeBreath || '',
     materialBarcodeHeight: configurations?.materialBarcodeHeight || '',
     materialBarcodeFields: configurations?.materialBarcodeFields || [],
-    additionalMaterialTransferStatus: configurations?.additionalMaterialTransferStatus || []
+    additionalMaterialTransferStatus: configurations?.additionalMaterialTransferStatus || [],
+    workingHours: configurations?.workingHours || 40
   }),
   validationSchema: Schema,
   handleSubmit: (data, { props: { userInfo, dispatch } }) => {

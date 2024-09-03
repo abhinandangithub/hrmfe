@@ -100,7 +100,7 @@ function ClientForm({
         if (data?.result && data.result.type === 'Customer') {
           setValues({ ...values, ...data.result })
         } else {
-          history.push('/app/customers')
+          history('/app/customers')
         }
       })
     }
@@ -564,13 +564,13 @@ export default withFormik({
       data.banks = data.banks.filter((v) => v.bankAccountNo)
       apiClient.put(`clients/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/customers')
+          history('/app/customers')
         }
       })
     } else {
       apiClient.post('clients/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/customers')
+          history('/app/customers')
         }
       })
     }

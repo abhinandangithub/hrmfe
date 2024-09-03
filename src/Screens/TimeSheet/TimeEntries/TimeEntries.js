@@ -38,14 +38,17 @@ class TimeEntries extends React.Component {
       openLogs: false,
       view: localStorage.getItem('timeEntryView') || 'day',
       loader: true
+      // filterHourEntry: []
     }
   }
 
   componentDidMount() {
+    // console.log(this.state.filterHourEntry)
     this.getTimeEntries()
     getProjects().then((projects) => {
       if (projects) {
         this.props.dispatch({ type: 'SET_USER_REDUCER', payload: { projects } })
+        console.log('projects details', projects)
       }
     })
   }
@@ -225,13 +228,14 @@ class TimeEntries extends React.Component {
                 <div className="timesheet-group">
                   <button
                     type="button"
-                    className="pds-button pds-button-icon"
+                    // style={{ color: '#039bcd !important' }}
+                    className="pds-button pds-button-icon pds-button-primary border"
                     onClick={() => this.onChangeWeek('previous')}>
                     <LeftOutlined />
                   </button>
                   <button
                     type="button"
-                    className="pds-button pds-button-icon"
+                    className="pds-button pds-button-icon pds-button-primary border"
                     onClick={() => this.onChangeWeek('next')}>
                     <RightOutlined />
                   </button>
@@ -272,7 +276,11 @@ class TimeEntries extends React.Component {
                       </button>
                     )}
                     <button type="button" className="pds-button pds-date">
-                      <DatePicker value={moment(this.props.selectedDate)} onChange={this.onChangeDate} />
+                      <DatePicker
+                        value={moment(this.props.selectedDate)}
+                        onChange={this.onChangeDate}
+                        className="text-dark"
+                      />
                     </button>
                     {this.state.weekStatus !== 'Created' && (
                       <button
@@ -337,6 +345,7 @@ class TimeEntries extends React.Component {
                 <TimeEntryWeeks
                   weekStatus={this.state.weekStatus}
                   onSubmitTimeEntries={this.onSubmitTimeEntries}
+                  // filterHourEntry={filterHourEntry}
                 />
               )}
             </div>

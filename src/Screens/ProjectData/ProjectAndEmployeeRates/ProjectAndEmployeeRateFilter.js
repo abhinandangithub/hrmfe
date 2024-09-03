@@ -1,14 +1,14 @@
 import { withFormik } from 'formik'
 import _ from 'lodash'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import apiClient from '../../../Util/apiClient'
 import { GET_DATA, SET_DATA, validateAccess } from '../../../Util/Util'
 
 function Filter(props) {
-  const history = useHistory()
+  const history = useNavigate()
 
   const onSubmitForm = async () => {
     props.validateForm().then((err) => {
@@ -48,7 +48,7 @@ function Filter(props) {
     <>
       {validateAccess('add-project-employee-rate') && (
         <Button
-          onClick={() => history.push('/app/add-project-employee-rate')}
+          onClick={() => history('/app/add-project-employee-rate')}
           variant="primary"
           className="btn-block">
           <i className="flaticon-plus" /> Add project & employee

@@ -27,7 +27,7 @@ function AppliedJobsDashboard({ values, history }) {
 
   const onRedirect = (status) => {
     SET_DATA('appliedJobs.filterData', { ...removeEmptyKeys(values), status })
-    history.push('/app/applied-jobs')
+    history('/app/applied-jobs')
   }
 
   return (

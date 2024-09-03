@@ -102,13 +102,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`department/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/departments')
+          history('/app/departments')
         }
       })
     } else {
       apiClient.post('department/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/departments')
+          history('/app/departments')
         }
       })
     }

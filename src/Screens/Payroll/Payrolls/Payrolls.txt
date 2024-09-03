@@ -220,7 +220,7 @@ export default function Payrolls() {
   // const onViewPayrolls = () => {
   //   if (selectedRows.length > 0) {
   //     const ids = selectedRows.map((val) => val.id)
-  //     props.history.push(`/app/payrolls/${ids.join(',')}`)
+  //     props.history(`/app/payrolls/${ids.join(',')}`)
   //   } else {
   //     message.error('Please select a row')
   //   }

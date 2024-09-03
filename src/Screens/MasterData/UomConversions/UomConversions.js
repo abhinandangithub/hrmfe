@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Col, Row } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
@@ -10,7 +10,7 @@ import { GET_DATA, SET_DATA, validateAccess } from '../../../Util/Util'
 import Filter from './UomConversionFilter'
 
 export default function UomConversions() {
-  const history = useHistory()
+  const history = useNavigate()
 
   const [uomConversions, setUomConversions] = useState([])
 
@@ -64,7 +64,7 @@ export default function UomConversions() {
         render: (text, row) => (
           <div className="btn-group">
             <Button
-              onClick={() => history.push(`/app/edit-uom-conversion/${row.id}`)}
+              onClick={() => history(`/app/edit-uom-conversion/${row.id}`)}
               className="btn glow dropdown-toggle">
               <EditOutlined />
             </Button>

@@ -95,13 +95,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`pos-options/${id}`, data.options[0]).then(({ status }) => {
         if (status === 200) {
-          history.push('/app/pos-options')
+          history('/app/pos-options')
         }
       })
     } else {
       apiClient.post('pos-options', data).then(({ status }) => {
         if (status === 201) {
-          history.push('/app/pos-options')
+          history('/app/pos-options')
         }
       })
     }

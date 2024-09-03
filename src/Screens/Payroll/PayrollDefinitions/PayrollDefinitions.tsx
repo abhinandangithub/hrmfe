@@ -4,18 +4,18 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 import { validateAccess } from '../../../Util/Util'
 
 export default function PayrollDefinitions() {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/payroll-definitions/edit/${param.id}`)
+      history(`/app/payroll-definitions/edit/${param.id}`)
     }
   }
   const PayrollDefinitionJson = {
@@ -317,7 +317,7 @@ export default function PayrollDefinitions() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/payroll-definitions/add')
+        return history('/app/payroll-definitions/add')
       default:
         console.log('test')
         break

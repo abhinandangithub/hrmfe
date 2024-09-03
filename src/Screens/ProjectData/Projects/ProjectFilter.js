@@ -1,7 +1,7 @@
 import { withFormik } from 'formik'
 import _ from 'lodash'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import apiClient from '../../../Util/apiClient'
@@ -13,7 +13,7 @@ const YES_NO_OPTIONS = [
 ]
 
 function Filter(props) {
-  const history = useHistory()
+  const history = useNavigate()
 
   const onSubmitForm = async () => {
     props.validateForm().then((err) => {
@@ -52,7 +52,7 @@ function Filter(props) {
   return (
     <>
       {validateAccess('add-project') && (
-        <Button onClick={() => history.push('/app/add-project')} variant="primary" className="btn-block">
+        <Button onClick={() => history('/app/add-project')} variant="primary" className="btn-block">
           <i className="flaticon-plus" /> Add Project
         </Button>
       )}

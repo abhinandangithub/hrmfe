@@ -2,7 +2,7 @@ import { Col, Row } from 'antd'
 import { withFormik } from 'formik'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import * as Yup from 'yup'
 import FooterActions from '../../../Components/FooterActions'
 import { Field, Form } from '../../../Components/Formik'
@@ -45,7 +45,7 @@ function TerminationChecklistForm({
   },
   submitForm
 }) {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   const getData = () => {
@@ -135,7 +135,7 @@ function TerminationChecklistForm({
                 prefix: 'flaticon-back',
                 label: 'Cancel',
                 onClick: () => {
-                  history.push('/app/termination-checklists')
+                  history('/app/termination-checklists')
                 }
               }
             ]}
@@ -179,13 +179,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`termination-checklists/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/termination-checklists')
+          history('/app/termination-checklists')
         }
       })
     } else {
       apiClient.post('termination-checklists/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/termination-checklists')
+          history('/app/termination-checklists')
         }
       })
     }

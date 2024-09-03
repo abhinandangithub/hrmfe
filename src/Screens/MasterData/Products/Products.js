@@ -1,7 +1,7 @@
 import { SettingOutlined } from '@ant-design/icons'
 import { message, Popover } from 'antd'
 import { useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate  } from 'react-router-dom'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
 import TableLayout from '../../../Layout/TableLayout'
@@ -10,7 +10,7 @@ import { GET_DATA, SET_DATA, validateAccess } from '../../../Util/Util'
 import ProductFilter from './ProductFilter'
 
 export default function Products({ productType, setProductType }) {
-  const history = useHistory()
+  const history = useNavigate()
   const [products, setProducts] = useState([])
 
   const onFilter = (params = {}) => {
@@ -41,7 +41,7 @@ export default function Products({ productType, setProductType }) {
   }
 
   const onDuplicate = (row) => {
-    history.push({ pathname: '/app/add-product', state: { duplicateId: row.id } })
+    history({ pathname: '/app/add-product', state: { duplicateId: row.id } })
   }
 
   const tableContent = (row) => (

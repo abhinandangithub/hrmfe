@@ -4,21 +4,21 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 import { validateAccess } from '../../../Util/Util'
 
 
 export default function EmployeeTransfers() {
-  const history = useHistory()
+  const history = useNavigate()
 
   const [employeetrf] = useState([])
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-employee-transfer/${param.id}`)
+      history(`/app/edit-employee-transfer/${param.id}`)
     }
   }
 
@@ -184,7 +184,7 @@ export default function EmployeeTransfers() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-employee-transfer')
+        return history('/app/add-employee-transfer')
       default:
         console.log('test')
         break

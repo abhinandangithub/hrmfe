@@ -521,13 +521,13 @@ export default withFormik({
       data.banks = data.banks.filter((v) => v.bankAccountNo)
       apiClient.put(`clients/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/clients')
+          history('/app/clients')
         }
       })
     } else {
       apiClient.post('clients/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/clients')
+          history('/app/clients')
         }
       })
     }

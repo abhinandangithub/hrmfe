@@ -49,7 +49,7 @@ export default class TaxdataForm extends React.Component {
   //         return true
   //     })
   //     if (flag) {
-  //         this.props.history.push('/app/products')
+  //         this.props.history('/app/products')
   //     } else {
   //         this.setState({ isSubmit: true });
   //     }

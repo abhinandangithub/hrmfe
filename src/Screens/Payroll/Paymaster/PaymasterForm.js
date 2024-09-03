@@ -3,7 +3,7 @@ import { Button, Col, message, Modal, Popover, Row, Tabs } from 'antd'
 import { withFormik } from 'formik'
 import _, { isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import * as Yup from 'yup'
 import FooterActions from '../../../Components/FooterActions'
 import { Field, Form } from '../../../Components/Formik'
@@ -26,7 +26,7 @@ function PaymasterForm({
     params: { id }
   }
 }) {
-  const history = useHistory()
+  const history = useNavigate()
   const [openPayslipModal, setOpenPayslipModal] = useState(false)
   const [payrollDefinition, setPayrollDefinition] = useState([])
   const [payrollComponents, setPayrollComponents] = useState([])
@@ -174,7 +174,7 @@ function PaymasterForm({
 
           if (data.success) {
             message.success('Added employee paymaster successfully')
-            history.push('/app/paymaster')
+            history('/app/paymaster')
           }
         } catch (error) {
           console.error('ADD_EMPLOYEE_PAYMASTER_ERROR', error)

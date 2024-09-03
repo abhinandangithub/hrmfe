@@ -2,7 +2,7 @@ import { withFormik } from 'formik'
 import _ from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import apiClient from '../../../Util/apiClient'
@@ -11,7 +11,7 @@ import { GET_DATA, removeEmptyKeys, SET_DATA, validateAccess } from '../../../Ut
 
 function Filter(props) {
   const { submitForm, validateForm, values, onFilter } = props
-  const history = useHistory()
+  const history = useNavigate()
   const [currencies, setCurrencies] = useState([])
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function Filter(props) {
     <>
       {validateAccess('add-uom-conversion') && (
         <Button
-          onClick={() => history.push('/app/add-uom-conversion')}
+          onClick={() => history('/app/add-uom-conversion')}
           variant="primary"
           className="btn-block">
           <i className="flaticon-plus" /> Add UOM Conversion

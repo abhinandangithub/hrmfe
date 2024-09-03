@@ -1,12 +1,12 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
 import TableLayout from '../../../Layout/TableLayout'
 import AbsenceManagementFilter from './AbsenceManagementFilter'
 
 export default function AbsenceManagement() {
-  const history = useHistory()
+  const history = useNavigate()
 
   const columns = [
     {
@@ -31,7 +31,7 @@ export default function AbsenceManagement() {
     <FilterLayout
       addButton={{
         title: 'Add Absent',
-        onClick: () => history.push('/app/apply-leave'),
+        onClick: () => history('/app/apply-leave'),
         access: 'apply-leave'
       }}
       filter={<AbsenceManagementFilter />}>

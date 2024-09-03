@@ -120,7 +120,7 @@ export default withFormik({
   handleSubmit: (data, { props: { history } }) => {
     apiClient.post('contact-us/add', data).then(({ data }) => {
       if (data && data.result) {
-        history.push('/')
+        history('/')
         message.success('Thank you for contacting us! Our Accqrate team will reach you shortly')
       }
     })

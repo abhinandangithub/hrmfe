@@ -23,7 +23,7 @@ class Login extends React.Component {
     const currentUser = localStorage.getItem('ACCOUNTING_USER')
 
     if (currentUser) {
-      this.props.history.push('/app/dashboard')
+      this.props.history('/app/dashboard')
     }
   }
 
@@ -47,7 +47,7 @@ class Login extends React.Component {
       this.props.dispatch(login({ email, password })).then((userData) => {
         if (userData) {
           localStorage.setItem('ACCOUNTING_USER', userData.token)
-          this.props.history.push(userData.result.company ? '/app/dashboard' : '/app/manage-company')
+          this.props.history(userData.result.company ? '/app/dashboard' : '/app/manage-company')
         }
       })
     } else {

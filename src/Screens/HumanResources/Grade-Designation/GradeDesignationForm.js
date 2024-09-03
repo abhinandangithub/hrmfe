@@ -97,13 +97,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`grade/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/Grade-Designation')
+          history('/app/Grade-Designation')
         }
       })
     } else {
       apiClient.post('grade/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/Grade-Designation')
+          history('/app/Grade-Designation')
         }
       })
     }

@@ -25,7 +25,7 @@ const Schema = Yup.object().shape({
 const EducationDetails = (props) => {
   const [toggle, setToggle] = useState(false)
   const [educationDetails, setEducationDetails] = useState([])
-  const { currentEmployee, values, setValues, submitForm, errors, resetForm } = props
+  const { currentEmployee, values, setValues, submitForm, errors, resetForm, restrictPage } = props
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -158,15 +158,20 @@ const EducationDetails = (props) => {
   return (
     <Form>
       <PanelLayout>
-        <Panel title={t('Education Details')}>
+        <Panel
+          title={t('Education Details')}
+          button={
+            !restrictPage ? (
+              <div className="align-right">
+                <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
+                  <i className="flaticon-plus" /> {props.t('Add')}
+                </ButtonBox>
+              </div>
+            ) : null
+          }>
           <div className="panel-with-border">
             <Row justify="left" gutter={(12, 10)}>
               <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
-                <div className="mb-3 align-right">
-                  <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
-                    <i className="flaticon-plus" /> {props.t('Add')}
-                  </ButtonBox>
-                </div>
                 <div className="table-view">
                   <TableBox
                     columns={columns}

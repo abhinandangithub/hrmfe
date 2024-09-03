@@ -1,14 +1,14 @@
 import { withFormik } from 'formik'
 import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../../Components/Button'
 import { Field, Form } from '../../../../Components/Formik'
 import apiClient from '../../../../Util/apiClient'
 import { GET_DATA, removeEmptyKeys, SET_DATA } from '../../../../Util/Util'
 
 function Filter(props) {
-  const history = useHistory()
+  const history = useNavigate()
   const [yearIds, setYearIds] = useState([])
   const [yearname, setYearname] = useState([])
 
@@ -58,7 +58,7 @@ function Filter(props) {
   return (
     <>
       <Button
-        onClick={() => history.push('/app/add-leave-configuration')}
+        onClick={() => history('/app/add-leave-configuration')}
         variant="primary"
         className="btn-block">
         <i className="flaticon-plus" /> Add Leave Configuration

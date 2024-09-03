@@ -209,13 +209,13 @@ export default withFormik({
       data.endDate = data.startDate ? moment(data.endDate).startOf('day') : null
       apiClient.put(`projects/updateProjectAndEmployeeById/${id}`, data).then(({ data }) => {
         if (data.result) {
-          history.push('/app/project-employee-rates')
+          history('/app/project-employee-rates')
         }
       })
     } else {
       apiClient.post('projects/addProjectAndEmployee', data).then(({ data }) => {
         if (data.result) {
-          history.push('/app/project-employee-rates')
+          history('/app/project-employee-rates')
         }
       })
     }

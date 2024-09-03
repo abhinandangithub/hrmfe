@@ -1,6 +1,6 @@
 export default {
- // API_URL: 'https://api.accqrate.com/api'
-  API_URL: 'http://localhost:9020/api'
+  API_URL: 'https://api.accqrate.com/api'
+  // API_URL: 'http://localhost:9020/api'
 }
 export const cardColors = [
   '#4472C4',

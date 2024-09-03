@@ -215,7 +215,7 @@ export default withFormik({
     if (id) {
       apiClient.put(`asset-capitalization/by-asset-id/${id}`, values).then(({ status }) => {
         if (status === 200) {
-          history.push('/app/new-assets')
+          history('/app/new-assets')
         }
       })
     }

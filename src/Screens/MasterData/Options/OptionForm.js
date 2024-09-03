@@ -100,13 +100,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`options/update/${id}`, { ...data }).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/options')
+          history('/app/options')
         }
       })
     } else {
       apiClient.post('options/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/options')
+          history('/app/options')
         }
       })
     }

@@ -57,14 +57,14 @@ class SetCompany extends React.Component {
     this.props.dispatch(updateUser(userInfo.id, { company: val.company })).then((user) => {
       if (user) {
         CLEAR_DATA()
-        this.props.history.push('/app/dashboard')
+        this.props.history('/app/dashboard')
       }
     })
   }
 
   onAddCompany = (network) => {
     this.props.dispatch({ type: 'SET_USER_REDUCER', payload: { network } })
-    this.props.history.push('/app/add-company')
+    this.props.history('/app/add-company')
   }
 
   onChangeNetwork = (value, type) => {
@@ -205,7 +205,7 @@ class SetCompany extends React.Component {
                               <div>
                                 <ButtonBox
                                   type="primary"
-                                  onClick={() => this.props.history.push('/app/add-company')}>
+                                  onClick={() => this.props.history('/app/add-company')}>
                                   <i className="flaticon-plus-1" />
                                   Add Company
                                 </ButtonBox>

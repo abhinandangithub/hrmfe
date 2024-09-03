@@ -1,6 +1,6 @@
 import { Col, message, Row, Tooltip } from 'antd'
 import { useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate , useParams } from 'react-router-dom'
 import DocumentFlows from '../Screens/DocumentFlows/DocumentFlows'
 import IncomeEmail from '../Screens/InvoiceData/Incomes/IncomeEmail'
 import apiClient from '../Util/apiClient'
@@ -19,7 +19,7 @@ export default function PrintDownloadMail({
   params = {}
 }) {
   const { id } = useParams()
-  const history = useHistory()
+  const history = useNavigate()
   const [showModal, setShowModal] = useState(false)
 
   const sendMail = (emailInfo) => {
@@ -39,7 +39,7 @@ export default function PrintDownloadMail({
     {
       name: 'view',
       title: 'Preview',
-      onClick: () => history.push(`/app/${url}/${id}`),
+      onClick: () => history(`/app/${url}/${id}`),
       icon: 'flaticon-document',
       color: '#4472c4'
     },

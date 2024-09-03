@@ -86,7 +86,7 @@ const Transfer = (props) => {
           {
             prefix: 'flaticon-back',
             label: 'Back to Employee List',
-            onClick: () => props.history.push('/app/employees')
+            onClick: () => props.history('/app/employees')
           }
         ]}
         centerActions={[

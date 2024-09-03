@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
@@ -16,7 +16,7 @@ export default function Termination() {
   // })
   const [calendar, setCalendar] = useState([])
 
-  const history = useHistory()
+  const history = useNavigate()
 
   const onFilter = (params = {}) => {
     apiClient.get('termination/get-all', { params }).then(({ data }) => {
@@ -70,7 +70,7 @@ export default function Termination() {
         render: (text, row) => (
           <div className="btn-group">
             <Button
-              onClick={() => history.push(`/app/edit-termination/${row.id}`)}
+              onClick={() => history(`/app/edit-termination/${row.id}`)}
               className="btn glow dropdown-toggle">
               <EditOutlined />
             </Button>

@@ -83,7 +83,7 @@ export default class BusinessPartnerInvitation extends React.Component {
                   style={{ paddingRight: 10 }}>
                   <div style={{ fontSize: 22, minWidth: 320 }}>{invitaionMessage}</div>
                   <br />
-                  <ButtonBox onClick={() => this.props.history.push('/login')}>Login</ButtonBox>
+                  <ButtonBox onClick={() => this.props.history('/login')}>Login</ButtonBox>
                 </Col>
               </Row>
             ) : (

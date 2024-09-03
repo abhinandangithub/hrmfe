@@ -119,7 +119,7 @@ class Header extends React.Component {
   onRedirect = async (path) => {
     if (path === '/login') {
       localStorage.removeItem('ACCOUNTING_USER')
-      this.props.history.push(path)
+      this.props.history(path)
     } else {
       if (path === '/app/edit-employee') {
         const email = this.props.userInfo?.email
@@ -129,7 +129,7 @@ class Header extends React.Component {
           path = sample
         }
       }
-      this.props.history.push(path)
+      this.props.history(path)
       const x = document.getElementById('accounting-sider-menu')
 
       if (x) {
@@ -392,7 +392,7 @@ class Header extends React.Component {
                         options={this.state.search !== '' ? this.state.searchOptions : []}
                         onChangeText={(value) => this.setState({ search: value })}
                         onSelect={(value) => {
-                          this.props.history.push(value)
+                          this.props.history(value)
                           this.setState({ search: '' })
                         }}
                         isSubmit={this.state.isSubmit}

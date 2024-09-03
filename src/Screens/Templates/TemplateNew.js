@@ -11,7 +11,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import { Tabs } from 'antd'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import TableHeader from '../../Components/TableBoxGrid/TableHeader'
 import apiClient from '../../Util/apiClient'
 import { GET_DATA, SET_DATA, validateAccess } from '../../Util/Util'
@@ -31,7 +31,7 @@ export default function Templates() {
   })
   const [rowCount, setRowCount] = useState(1)
   const { t } = useTranslation()
-  const history = useHistory()
+  const history = useNavigate()
 
   const getData = (params = {}) => {
     params.type = activeTab
@@ -87,7 +87,7 @@ export default function Templates() {
 
   const setForm = (param) => {
     console.log('param', param)
-    history.push(`/app/custom-templates/${param.id}`)
+    history(`/app/custom-templates/${param.id}`)
   }
 
   const columns = [
@@ -132,7 +132,7 @@ export default function Templates() {
     //   render: (text, r) => (
     //     <div
     //       onClick={() =>
-    //         r.mode === 'HTML' ? setToggleHTMLForm(r) : history.push(`/app/custom-templates/${r.id}`)
+    //         r.mode === 'HTML' ? setToggleHTMLForm(r) : history(`/app/custom-templates/${r.id}`)
     //       }>
     //       <a>{text}</a>
     //     </div>

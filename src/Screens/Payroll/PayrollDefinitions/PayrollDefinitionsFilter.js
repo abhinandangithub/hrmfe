@@ -1,14 +1,14 @@
 // import { message } from 'antd'
 import { withFormik } from 'formik'
 import _ from 'lodash'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import { STATUS } from '../../../Util/Options'
 import { GET_DATA, removeEmptyKeys, SET_DATA } from '../../../Util/Util'
 
 function PayrollDefinitionsFilter(props) {
-  const history = useHistory()
+  const history = useNavigate()
   const { validateForm, values, onFilter, resetForm } = props
 
   const onSubmit = async () => {
@@ -29,7 +29,7 @@ function PayrollDefinitionsFilter(props) {
   return (
     <>
       <Button
-        onClick={() => history.push('/app/payroll-definitions/add')}
+        onClick={() => history('/app/payroll-definitions/add')}
         variant="primary"
         className="btn-block">
         <i className="flaticon-plus" /> Payroll Definition

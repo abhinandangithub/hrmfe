@@ -1,6 +1,6 @@
 import { message, Upload } from 'antd'
 import React from 'react'
-import XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 
 class UploadArea extends React.Component {
   constructor() {
@@ -47,6 +47,10 @@ class UploadArea extends React.Component {
       },
       on: {
         sheet: (json) => {
+          if (this.props.multiple) {
+            this.props.onUpload(json)
+            return
+          }
           console.log('JSON.stringify(json)', JSON.stringify(json))
           const [header = []] = json || []
 
@@ -89,7 +93,11 @@ class UploadArea extends React.Component {
       const result = {}
       workbook.SheetNames.forEach((sheetName) => {
         try {
-          const roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, raw: false })
+          const roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+            header: 1,
+            raw: false,
+            blankrows: false
+          })
 
           if (roa.length > 0) {
             result[sheetName] = roa
@@ -104,11 +112,16 @@ class UploadArea extends React.Component {
 
     function processWb(wb, sheetidx) {
       const sheet = wb.SheetNames[sheetidx || 0]
+      if (multiple) {
+        const json = toJson(wb)
+        opts.on.sheet(json, wb.SheetNames)
+        return
+      }
       const json = toJson(wb)[sheet]
       opts.on.sheet(json, wb.SheetNames)
     }
 
-    const { sheetName } = this.props
+    const { sheetName, multiple } = this.props
 
     reader.onload = (e) => {
       let data = e.target.result
@@ -132,7 +145,7 @@ class UploadArea extends React.Component {
             message.error(`Invalid template! There is no sheet called ${sheetName} in this template`)
           }
         } catch (e) {
-          //  console.log(e);
+          console.log(e)
           opts.errors.failed(e)
         }
       }

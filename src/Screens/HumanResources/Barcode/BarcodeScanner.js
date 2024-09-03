@@ -6,7 +6,7 @@ import PanelLayout from '../../../Layout/PanelLayout'
 
 export default function BarcodeScanner({ history }) {
   const _onDetected = (result) => {
-    history.push(`/app/tracked-assets/${result}`)
+    history(`/app/tracked-assets/${result}`)
   }
 
   const { t } = useTranslation()

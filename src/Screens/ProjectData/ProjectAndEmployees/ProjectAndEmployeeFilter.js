@@ -1,19 +1,19 @@
 import { Formik } from 'formik'
 import _ from 'lodash'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import { validateAccess } from '../../../Util/Util'
 
 export default function ProjectAndEmployeeFilter({ onSubmit }) {
-  const history = useHistory()
+  const history = useNavigate()
 
   return (
     <>
       {validateAccess('add-project-employee') && (
         <Button
-          onClick={() => history.push('/app/add-project-employee')}
+          onClick={() => history('/app/add-project-employee')}
           variant="primary"
           className="btn-block">
           Add Project & employee

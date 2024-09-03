@@ -1,7 +1,7 @@
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Col, Row } from 'antd'
 import { withFormik } from 'formik'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import * as Yup from 'yup'
 import Button from '../../../Components/Button'
@@ -104,14 +104,9 @@ function ExchangeRateForm({
                       <Field
                         name="rate"
                         label={
-                          <span>
-                            Rate{' '}
-                            {values.toCurrency && values.baseCurrency && (
-                              <i>
-                                ({values.toCurrency} to {values.baseCurrency})
-                              </i>
-                            )}
-                          </span>
+                          values.toCurrency && values.baseCurrency
+                            ? `Rate (${values.toCurrency} to ${values.baseCurrency})`
+                            : 'Rate'
                         }
                       />
                     </div>
@@ -167,13 +162,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`exchange-rates/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/exchange-rates')
+          history('/app/exchange-rates')
         }
       })
     } else {
       apiClient.post('exchange-rates/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/exchange-rates')
+          history('/app/exchange-rates')
         }
       })
     }

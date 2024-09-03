@@ -135,6 +135,10 @@ class WorkflowView extends React.PureComponent {
                       {...this.props}
                     />
                   )}
+                  {selectedWorkflow.entityType === 'Document' && (
+                    <iframe src={selectedWorkflow.reason} width="100%" height="700px" title="signature" />
+                    // <div>{selectedWorkflow.reason}</div>
+                  )}
                 </TabPane>
                 <TabPane tab="Logs" key="Timelogs">
                   {selectedWorkflow && (

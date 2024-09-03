@@ -138,7 +138,7 @@ export default function OrganizationOverview() {
       )
       // {
       //   doubleClick(e, node) {
-      //     history.push(`/app/assets/${node.ub.key}/Diagram`)
+      //     history(`/app/assets/${node.ub.key}/Diagram`)
       //   }
       // }
     )

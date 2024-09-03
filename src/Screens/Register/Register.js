@@ -45,7 +45,7 @@ export default class Register extends React.Component {
     if (flag) {
       register({ networkName, name, email, phone, password }).then((comp) => {
         if (comp) {
-          this.props.history.push('/login')
+          this.props.history('/login')
         }
       })
     } else {

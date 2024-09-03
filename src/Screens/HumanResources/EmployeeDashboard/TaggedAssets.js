@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import TableBox from '../../../Components/TableBox/TableBox'
 import apiClient from '../../../Util/apiClient'
@@ -9,7 +9,7 @@ import { GET_DATA, SET_DATA, validateAccess } from '../../../Util/Util'
 
 export default function TaggedAssets() {
   const [assetTransfers, setAssetTransfers] = useState([])
-  const history = useHistory()
+  const history = useNavigate()
 
   const onFilter = (params = {}) => {
     apiClient.get('asset-transfers/get', { params }).then(({ data }) => {
@@ -75,7 +75,7 @@ export default function TaggedAssets() {
         render: (text, row) => (
           <div className="btn-group">
             <Button
-              onClick={() => history.push(`/app/edit-asset-transfer/${row.id}`)}
+              onClick={() => history(`/app/edit-asset-transfer/${row.id}`)}
               className="btn-glow dropdown-toggle">
               <EditOutlined />
             </Button>

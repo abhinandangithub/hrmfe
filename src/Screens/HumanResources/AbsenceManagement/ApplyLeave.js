@@ -58,7 +58,7 @@ const ApplyLeave = (props) => (
         {
           prefix: 'flaticon-back',
           label: 'Back to Employee Absence Management',
-          onClick: () => props.history.push('/app/absence-management')
+          onClick: () => props.history('/app/absence-management')
         }
       ]}
       centerActions={[

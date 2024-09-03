@@ -1,7 +1,7 @@
 import { SettingOutlined } from '@ant-design/icons'
 import { Popconfirm, Popover } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate  } from 'react-router-dom'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
 import TableLayout from '../../../Layout/TableLayout'
@@ -11,7 +11,7 @@ import SalesPersonFilter from './SalesPersonFilter'
 
 export default function SalesPersons() {
   const [salesPersons, setSalesPersons] = useState([])
-  const history = useHistory()
+  const history = useNavigate()
 
   const getData = (params = {}) => {
     const filterCache = GET_DATA('salesPersons.filterData') || {}
@@ -109,7 +109,7 @@ export default function SalesPersons() {
     <FilterLayout
       addButton={{
         title: 'Sales Person',
-        onClick: () => history.push('/app/add-sales-person'),
+        onClick: () => history('/app/add-sales-person'),
         access: 'add-sales-person'
       }}
       filterData={GET_DATA('salesPersons.filterData')}

@@ -172,19 +172,24 @@ const InsuranceDetails = (props) => {
   return (
     <Form>
       <PanelLayout>
-        <Panel title={props.t('Insurance Details')}>
+        <Panel
+          title={props.t('Insurance Details')}
+          button={
+            !restrictPage ? (
+              <div className="align-right">
+                <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
+                  <i className="flaticon-plus" /> {props.t('Add')}
+                </ButtonBox>
+              </div>
+            ) : null
+          }>
           <div className="panel-with-border">
             <Row justify="left" gutter={(12, 10)}>
               <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
-                <div className="mb-3 align-right">
-                  <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
-                    <i className="flaticon-plus" /> {props.t('Add')}
-                  </ButtonBox>
-                  {/* <ButtonBox type="primary">
+                {/* <ButtonBox type="primary">
                     {' '}
                     <i className="flaticon-delete-3" /> Delete{' '}
                   </ButtonBox> */}
-                </div>
                 <div className="table-view">
                   <TableBox
                     columns={columns}
@@ -222,7 +227,7 @@ const InsuranceDetails = (props) => {
                 {
                   prefix: 'flaticon-back',
                   label: 'Back to employee list',
-                  onClick: () => history.push('/app/employees')
+                  onClick: () => history('/app/employees')
                 }
               ]
             : []

@@ -185,13 +185,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`asset-transfers/update/${id}`, data).then(({ data }) => {
         if (data.result) {
-          history.push('/app/asset-transfers')
+          history('/app/asset-transfers')
         }
       })
     } else {
       apiClient.post('asset-transfers/add', data).then(({ data }) => {
         if (data.result) {
-          history.push('/app/asset-transfers')
+          history('/app/asset-transfers')
         }
       })
     }

@@ -1,7 +1,7 @@
 import { Layout } from 'antd'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import { HeaderLoader } from '../Components/LoaderBox/Loader'
 import './Header.scss'
 
@@ -56,7 +56,7 @@ const { Header, Content } = Layout
 
 export default function Layouts(props) {
   // const [collapsed, setCollapsed] = useState(false)
-  const history = useHistory()
+  const history = useNavigate()
 
   history.listen(() => {
     const appView = document.getElementById('app-view')
@@ -70,7 +70,7 @@ export default function Layouts(props) {
     const currentUser = localStorage.getItem('ACCOUNTING_USER')
 
     if (!currentUser) {
-      history.push('/')
+      history('/')
     }
   }, [])
 

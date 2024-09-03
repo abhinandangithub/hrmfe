@@ -196,13 +196,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`products/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/products')
+          history('/app/products')
         }
       })
     } else {
       apiClient.post('products/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/products')
+          history('/app/products')
         }
       })
     }

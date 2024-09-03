@@ -1,6 +1,6 @@
 import { Col, Image } from 'antd'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import folderImage from '../../../assets/images/icons/folder.svg'
 import pdfImage from '../../../assets/images/icons/pdf.svg'
 import wordImage from '../../../assets/images/icons/word.svg'
@@ -10,7 +10,7 @@ import './Drive.scss'
 const { API_URL } = AppConfig
 
 export default function DriveContentRenderer(props) {
-  const history = useHistory()
+  const history = useNavigate()
 
   const getImage = () => {
     const { type, fileType, path } = props
@@ -34,7 +34,7 @@ export default function DriveContentRenderer(props) {
     const { type, id, fileType, setFilePath, path } = props
 
     if (type === 'Folder') {
-      history.push(`/app/drive/${id}`)
+      history(`/app/drive/${id}`)
     }
 
     if (fileType === 'application/pdf') {

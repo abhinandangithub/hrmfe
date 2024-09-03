@@ -220,14 +220,14 @@ export default withFormik({
     if (id) {
       apiClient.put(`loan/update/${id}`, values).then(({ status }) => {
         if (status === 200) {
-          history.push('/app/employee-loans')
+          history('/app/employee-loans')
         }
       })
     } else {
       apiClient.post('loan/add', values).then(({ status, data }) => {
         if (status === 200) {
           console.log('data', data.result)
-          history.push('/app/employee-loans/')
+          history('/app/employee-loans/')
         }
       })
     }

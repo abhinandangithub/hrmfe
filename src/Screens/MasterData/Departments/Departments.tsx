@@ -5,18 +5,18 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { useTranslation, withTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 
 function Departments(props: any) {
   const [department] = useState([])
   const { t } = useTranslation()
-  const history = useHistory()
+  const history = useNavigate()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-departments/${param.id}`)
+      history(`/app/edit-departments/${param.id}`)
     }
   }
 
@@ -105,7 +105,7 @@ function Departments(props: any) {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-departments')
+        return history('/app/add-departments')
       default:
         console.log('test')
         break

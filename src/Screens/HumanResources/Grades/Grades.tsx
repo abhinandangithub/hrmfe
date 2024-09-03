@@ -3,19 +3,19 @@ import { ButtonBase } from '@mui/material'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+import moment from 'moment'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
-import { validateAccess } from '../../../Util/Util'
 
 export default function Grades() {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-grade/${param.id}`)
+      history(`/app/edit-grade/${param.id}`)
     }
   }
   const GradesJson = {
@@ -29,13 +29,13 @@ export default function Grades() {
           flex: 0.25,
           minWidth: 180,
 
-          field: 'name',
+          field: 'validFrom',
           headerClassName: 'super-app-theme--header pl-3',
 
-          headerName: t('Name'),
+          headerName: t('Valid From'),
           disableColumnMenu: true,
           renderCell: ({ row }: any) => {
-            const { name, id } = row
+            const { validFrom, id } = row
 
             return (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -55,7 +55,7 @@ export default function Grades() {
                         color: 'text.secondary',
                         '&:hover': { color: 'primary.main' }
                       }}>
-                      {name}
+                      {validFrom ? moment(validFrom).format('YYYY-MM-DD') : ''}
                     </Typography>
                   </ButtonBase>
                 </Box>
@@ -66,13 +66,13 @@ export default function Grades() {
         {
           flex: 0.25,
           minWidth: 180,
-          field: 'description',
-          headerName: t('Description'),
+          field: 'validTo',
+          headerName: t('Valid To'),
           headerClassName: 'super-app-theme--header pl-3',
 
           disableColumnMenu: true,
           renderCell: ({ row }: any) => {
-            const { description } = row
+            const { validTo } = row
 
             return (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -85,7 +85,7 @@ export default function Grades() {
                       color: 'text.secondary',
                       '&:hover': { color: 'primary.main' }
                     }}>
-                    {description}
+                    {validTo ? moment(validTo).format('YYYY-MM-DD') : ''}
                   </Typography>
                 </Box>
               </Box>
@@ -95,12 +95,12 @@ export default function Grades() {
         {
           flex: 0.25,
           minWidth: 180,
-          field: 'status',
-          headerName: t('Status'),
+          field: 'gradeId',
+          headerName: t('Grade ID'),
           headerClassName: 'super-app-theme--header pl-3 ',
           disableColumnMenu: true,
           renderCell: ({ row }: any) => {
-            const { status } = row
+            const { gradeId } = row
 
             return (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -114,7 +114,36 @@ export default function Grades() {
 
                       '&:hover': { color: 'primary.main' }
                     }}>
-                    {status}
+                    {gradeId}
+                  </Typography>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        {
+          flex: 0.25,
+          minWidth: 180,
+          field: 'gradeName',
+          headerName: t('Grade Name'),
+          headerClassName: 'super-app-theme--header pl-3 ',
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { gradeName } = row
+
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontWeight: '500',
+                      textDecoration: 'none',
+                      color: 'text.secondary',
+
+                      '&:hover': { color: 'primary.main' }
+                    }}>
+                    {gradeName}
                   </Typography>
                 </Box>
               </Box>
@@ -122,7 +151,7 @@ export default function Grades() {
           }
         },
 
-        validateAccess('edit-job-sequence') && {
+        {
           flex: 0.1,
           minWidth: 100,
           sortable: false,
@@ -145,9 +174,9 @@ export default function Grades() {
       dataSource: []
     },
     export: {
-      header: ['Name', 'Description', 'Status'],
-      data: ['name', 'description', 'status'],
-      btnTitle: 'Add Sequence'
+      header: ['Valid From', 'Valid To', 'Grade ID', 'Grade Name'],
+      data: ['validFrom', 'validTo', 'gradeId', 'gradeName'],
+      btnTitle: 'Add Grade'
     },
     filters: null
   }
@@ -155,7 +184,7 @@ export default function Grades() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-grade')
+        return history('/app/add-grade')
       default:
         console.log('test')
         break

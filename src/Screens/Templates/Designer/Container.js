@@ -1,4 +1,4 @@
-import arrayMove from 'array-move'
+import { arrayMoveImmutable } from 'array-move';
 import React, { memo, useCallback, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import { generateId } from '../../../Util/Util'
@@ -14,10 +14,11 @@ const Container = function (props) {
   const moveCard = useCallback(
     (id, atIndex) => {
       const index = findIndexById(id)
-      const newData = arrayMove([].concat(cards), index, atIndex)
+      const newData = arrayMoveImmutable(cards, index, atIndex);
+
       setCards(newData)
     },
-    [cards, findIndexById, arrayMove]
+    [cards, findIndexById]
   )
   const accepts = props.type === 'MainContainer' ? [props.id] : [props.id, 'DND']
   const [{ isOver }, drop] = useDrop(

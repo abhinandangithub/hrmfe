@@ -3,7 +3,7 @@ import { Col, Row } from 'antd'
 import { withFormik } from 'formik'
 import _ from 'lodash'
 import { useEffect } from 'react'
-import { useHistory } from 'react-router'
+import { useNavigate  } from 'react-router'
 import { Link } from 'react-router-dom'
 import * as Yup from 'yup'
 import Button from '../../../Components/Button'
@@ -34,7 +34,7 @@ function EmployeeForm({
     params: { id }
   }
 }) {
-  const history = useHistory()
+  const history = useNavigate()
 
   const getData = () => {
     if (id) {
@@ -66,13 +66,13 @@ function EmployeeForm({
         if (id) {
           apiClient.put(`employees/update/${id}`, { ...data }).then(({ data }) => {
             if (data && data.result) {
-              history.push('/app/employees')
+              history('/app/employees')
             }
           })
         } else {
           apiClient.post('employees/add', data).then(({ data }) => {
             if (data && data.result) {
-              history.push('/app/employees')
+              history('/app/employees')
             }
           })
         }

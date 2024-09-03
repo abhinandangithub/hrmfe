@@ -137,7 +137,7 @@ function JobPostingForm({
             prefix: 'flaticon-back',
             label: 'Back',
             onClick: () => {
-              history.push('/app/applied-jobs')
+              history('/app/applied-jobs')
             }
           }
         ]}
@@ -206,7 +206,7 @@ export default withFormik({
   ) => {
     apiClient.put(`applied-jobs/update/${id}`, data).then(({ data }) => {
       if (data && data.result) {
-        history.push('/app/applied-jobs')
+        history('/app/applied-jobs')
       }
     })
   }

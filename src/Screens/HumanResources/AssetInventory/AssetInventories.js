@@ -2,7 +2,7 @@ import { SettingOutlined } from '@ant-design/icons'
 import { Popover } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
 import TableLayout from '../../../Layout/TableLayout'
@@ -12,7 +12,7 @@ import AssetInventoryFilter from './AssetInventoryFilter'
 
 export default function AssetInventories() {
   const [assetInventories, setAssetInventories] = useState([])
-  const history = useHistory()
+  const history = useNavigate()
 
   useEffect(() => {
     getData(GET_DATA('assetInventories.filterData'))
@@ -88,13 +88,13 @@ export default function AssetInventories() {
     <div className="action-buttons">
       <ul>
         <li>
-          <a onClick={() => history.push(`/app/view-asset-inventory/${row.id}`)}>
+          <a onClick={() => history(`/app/view-asset-inventory/${row.id}`)}>
             <i className="flaticon-eye" /> View
           </a>
         </li>
         {validateAccess && row.status === 'In Progress' && (
           <li>
-            <a onClick={() => history.push(`/app/asset-code-scan/${row.id}`)}>
+            <a onClick={() => history(`/app/asset-code-scan/${row.id}`)}>
               <i className="flaticon-edit-1" /> Edit
             </a>
           </li>
@@ -108,7 +108,7 @@ export default function AssetInventories() {
     <FilterLayout
       addButton={{
         title: 'Add Inventory',
-        onClick: () => history.push('/app/add-asset-inventory'),
+        onClick: () => history('/app/add-asset-inventory'),
         access: 'add-asset-inventory'
       }}
       filterData={GET_DATA('assetInventories.filterData')}

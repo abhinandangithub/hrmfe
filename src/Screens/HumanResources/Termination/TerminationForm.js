@@ -143,7 +143,7 @@ function Termination({
           {
             prefix: 'flaticon-back',
             label: 'Back to Termination list',
-            onClick: () => history.push('/app/termination')
+            onClick: () => history('/app/termination')
           }
         ]}
         centerActions={[
@@ -194,13 +194,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`termination/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/termination')
+          history('/app/termination')
         }
       })
     } else {
       apiClient.post('termination/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/termination')
+          history('/app/termination')
         }
       })
     }

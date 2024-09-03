@@ -1,7 +1,7 @@
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons'
 import { Space } from 'antd'
 import { useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate  } from 'react-router-dom'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
 import TableLayout from '../../../Layout/TableLayout'
@@ -14,7 +14,7 @@ export default function Clients() {
   const [vendors, setVendors] = useState([])
   const [toggleLog, setToggleLog] = useState(false)
 
-  const history = useHistory()
+  const history = useNavigate()
 
   const onFilter = (params = {}) => {
     apiClient.get('clients/getAll', { params: { ...params, type: 'Vendor' } }).then(({ data }) => {
@@ -69,7 +69,7 @@ export default function Clients() {
               <Space>
                 <button
                   type="button"
-                  onClick={() => history.push(`/app/edit-vendor/${row.id}`)}
+                  onClick={() => history(`/app/edit-vendor/${row.id}`)}
                   className="btn glow dropdown-toggle">
                   {' '}
                   <SettingOutlined />

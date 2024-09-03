@@ -6,14 +6,15 @@ import { convertMinutesToHours, TIME_ENABLED_STATUS } from '../../../Util/Util'
 import WeekList from './WeekList'
 
 class TimeEntryWeeks extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       // time: ''
     }
   }
 
   getWeeks = () => {
+    console.log(this.props.filterHourEntry)
     const { startWeek, endWeek } = this.props
     const weeks = []
 
@@ -76,6 +77,7 @@ class TimeEntryWeeks extends React.Component {
   }
 
   render() {
+    console.log('time entries', this.props.timeEntries)
     const weeks = this.getWeeks()
     const { projects, footer } = this.getProjects()
 

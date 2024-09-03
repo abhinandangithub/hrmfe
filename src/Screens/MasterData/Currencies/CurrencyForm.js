@@ -160,13 +160,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`currencies/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/currencies')
+          history('/app/currencies')
         }
       })
     } else {
       apiClient.post('currencies/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/currencies')
+          history('/app/currencies')
         }
       })
     }

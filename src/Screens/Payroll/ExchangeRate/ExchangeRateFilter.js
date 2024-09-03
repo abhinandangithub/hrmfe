@@ -3,7 +3,7 @@ import { withFormik } from 'formik'
 import _ from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import ConfirmationBox from '../../../Components/ConfirmationBox/ConfirmationBox'
 import { Field, Form } from '../../../Components/Formik'
@@ -14,7 +14,7 @@ import UploadArea from '../../MasterData/MasterUploads/UploadArea'
 
 function Filter(props) {
   const { submitForm, validateForm, values, onFilter } = props
-  const history = useHistory()
+  const history = useNavigate()
   const [currencies, setCurrencies] = useState([])
 
   useEffect(() => {
@@ -122,7 +122,7 @@ function Filter(props) {
     <>
       {validateAccess('add-exchange-rate') && (
         <Button
-          onClick={() => history.push('/app/add-exchange-rate')}
+          onClick={() => history('/app/add-exchange-rate')}
           variant="primary"
           className="btn-block">
           <i className="flaticon-plus" /> Add Exchange Rate

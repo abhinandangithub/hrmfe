@@ -38,7 +38,7 @@ export default class CountryFilter extends React.Component {
         {validateAccess('add-company') && (
           <button
             type="button"
-            onClick={() => this.props.history.push('/app/add-country')}
+            onClick={() => this.props.history('/app/add-country')}
             className="btn-glow btn-block primary">
             Add new country
           </button>

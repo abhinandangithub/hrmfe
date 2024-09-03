@@ -2,7 +2,7 @@ import { Col, Row } from 'antd'
 import { withFormik } from 'formik'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import * as Yup from 'yup'
 import FooterActions from '../../../Components/FooterActions'
 import { Field, Form } from '../../../Components/Formik'
@@ -28,7 +28,7 @@ function EmployeeTransferForm({
   },
   submitForm
 }) {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   const getData = () => {
@@ -306,13 +306,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`employee-transfers/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/employee-transfers')
+          history('/app/employee-transfers')
         }
       })
     } else {
       apiClient.post('employee-transfers/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/employee-transfers')
+          history('/app/employee-transfers')
         }
       })
     }

@@ -5,18 +5,18 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../../Components/TableBoxGrid/TableBox'
 import { validateAccess } from '../../../../Util/Util'
 
 export default function CompanyCalendar() {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-company-calendar/${param.id}`)
+      history(`/app/edit-company-calendar/${param.id}`)
     }
   }
 
@@ -41,12 +41,13 @@ export default function CompanyCalendar() {
             return (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-                  <ButtonBase onClick={() => {
-                    tableAction({
-                      TYPE: 'EDIT',
-                      id
-                    })
-                  }}>
+                  <ButtonBase
+                    onClick={() => {
+                      tableAction({
+                        TYPE: 'EDIT',
+                        id
+                      })
+                    }}>
                     <Typography
                       noWrap
                       sx={{
@@ -55,7 +56,7 @@ export default function CompanyCalendar() {
                         color: 'text.secondary',
                         '&:hover': { color: 'primary.main' }
                       }}>
-                      {name}
+                      {name ? moment(name).format('YYYY') : ''}
                     </Typography>
                   </ButtonBase>
                 </Box>
@@ -153,7 +154,7 @@ export default function CompanyCalendar() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-company-calendar')
+        return history('/app/add-company-calendar')
       default:
         console.log('test')
         break

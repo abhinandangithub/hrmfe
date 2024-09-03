@@ -29,13 +29,14 @@ type TComponentProps = {
   dependents: IDependent[]
   currentEmployee: IEmployee
   getDependents: () => void
+  restrictPage: boolean
 }
 
 type TProps = FormikProps<TDependentDetailsFormValues> &
   TComponentProps & { t: TFunction<'translation', undefined> }
 
 const DependentsDetails: FC<TProps> = (props) => {
-  const { dependents, currentEmployee, values, setValues, getDependents, resetForm, submitForm, errors } =
+  const { dependents, currentEmployee, values, setValues, getDependents, resetForm, submitForm, errors, restrictPage } =
     props
   const [toggle, setToggle] = useState(false)
 
@@ -155,11 +156,13 @@ const DependentsDetails: FC<TProps> = (props) => {
   return (
     <Form>
       <Panel title={props.t('Dependents Details')} noBottom={false}>
-        <div style={{ position: 'absolute', top: -40, right: 15 }}>
-          <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
-            <i className="flaticon-plus" /> {props.t('Add')}
-          </ButtonBox>
-        </div>
+        {!restrictPage ?
+          <div style={{ position: 'absolute', top: -40, right: 15 }}>
+            <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
+              <i className="flaticon-plus" /> {props.t('Add')}
+            </ButtonBox>
+          </div>
+          : null}
         <Row justify="start" gutter={[12, 10]}>
           <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
             <div className="table-view">

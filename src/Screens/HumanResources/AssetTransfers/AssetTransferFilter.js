@@ -1,7 +1,7 @@
 import { withFormik } from 'formik'
 import _ from 'lodash'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import { GET_DATA, SET_DATA, validateAccess } from '../../../Util/Util'
@@ -12,7 +12,7 @@ const STATUS = [
 ]
 
 function Filter(props) {
-  const history = useHistory()
+  const history = useNavigate()
 
   const onSubmitForm = async () => {
     props.validateForm().then((err) => {
@@ -32,7 +32,7 @@ function Filter(props) {
     <>
       {validateAccess('add-project-employee-rate') && (
         <Button
-          onClick={() => history.push('/app/add-asset-transfer')}
+          onClick={() => history('/app/add-asset-transfer')}
           variant="primary"
           className="btn-block">
           <i className="flaticon-plus" /> Assign Asset

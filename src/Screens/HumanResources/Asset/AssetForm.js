@@ -129,7 +129,7 @@ const AssetForm = ({
           {
             prefix: 'flaticon-back',
             label: 'Back to Asset list',
-            onClick: () => history.push('/app/assets')
+            onClick: () => history('/app/assets')
           }
         ]}
         centerActions={[
@@ -173,13 +173,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`assets/update/${id}`, { ...data }).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/assets')
+          history('/app/assets')
         }
       })
     } else {
       apiClient.post('assets/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/assets')
+          history('/app/assets')
         }
       })
     }

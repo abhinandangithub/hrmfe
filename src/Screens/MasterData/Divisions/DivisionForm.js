@@ -3,7 +3,7 @@ import { Col, Row } from 'antd'
 import { withFormik } from 'formik'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate  } from 'react-router-dom'
 import * as Yup from 'yup'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
@@ -30,7 +30,7 @@ function DivisionForm({
   companyInfo
 }) {
   const { t } = useTranslation()
-  const history = useHistory()
+  const history = useNavigate()
 
   const getData = () => {
     if (id) {
@@ -44,7 +44,7 @@ function DivisionForm({
 
   useEffect(() => {
     if (companyInfo?.configurations?.division !== 'Yes') {
-      history.push('/app/dashboard')
+      history('/app/dashboard')
     }
 
     getData()
@@ -154,13 +154,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`divisions/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/divisions')
+          history('/app/divisions')
         }
       })
     } else {
       apiClient.post('divisions/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/divisions')
+          history('/app/divisions')
         }
       })
     }

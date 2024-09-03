@@ -95,7 +95,7 @@ export default function TimeReports(props) {
         objStr.client = filterCache.clientIds
       }
 
-      props.history.push(`/app/time-reports-view?${convertQueryStr(objStr)}`)
+      props.history(`/app/time-reports-view?${convertQueryStr(objStr)}`)
     } else {
       message.error('Please select a row')
     }

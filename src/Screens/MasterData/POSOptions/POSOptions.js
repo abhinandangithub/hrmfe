@@ -1,6 +1,6 @@
 import { EditOutlined } from '@ant-design/icons'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
@@ -11,7 +11,7 @@ import POSOptionFilter from './POSOptionFilter'
 
 export default function POSOptions() {
   const [options, setOptions] = useState([])
-  const history = useHistory()
+  const history = useNavigate()
 
   const getData = (params) => {
     const filterCache = GET_DATA('POSOptions.filterData') || {}
@@ -44,7 +44,7 @@ export default function POSOptions() {
         dataIndex: 'custom_action',
         render: (text, row) => (
           <div className="btn-group">
-            <Button onClick={() => history.push(`/app/edit-pos-option/${row.id}`)} className="btn-glow">
+            <Button onClick={() => history(`/app/edit-pos-option/${row.id}`)} className="btn-glow">
               <EditOutlined />
             </Button>
           </div>
@@ -57,7 +57,7 @@ export default function POSOptions() {
     <FilterLayout
       addButton={{
         title: 'POS Option',
-        onClick: () => history.push('/app/add-pos-option'),
+        onClick: () => history('/app/add-pos-option'),
         access: 'add-pos-option'
       }}
       filterData={GET_DATA('POSOptions.filterData')}

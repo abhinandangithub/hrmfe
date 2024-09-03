@@ -285,7 +285,7 @@ export default function reducer(state = initialState, action) {
 
     case EmployeeType.ADD_JOB_HISTORY: {
       const employeeDetails = cloneDeep(state.employeeDetails)
-      employeeDetails.jobHistory.push(action.payload)
+      employeeDetails.jobhistory(action.payload)
 
       return { ...state, employeeDetails }
     }
@@ -318,7 +318,7 @@ export default function reducer(state = initialState, action) {
 
     case EmployeeType.ADD_SALARY_HISTORY: {
       const employeeDetails = cloneDeep(state.employeeDetails)
-      employeeDetails.salaryHistory.push(action.payload)
+      employeeDetails.salaryhistory(action.payload)
 
       return { ...state, employeeDetails }
     }

@@ -3,7 +3,7 @@
 import { Col, message, Row } from 'antd'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate , useParams } from 'react-router-dom'
 import apiClient from '../Util/apiClient'
 import { navigateToPreviousAndNext } from '../Util/Util'
 import Button, { TButton } from './Button'
@@ -49,7 +49,7 @@ function FooterActions({
   ...props
 }: TFooterActions) {
   const { id } = useParams<Params>()
-  const history = useHistory()
+  const history = useNavigate()
 
   const updateTemplate = () => {
     if (templateData) {
@@ -60,7 +60,7 @@ function FooterActions({
         })
         .then(({ status }) => {
           if (status === 200) {
-            history.push(`/app/${redirectUrl || url}/${id}`)
+            history(`/app/${redirectUrl || url}/${id}`)
           }
         })
     }
@@ -74,7 +74,7 @@ function FooterActions({
     })
 
     if (navigationId) {
-      history.push(`${navigation?.actionUrl}/${navigationId}`)
+      history(`${navigation?.actionUrl}/${navigationId}`)
     } else {
       message.info('No data found!')
     }

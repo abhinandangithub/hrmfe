@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Tabs } from 'antd'
 import { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../Components/Button'
 import TableBox from '../../Components/TableBox/TableBox'
 import FilterLayout from '../../Layout/FilterLayout'
@@ -20,7 +20,7 @@ export default function Templates() {
   const [toggleForm, setToggleForm] = useState(false)
   const [toggleHTMLForm, setToggleHTMLForm] = useState(false)
 
-  const history = useHistory()
+  const history = useNavigate()
 
   const getData = (params = {}) => {
     params.type = activeTab
@@ -76,7 +76,7 @@ export default function Templates() {
       render: (text, r) => (
         <div
           onClick={() =>
-            r.mode === 'HTML' ? setToggleHTMLForm(r) : history.push(`/app/custom-templates/${r.id}`)
+            r.mode === 'HTML' ? setToggleHTMLForm(r) : history(`/app/custom-templates/${r.id}`)
           }>
           <a>{text}</a>
         </div>

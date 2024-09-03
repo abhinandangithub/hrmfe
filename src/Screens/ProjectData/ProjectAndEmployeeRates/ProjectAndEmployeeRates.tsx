@@ -4,18 +4,18 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 import { validateAccess } from '../../../Util/Util'
 
 export default function Projectrate() {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-project-employee-rate/${param.id}`)
+      history(`/app/edit-project-employee-rate/${param.id}`)
     }
   }
 
@@ -267,7 +267,7 @@ export default function Projectrate() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-project-employee-rate')
+        return history('/app/add-project-employee-rate')
       default:
         console.log('test')
         break

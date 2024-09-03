@@ -1,119 +1,131 @@
-import { CaretRightOutlined } from '@ant-design/icons'
-import { Col, Collapse, message, Row, Space } from 'antd'
+// import { COUNTRIES, GENDER } from '../../../Util/Options'
+// import { getImageUrl } from '../../../Util/Util'
+import { EditOutlined } from '@ant-design/icons'
+import { Col, message, Row } from 'antd'
 import { withFormik } from 'formik'
-import { isEmpty } from 'lodash'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
 import * as Yup from 'yup'
+import Button from '../../../Components/Button'
+import ButtonBox from '../../../Components/ButtonBox/ButtonBox'
 import FooterActions from '../../../Components/FooterActions'
-import { Field, Form } from '../../../Components/Formik'
-import UploadBox from '../../../Components/UploadBox/UploadBox'
+import { Form } from '../../../Components/Formik'
+import ModalBox from '../../../Components/ModalBox/ModalBox'
+import TableBox from '../../../Components/TableBox/TableBox'
+import Panel from '../../../Layout/Panel'
 import PanelLayout from '../../../Layout/PanelLayout'
 import apiClient from '../../../Util/apiClient'
-import { COUNTRIES, GENDER } from '../../../Util/Options'
-import { getImageUrl } from '../../../Util/Util'
 import ContactDetails from './ContactDetails'
 import PassportDetails from './PassportDetails'
+import PersonalDetailsForm from './PersonalDetailsForm'
+import StatusDetails from './StatusDetails'
 
-const { Panel } = Collapse
+// const { Panel } = Collapse
 const Schema = Yup.object().shape({
-  firstName: Yup.string().required(),
-  lastName: Yup.string().required(),
-  // employeeNo: Yup.string().required(),
-  dob: Yup.string().required(),
+  employee: Yup.string().required(),
+  dateOfBirth: Yup.date()
+    .default(() => new Date())
+    .required(),
   phone: Yup.string()
     .matches(/^\d{10}$/, 'Phone number must be exactly 10 digits')
     .required('Phone number is required'),
-  maritalStatus: Yup.string().required(),
-  nationality: Yup.string().required(),
-  gender: Yup.string().required(),
   email: Yup.string()
     .email('Invalid email format')
     .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email format')
     .required('Email is required'),
   alternatePhone: Yup.string()
     .matches(/^\d{10}$/, 'Alternate Phone number must be exactly 10 digits')
-    .required('Phone number is required'),
+    .required('Alternate Phone number is required'),
   alternateEmail: Yup.string()
     .email('Invalid email format')
     .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email format')
     .required('Alternate is required'),
-  currentAddress: Yup.object().shape({
-    street: Yup.string().required(),
-    city: Yup.string().required(),
-    postalCode: Yup.string()
-      .matches(/^\d{5}(-\d{4})?$/, 'Postal Code must be either 5 digits or 5+4 digits with a hyphen')
-      .required('Postal Code is required'),
-    country: Yup.string().required(),
-    // neighborhood: Yup.string().required(),
-    state: Yup.string().required(),
-    buildingNo: Yup.string().required()
-  }),
-  permanentAddress: Yup.object().shape({
-    street: Yup.string().required(),
-    city: Yup.string().required(),
-    postalCode: Yup.string().required(),
-    country: Yup.string().required(),
-    // neighborhood: Yup.string().required(),
-    state: Yup.string().required(),
-    buildingNo: Yup.string().required()
-  })
-  // role: Yup.string().required(),
-  // reporter: Yup.string().required(),
-  // wageType: Yup.string().required(),
-  // jobTitle: Yup.string().required(),
-  // joiningDate: Yup.date().required()
+  validFrom: Yup.date()
+    .default(() => new Date())
+    .required('Valid From date is required')
+    .nullable(),
+  validTo: Yup.date()
+    .default(() => new Date('9999-12-31'))
+    .nullable()
 })
 
 const BasicDetails = (props) => {
   const {
     values,
     setValues,
-    submitForm,
+    // submitForm,
     errors,
     employeeId,
-    onChangeEmployee,
     history,
-    setFieldValue,
-    restrictPage
+    resetForm,
+    restrictPage,
+    currentEmployee,
+    handleValueChange
   } = props
 
-  const [editable, setEditable] = useState(!employeeId)
+  const [modalTitle, setModalTitle] = useState('Add')
+  const [editable, setEditable] = useState(null)
+  const [basicDetails, setBasicDetails] = useState([])
+  const [toggle, setToggle] = useState(false)
 
   useEffect(() => {
     getDetails()
-    fetchDropdownValues()
+    // fetchDropdownValues()
   }, [employeeId])
 
   const getDetails = () => {
-    apiClient.get(`employees/get/${employeeId}`).then(({ data }) => {
+    apiClient.get(`employee-details/personal-details/get/${employeeId}`).then(({ data }) => {
       if (data && data.result) {
-        setValues({ ...values, ...data.result })
+        setBasicDetails(data.result)
+        setValues({ ...values, ...data.result, employee: employeeId })
       }
     })
   }
 
-  const [options, setOptions] = useState({})
+  const columns = [
+    {
+      title: props.t('Valid From'),
+      dataIndex: 'validFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Valid To'),
+      dataIndex: 'validTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
 
-  // useEffect(() => {
-  //   if (editable) {
-  //     fetchDropdownValues()
-  //   }
-  // }, [editable])
-
-  const fetchDropdownValues = () => {
-    apiClient
-      .get('options/get-by-types', {
-        params: { type: ['BloodGroup', 'Nationality', 'MaritalStatus', 'Gender'] }
-      })
-      .then(({ data }) => {
-        console.log('data ==>', data)
-        if (data && data.result) {
-          setOptions(data.result)
-        }
-      })
-  }
+    {
+      title: props.t('Date of Birth'),
+      dataIndex: 'dateOfBirth',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Home Primary Email'),
+      dataIndex: 'email'
+    },
+    {
+      title: props.t('Home Alternative Email'),
+      dataIndex: 'alternateEmail'
+    },
+    {
+      title: props.t('Home Primary phone'),
+      dataIndex: 'phone'
+    },
+    {
+      title: props.t('Home alternative phone'),
+      dataIndex: 'alternatePhone'
+    },
+    {
+      title: props.t('Action'),
+      dataIndex: 'custom_action',
+      render: (_, row) => (
+        <Button onClick={() => tableActions(row)} className="btn glow dropdown-toggle">
+          <EditOutlined />
+        </Button>
+      )
+    }
+  ]
 
   const onEdit = () => {
     if (values?.id) {
@@ -123,203 +135,134 @@ const BasicDetails = (props) => {
     }
   }
 
-  const onSave = () => {
-    submitForm()
+  const tableActions = (val) => {
+    setModalTitle('Edit')
+    setValues({ ...values, ...val })
+    setToggle(true)
+  }
 
-    if (isEmpty(errors)) {
-      values.name = `${values.firstName} ${values.middleName || ''} ${values.lastName} `
-        .replace(/\s+/g, ' ')
-        .trim()
-      values.reporter = values.reporter === 'Self' ? null : values.reporter
+  const onSave = async () => {
+    console.log('errors', errors)
+    // submitForm()
+    const {
+      alternateEmail,
+      alternatePhone,
+      validTo,
+      validFrom,
+      dateOfBirth,
+      email,
+      employee,
+      firstName,
+      lastName,
+      middleName,
+      phone,
+      title
+    } = values
 
-      if (employeeId) {
-        apiClient.put(`employees/update/${employeeId}`, values).then(({ data }) => {
-          if (data && data.result) {
-            getDetails()
-            setEditable(false)
-          }
-        })
-      } else {
-        apiClient.post('employees/add', values).then(({ data }) => {
-          if (data && data.result) {
-            onChangeEmployee(data.result.id)
-            setEditable(false)
-          }
-        })
-      }
+    const param = {
+      alternateEmail,
+      alternatePhone,
+      dateOfBirth,
+      validTo,
+      validFrom,
+      email,
+      employee,
+      firstName,
+      lastName,
+      middleName,
+      phone,
+      title
+    }
+
+    let result
+    if (modalTitle === 'Edit') {
+      result = await apiClient.put(`employee-details/personal-details/update/${values?.id}`, values)
+    } else {
+      result = await apiClient.post('employee-details/personal-details/add', param)
+    }
+    console.log('result', result)
+    if (result.data && result.data.result) {
+      setEditable(false)
+      setToggle(false)
+      getDetails()
     }
   }
-  console.log('restrictPage', restrictPage)
+
+  const handleAddNewDetails = () => {
+    const lastIndex = basicDetails.length - 1
+    // const findActive = basicDetails.find((x) => x.isActive)
+    // if (findActive) {
+    //   setValues({ ...values, ...findActive, employee: employeeId })
+    // } else {
+    //   setValues({ ...values, employee: employeeId })
+    // }
+    if (basicDetails.length > 0) {
+      setValues({ ...values, ...basicDetails[lastIndex], employee: employeeId })
+    }
+
+    setToggle(true)
+  }
 
   return (
     <Form>
-      <PanelLayout className="mb-3">
-        <Space direction="vertical" size="large" className="w-100">
-          <Collapse
-            defaultActiveKey="1"
-            collapsible="header"
-            expandIconPosition="right"
-            expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 270 : 90} />}
-            bordered>
-            <Panel style={{ fontSize: 16, fontWeight: 'bold' }} header={props.t('Personal Details')} key="1">
-              {(!editable || restrictPage) && (
-                <div className="basic-details">
-                  <Row justify="left" gutter={(12, 10)}>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Employee Number')}</span>
-                      <p>{values?.employeeNo || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8} />
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <img
-                        style={{ width: 100, paddingBottom: 10 }}
-                        src={getImageUrl(values?.profilePicPath)}
-                        alt="Accounting software"
-                      />
-                    </Col>
-
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('First Name')}</span>
-                      <p>{values?.firstName || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Middle Name')}</span>
-                      <p>{values?.middleName || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Last Name')}</span>
-                      <p>{values?.lastName || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Date of Birth')}</span>
-                      <p>{values?.dob ? moment(values?.dob).format('YYYY-MM-DD') : '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Home Primary Email')}</span>
-                      <p>{values?.email || '-'}</p>
-                    </Col>
-
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Home Primary Phone')}</span>
-                      <p>{values?.phone || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Nationality')}</span>
-                      <p>{values?.nationality || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Marital Status')}</span>
-                      <p>{values?.maritalStatus || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Gender')}</span>
-                      <p>{values?.gender || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Alternate Email')}</span>
-                      <p>{values?.alternateEmail || '-'}</p>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8}>
-                      <span>{props.t('Alternate Phone')}</span>
-                      <p>{values?.alternatePhone || '-'}</p>
-                    </Col>
-                  </Row>
-                </div>
-              )}
-              {editable && !restrictPage && (
-                <Row justify="left" gutter={(12, 10)}>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="employeeNo" label="Employee Number" type="number" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8} />
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <UploadBox
-                      id="profilePicPath"
-                      label="Upload Photo"
-                      value={values.logo}
-                      onUpload={(v) => setFieldValue('profilePicPath', v)}
-                      height={100}
-                      width={300}
+      <PanelLayout>
+        <Panel
+          title="Contact Details"
+          button={
+            <div className="align-right">
+              <ButtonBox
+                style={{ marginRight: 10 }}
+                type="success"
+                onClick={() => {
+                  handleAddNewDetails()
+                  setModalTitle('Add')
+                }}>
+                <i className="flaticon-plus" /> {props.t('Add')}
+              </ButtonBox>
+            </div>
+          }>
+          <div className="panel-with-border">
+            <Row justify="left" gutter={(12, 10)}>
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
+                {(!editable || restrictPage) && (
+                  <div className="table-view">
+                    <TableBox
+                      columns={columns}
+                      actionIndex="custom_action"
+                      cardHeaderIndex="status"
+                      cardFirstLabelIndex="docno"
+                      dataSource={basicDetails}
                     />
-                  </Col>
-
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="firstName" label="First Name" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="middleName" label="Middle Name" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="lastName" label="Last Name" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="dob" label="Date of Birth" as="date" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="email" label="Email id" type="email" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="phone" label="Phone no" type="number" maxlength="10" pattern="\d{10}" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="nationality" label="Nationality" as="select" options={COUNTRIES} />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field
-                        name="maritalStatus"
-                        label="Marital Status"
-                        as="select"
-                        options={options.MaritalStatus || []}
-                      />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="gender" label="Gender" as="select" options={GENDER || []} />
-                    </div>
-                  </Col>
-
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="alternateEmail" label="Alternate Email" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="alternatePhone" label="Alternate Phone" />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={24} md={8} lg={8}>
-                    <div className="form-field">
-                      <Field name="cprNo" label="CPR Number" />
-                    </div>
-                  </Col>
-                </Row>
-              )}
-            </Panel>
-          </Collapse>
-          {/* <PersonalDetails editable={editable} {...props} /> */}
-          <ContactDetails editable={editable} {...props} />
-          <PassportDetails editable={editable} {...props} />
-        </Space>
+                  </div>
+                )}
+              </Col>
+            </Row>
+          </div>
+        </Panel>
       </PanelLayout>
+      <>
+        <StatusDetails editable={editable} {...props} />
+        <ContactDetails editable={editable} {...props} />
+        <PassportDetails editable={editable} {...props} />
+      </>
+
+      <ModalBox
+        title={`${props.t(modalTitle)} ${props.t('Personal Details')}`}
+        visible={toggle}
+        onCancel={() => {
+          setToggle(false)
+          resetForm()
+        }}
+        width={700}
+        okText="Save"
+        onOk={onSave}
+        destroyOnClose>
+        <PersonalDetailsForm
+          currentEmployee={currentEmployee}
+          currentDetails={values}
+          handleValueChange={handleValueChange}
+        />
+      </ModalBox>
 
       <FooterActions
         leftActions={
@@ -328,7 +271,7 @@ const BasicDetails = (props) => {
                 {
                   prefix: 'flaticon-back',
                   label: 'Back to employee list',
-                  onClick: () => history.push('/app/employees')
+                  onClick: () => history('/app/employees')
                 }
               ]
             : []
@@ -341,20 +284,24 @@ const BasicDetails = (props) => {
             onClick: onSave
           }
         ]}
-        rightActions={[
-          {
-            prefix: 'flaticon-edit-1',
-            label: 'Edit',
-            dontShow: editable,
-            onClick: onEdit
-          },
-          {
-            prefix: 'flaticon-delete',
-            label: 'Cancel',
-            dontShow: !editable,
-            onClick: () => setEditable(false)
-          }
-        ]}
+        rightActions={
+          !restrictPage
+            ? [
+                {
+                  prefix: 'flaticon-edit-1',
+                  label: 'Edit',
+                  dontShow: editable,
+                  onClick: onEdit
+                },
+                {
+                  prefix: 'flaticon-delete',
+                  label: 'Cancel',
+                  dontShow: !editable,
+                  onClick: () => setEditable(false)
+                }
+              ]
+            : []
+        }
       />
     </Form>
   )
@@ -362,70 +309,18 @@ const BasicDetails = (props) => {
 
 export default withFormik({
   mapPropsToValues: () => ({
-    employeeNo: '',
+    employee: '',
     firstName: '',
-    profilePicPath: '',
     middleName: '',
     lastName: '',
     dob: '',
-
-    wageType: '',
-    timesheetViewAccess: [],
     email: '',
-    jobTitle: '',
+    title: '',
     phone: '',
-    location: '',
-    level: '',
-    pfNo: '',
-    roleAndResponsibility: '',
-    functionalArea: '',
-    employeeCategory: '',
-    joiningDate: '',
-    status: 'Active',
-    bloodGroup: '',
-    drivingLicenseNo: '',
-    drivingLicenseExpiryDate: '',
-    nationality: '',
-    maritalStatus: '',
-    gender: '',
-    panCardNo: '',
+    validFrom: new Date(),
+    validTo: new Date('9999-12-31'),
     alternateEmail: '',
-    alternatePhone: '',
-    cprNo: '',
-    // currentAddress: {
-    //   buildingNo: '',
-    //   street: '',
-    //   additionalStreet: '',
-    //   city: '',
-    //   state: '',
-    //   postalCode: '',
-    //   country: '',
-    //   neighbourhood: '',
-    //   additionalNo: ''
-    // },
-    // permanentAddress: {
-    //   buildingNo: '',
-    //   street: '',
-    //   additionalStreet: '',
-    //   city: '',
-    //   state: '',
-    //   postalCode: '',
-    //   country: '',
-    //   neighbourhood: '',
-    //   additionalNo: ''
-    // },
-
-    passportNo: '',
-    nameAsPassport: '',
-    passportValidFrom: '',
-    passportValidTo: '',
-    passportIssuedCountry: '',
-    visa: 'No',
-    visaHeldForCountry: '',
-    typeOfVisa: '',
-    visaValidFrom: '',
-    visaValidTo: '',
-    typeOfVisaEntry: ''
+    alternatePhone: ''
   }),
   validationSchema: Schema,
   handleSubmit: () => null

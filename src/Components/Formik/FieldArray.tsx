@@ -1,7 +1,7 @@
 import { Skeleton, Space } from 'antd'
 import { FormikHelpers, FormikValues, getIn, useFormikContext } from 'formik'
 import _ from 'lodash'
-import { FunctionComponent, memo, ReactNode, useEffect, useState } from 'react'
+import { FunctionComponent, ReactNode, memo, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import useMediaQuery from '../../Hooks/useMediaQuery'
 import Button from '../Button'
@@ -64,8 +64,10 @@ function FieldArray<TLineItem extends TItem>({
   const items = getIn(values, name) as []
 
   const addRow = () => {
+    console.log('showUpdated', showUpdated)
     if (addRowHandler) {
       addRowHandler()
+
     } else if (showUpdated) {
       setFieldValue(name, [defaultValues, ...items])
     } else {
@@ -86,7 +88,15 @@ function FieldArray<TLineItem extends TItem>({
   useEffect(() => {
     setTimeout(() => {
       setMount(true)
+      console.log('editable', editable)
+      console.log('items', items)
+      if (editable && !items.length) {
+
+        addRow()
+      }
+
     }, delay)
+
   }, [])
 
   return mount ? (

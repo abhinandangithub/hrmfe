@@ -3,17 +3,17 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 
 export default function Payrolls() {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-division/${param.id}`)
+      history(`/app/edit-division/${param.id}`)
     }
   }
 
@@ -265,7 +265,7 @@ export default function Payrolls() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/payroll/generate-payrolls')
+        return history('/payroll/generate-payrolls')
       default:
         console.log('test')
         break

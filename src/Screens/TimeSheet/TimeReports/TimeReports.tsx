@@ -5,13 +5,13 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 import { convertMinutesToHours, convertQueryStr } from '../../../Util/Util'
 
 export default function TimeReports(props: any) {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
@@ -35,7 +35,7 @@ export default function TimeReports(props: any) {
       objStr.client = row.clientIds
     }
 
-    history.push(`/app/time-reports-view?${convertQueryStr(objStr)}`)
+    history(`/app/time-reports-view?${convertQueryStr(objStr)}`)
   }
 
   const TimereportJson = {
@@ -220,14 +220,14 @@ export default function TimeReports(props: any) {
   }
   useEffect(() => {
     if (props?.companyInfo?.configurations?.division !== 'Yes') {
-      history.push('/app/time-reports')
+      history('/app/time-reports')
     }
   }, [])
 
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-division')
+        return history('/app/add-division')
       default:
         console.log('test')
         break

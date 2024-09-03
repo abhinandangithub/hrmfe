@@ -179,19 +179,24 @@ const BankDetails = (props) => {
   return (
     <Form>
       <PanelLayout>
-        <Panel title={props.t('Bank Details')}>
-          <div className="panel-with-border">
-            <Row justify="left" gutter={(12, 10)}>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
-                <div className="mb-3 align-right">
-                  <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
-                    <i className="flaticon-plus" /> {props.t('Add')}
-                  </ButtonBox>
-                  {/* <ButtonBox type="primary">
+        <Panel
+          title={props.t('Bank Details')}
+          button={
+            !restrictPage ? (
+              <div className=" align-right">
+                <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
+                  <i className="flaticon-plus" /> {props.t('Add')}
+                </ButtonBox>
+                {/* <ButtonBox type="primary">
                     {' '}
                     <i className="flaticon-delete-3" /> Delete{' '}
                   </ButtonBox> */}
-                </div>
+              </div>
+            ) : null
+          }>
+          <div className="panel-with-border">
+            <Row justify="left" gutter={(12, 10)}>
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
                 <div className="table-view">
                   <TableBox
                     columns={columns}
@@ -228,7 +233,7 @@ const BankDetails = (props) => {
                 {
                   prefix: 'flaticon-back',
                   label: 'Back to employee list',
-                  onClick: () => history.push('/app/employees')
+                  onClick: () => history('/app/employees')
                 }
               ]
             : []

@@ -1,19 +1,14 @@
 import { Col, Row } from 'antd'
 import { withFormik } from 'formik'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import * as Yup from 'yup'
 import FooterActions from '../../../Components/FooterActions'
 import { Field, Form } from '../../../Components/Formik'
 import Panel from '../../../Layout/Panel'
 import PanelLayout from '../../../Layout/PanelLayout'
 import apiClient from '../../../Util/apiClient'
-import { STATUS } from '../../../Util/Options'
-
-const Schema = Yup.object().shape({
-  name: Yup.string().required()
-})
 
 function GradeForm({
   setValues,
@@ -23,7 +18,7 @@ function GradeForm({
   },
   submitForm
 }) {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   const getData = () => {
@@ -38,7 +33,22 @@ function GradeForm({
 
   useEffect(() => {
     getData()
+    fetchDropdownValues()
   }, [])
+
+  const [options, setOptions] = useState({})
+
+  const fetchDropdownValues = () => {
+    apiClient
+      .get('options/get-by-types', {
+        params: { type: 'Grade' }
+      })
+      .then(({ data }) => {
+        if (data && data.result) {
+          setOptions(data.result)
+        }
+      })
+  }
 
   return (
     <Form>
@@ -47,29 +57,24 @@ function GradeForm({
           <PanelLayout title={t('Grade')}>
             <Panel title={t('Grade Details')}>
               <Row gutter={[20, 10]}>
-                <Col xs={24} sm={24} md={12} lg={8}>
+                <Col xs={24} sm={24} md={12} lg={4}>
                   <div className="form-field">
-                    <Field name="name" label="Name" />
+                    <Field name="validFrom" label="Valid From" as="date" />
                   </div>
                 </Col>
-                <Col xs={24} sm={24} md={12} lg={16}>
+                <Col xs={24} sm={24} md={12} lg={4}>
                   <div className="form-field">
-                    <Field name="description" label="Description" />
+                    <Field name="validTo" label="Valid To" as="date" />
                   </div>
                 </Col>
-                <Col xs={24} sm={24} md={12} lg={8}>
+                <Col xs={24} sm={24} md={12} lg={4}>
                   <div className="form-field">
-                    <Field name="salaryFrom" label="From Salary" />
+                    <Field name="gradeId" label="Grade ID" />
                   </div>
                 </Col>
-                <Col xs={24} sm={24} md={12} lg={8}>
+                <Col xs={24} sm={24} md={12} lg={4}>
                   <div className="form-field">
-                    <Field name="salaryTo" label="To Salary" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={12} lg={8}>
-                  <div className="form-field">
-                    <Field name="status" label="Status" as="select" options={STATUS} />
+                    <Field name="gradeName" label="Grade Name" as="select" options={options.Grade} />
                   </div>
                 </Col>
               </Row>
@@ -100,13 +105,21 @@ function GradeForm({
   )
 }
 
+const Schema = Yup.object().shape({
+  validFrom: Yup.date()
+    .max(Yup.ref('validTo'), 'Should not exceed valid to date')
+    .required('Please select a valid from date'),
+  validTo: Yup.date()
+    .min(Yup.ref('validFrom'), 'Should not be less than valid from date')
+    .required('Please select a valid to date')
+})
+
 export default withFormik({
   mapPropsToValues: () => ({
-    name: '',
-    description: '',
-    fromSalary: '',
-    toSalary: '',
-    status: ''
+    validFrom: '',
+    validTo: '',
+    gradeId: '',
+    gradeName: ''
   }),
   validationSchema: Schema,
   handleSubmit: (
@@ -123,13 +136,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`grades/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/grades')
+          history('/app/grades')
         }
       })
     } else {
       apiClient.post('grades/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/grades')
+          history('/app/grades')
         }
       })
     }

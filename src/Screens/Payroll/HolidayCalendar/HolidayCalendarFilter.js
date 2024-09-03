@@ -39,7 +39,7 @@ class HolidaycalendarFilter extends React.Component {
         <div className="filter-section">
           <button
             type="button"
-            onClick={() => this.props.history.push('/app/add-holiday-calendar')}
+            onClick={() => this.props.history('/app/add-holiday-calendar')}
             className="btn-glow btn-block primary">
             <i className="flaticon-plus" />
             Add Holiday Calendar

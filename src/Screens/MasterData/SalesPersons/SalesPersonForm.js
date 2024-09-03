@@ -117,13 +117,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`sales-persons/${id}`, data).then(({ status }) => {
         if (status === 200) {
-          history.push('/app/sales-persons')
+          history('/app/sales-persons')
         }
       })
     } else {
       apiClient.post('sales-persons', data).then(({ status }) => {
         if (status === 201) {
-          history.push('/app/sales-persons')
+          history('/app/sales-persons')
         }
       })
     }

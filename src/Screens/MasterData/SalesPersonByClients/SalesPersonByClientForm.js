@@ -199,13 +199,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`sales-person-by-clients/update/${id}`, data).then(({ data }) => {
         if (data?.result) {
-          history.push('/app/sales-person-by-clients')
+          history('/app/sales-person-by-clients')
         }
       })
     } else {
       apiClient.post('sales-person-by-clients/add', data).then(({ data }) => {
         if (data?.result) {
-          history.push('/app/sales-person-by-clients')
+          history('/app/sales-person-by-clients')
         }
       })
     }

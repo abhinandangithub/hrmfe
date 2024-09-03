@@ -1,122 +1,128 @@
-import { ArrowLeftOutlined } from '@ant-design/icons'
-import { Col, Row } from 'antd'
-import { Formik } from 'formik'
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { addCategory, getCategoryById, updateCategory } from '../../../Actions/UserAction'
-import Button from '../../../Components/Button'
-import { Field } from '../../../Components/Formik'
-import { useStateCallback } from '../../../Util/Util'
+import { Col, message, Row } from 'antd'
+import { withFormik } from 'formik'
+import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import FooterActions from '../../../Components/FooterActions'
+import { Field, Form } from '../../../Components/Formik'
+import Panel from '../../../Layout/Panel'
+import PanelLayout from '../../../Layout/PanelLayout'
+import apiClient from '../../../Util/apiClient'
 
-const CategoryForm = (props) => {
-  const { history, match } = props
-
-  const [state, setState] = useStateCallback({
-    name: '',
-    id: false
-  })
-
-  const { name, id } = state
-
-  useEffect(() => {
-    if (match.params.id) {
-      getCategoryById(match.params.id).then((category) => {
-        if (category) {
-          const { id, name } = category
-          setState({ ...state, id, name })
-        }
-      })
-    }
-  }, [])
-
-  const handleSubmit = (values) => {
-    const { name } = values
-    const { id } = state
-    const validateFields = ['name']
-    let flag = true
-    validateFields.map((data) => {
-      if (data && data.error) {
-        flag = false
-      }
-
-      return true
-    })
-
-    if (flag) {
-      if (id) {
-        updateCategory(id, { name }).then((category) => {
-          if (category) {
-            history.push('/app/categories')
+function CategoryForm({
+  setValues,
+  match: {
+    params: { id }
+  },
+  history
+}) {
+  const fetchData = () => {
+    if (id) {
+      apiClient
+        .get(`expense-categories/${id}`)
+        .then(({ data }) => {
+          if (data && data.result) {
+            setValues(data.result)
           }
         })
-      } else {
-        addCategory({ name }).then((category) => {
-          if (category) {
-            history.push('/app/categories')
-          }
+        .catch((error) => {
+          console.error('Error fetching data:', error)
         })
-      }
-    } else {
-      setState({ ...state, isSubmit: true })
     }
   }
+  const { t } = useTranslation()
+
+  useEffect(() => {
+    if (id) {
+      fetchData()
+    }
+  }, [id])
 
   return (
-    <Row justify="center" className="inner-contents">
-      <Col xs={{ span: 22 }} sm={{ span: 22 }} md={{ span: 20 }} lg={{ span: 16 }}>
-        <div className="panel-layout">
-          <h2 className="panel-title">Category Details</h2>
-          <Row gutter={[26, { xs: 8, sm: 16, md: 20, lg: 20 }]}>
-            <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
-              <div className="panel-design">
-                <div className="panel-header">
-                  <h3>Add New Category</h3>
-                </div>
-                <div className="panel-body">
-                  <Formik
-                    initialValues={{
-                      name: id ? name : ''
-                    }}
-                    onSubmit={handleSubmit}>
-                    {(props) => {
-                      const { handleSubmit } = props
+    <Form>
+      <Row justify="center" className="inner-contents">
+        <Col xs={{ span: 22 }} sm={{ span: 22 }} md={{ span: 20 }} lg={{ span: 22 }}>
+          <PanelLayout title={t('CATEGORY')}>
+            <Panel title={t('CATEGORY DETAILS')}>
+              <Row gutter={[26, { xs: 8, sm: 16, md: 20, lg: 20 }]}>
+                <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
+                  <div className="form-field">
+                    <Field as="string" name="name" label="Name" />
+                  </div>
+                </Col>
+              </Row>
+            </Panel>
+          </PanelLayout>
 
-                      return (
-                        <form onSubmit={handleSubmit} noValidate>
-                          <div className="form-field">
-                            <Field name="name" label="Name" />
-                          </div>
-                          <div className="save-changes">
-                            <button type="submit" className="btn ant-btn-primary">
-                              {id ? 'Update' : 'Save'}
-                            </button>
-                            <span>or</span>
-                            <Link to="/app/categories">
-                              <Button>
-                                <ArrowLeftOutlined /> Back to category list
-                              </Button>
-                            </Link>
-                          </div>
-                        </form>
-                      )
-                    }}
-                  </Formik>
-                </div>
-              </div>
-              {/* Invoice Information ends */}
-            </Col>
-          </Row>
-        </div>
-      </Col>
-    </Row>
+          <FooterActions
+            leftActions={[
+              {
+                prefix: 'flaticon-back',
+                label: 'Back',
+                onClick: () => history.goBack()
+              }
+            ]}
+            centerActions={[
+              {
+                prefix: 'flaticon-writing',
+                label: id ? 'Update' : 'Save',
+                type: 'submit'
+              }
+            ]}
+          />
+        </Col>
+      </Row>
+    </Form>
   )
 }
 
-function mapStateToProps(state) {
-  return {
-    companyInfo: state.users.companyInfo
-  }
-}
+export default withFormik({
+  mapPropsToValues: () => ({
+    name: ''
+  }),
 
-export default connect(mapStateToProps)(CategoryForm)
+  handleSubmit: (
+    values,
+    {
+      props: {
+        match: {
+          params: { id }
+        },
+        history
+      }
+    }
+  ) => {
+    if (id) {
+      apiClient
+        .put(`expense-categories/${id}`, values)
+        .then(({ data }) => {
+          console.log('PUT response data:', data) // Log the response data
+
+          if (data && data.result) {
+            message.success('Category Updated Successfully')
+            history('/app/categories')
+          } else {
+            message.error('Failed to update Category')
+          }
+        })
+        .catch((error) => {
+          message.error('Failed to update Category')
+          console.error('Error updating data:', error)
+        })
+    } else {
+      apiClient
+        .post('expense-categories/add', values)
+        .then(({ data }) => {
+          if (data && data.result) {
+            message.success('Category Added Successfully')
+            history('/app/categories')
+          } else {
+            message.error('Failed to add Category')
+          }
+        })
+        .catch((error) => {
+          message.error('Failed to add Category')
+          console.error('Error adding data:', error)
+        })
+    }
+  }
+})(CategoryForm)

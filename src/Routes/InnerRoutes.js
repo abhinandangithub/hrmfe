@@ -1,7 +1,7 @@
 import { Modal } from 'antd'
 import React from 'react'
 import { connect } from 'react-redux'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { getTimeEntryById, getUserByToken } from '../Actions/UserAction'
 import { FullLoader, SideBarLoader } from '../Components/LoaderBox/Loader'
 import LoaderBox from '../Components/LoaderBox/LoaderBox'
@@ -53,7 +53,10 @@ const getAsyncRoutes = (url) => [
     screen: FullLoader(() => import('../Screens/ExpensesClaim/ExpensesEntries'))
   },
 
-  { path: `${url}/companies`, screen: FullLoader(() => import('../Screens/MasterData/Companies/Companies')) },
+  {
+    path: `${url}/companies`,
+    screen: FullLoader(() => import('../Screens/MasterData/Companies/Companies'))
+  },
   {
     path: `${url}/add-company`,
     screen: FullLoader(() => import('../Screens/MasterData/Companies/CompanyForm'))
@@ -98,15 +101,6 @@ const getAsyncRoutes = (url) => [
   {
     path: `${url}/edit-currency/:id`,
     screen: FullLoader(() => import('../Screens/MasterData/Currencies/CurrencyForm'))
-  },
-  { path: `${url}/countries`, screen: FullLoader(() => import('../Screens/MasterData/Countries/Countries')) },
-  {
-    path: `${url}/add-country`,
-    screen: FullLoader(() => import('../Screens/MasterData/Countries/CountryForm'))
-  },
-  {
-    path: `${url}/edit-country/:id`,
-    screen: FullLoader(() => import('../Screens/MasterData/Countries/CountryForm'))
   },
   {
     path: `${url}/categories`,
@@ -450,7 +444,7 @@ const getAsyncRoutes = (url) => [
     )
   },
   {
-    path: `${url}/edit-leave-configuration/:id`,
+    path: `${url}/edit-leave-configuration/:id/:index`,
     screen: FullLoader(() =>
       import('../Screens/HumanResources/AbsenceManagement/LeaveConfiguration/LeaveConfigurationForm')
     )
@@ -729,6 +723,319 @@ const getAsyncRoutes = (url) => [
   {
     path: `${url}/edit-translate/:id`,
     screen: FullLoader(() => import('../Screens/Translator/TranslatorForm'))
+  },
+  {
+    path: `${url}/cash-out-form`,
+    screen: FullLoader(() =>
+      import('../Screens/HumanResources/AbsenceManagement/AnnualLeaveCashOut/CashOutForm')
+    ),
+    access: 'cash-out-form'
+  },
+  {
+    path: `${url}/purchase-leave-form`,
+    screen: FullLoader(() =>
+      import('../Screens/HumanResources/AbsenceManagement/PurchaseLeaveForm/PurchaseLeaveForm')
+    ),
+    access: 'purchase-leave-form'
+  },
+  {
+    path: `${url}/location`,
+    screen: FullLoader(() => import('../Screens/MasterData/Location/Location'))
+    // access: 'purchase-leave-form'
+  },
+  {
+    path: `${url}/work-schedules`,
+    screen: SideBarLoader(() => import('../Screens/TimeSheet/WorkSchedules/WorkSchedules'))
+  },
+  {
+    path: `${url}/add-work-schedules`,
+    screen: FullLoader(() => import('../Screens/TimeSheet/WorkSchedules/WorkScheduleForm'))
+  },
+  {
+    path: `${url}/edit-work-schedules/:id`,
+    screen: FullLoader(() => import('../Screens/TimeSheet/WorkSchedules/WorkScheduleForm'))
+  },
+  {
+    path: `${url}/add-employee-group`,
+    screen: FullLoader(() => import('../Screens/MasterData/EmployeeGroups/EmployeeGroupForm'))
+  },
+  {
+    path: `${url}/employee-groups`,
+    screen: FullLoader(() => import('../Screens/MasterData/EmployeeGroups/EmployeeGroups'))
+  },
+  {
+    path: `${url}/employee-groups/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/EmployeeGroups/EmployeeGroupForm'))
+  },
+  {
+    path: `${url}/add-gender`,
+    screen: FullLoader(() => import('../Screens/MasterData/Genders/GenderForm'))
+  },
+  {
+    path: `${url}/genders`,
+    screen: FullLoader(() => import('../Screens/MasterData/Genders/Genders'))
+  },
+  {
+    path: `${url}/genders/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Genders/GenderForm'))
+  },
+  {
+    path: `${url}/add-wage-type`,
+    screen: FullLoader(() => import('../Screens/MasterData/WageTypes/WageTypeFrom'))
+  },
+  {
+    path: `${url}/wage-type/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/WageTypes/WageTypeFrom'))
+  },
+  {
+    path: `${url}/wage-types`,
+    screen: FullLoader(() => import('../Screens/MasterData/WageTypes/WageTypes'))
+  },
+  {
+    path: `${url}/add-organization-unit`,
+    screen: FullLoader(() => import('../Screens/MasterData/OrganizationUnits/OrganizationUnitForm'))
+  },
+  {
+    path: `${url}/organization-unit/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/OrganizationUnits/OrganizationUnitForm'))
+  },
+  {
+    path: `${url}/organization-units`,
+    screen: FullLoader(() => import('../Screens/MasterData/OrganizationUnits/OrganizationUnits'))
+  },
+  {
+    path: `${url}/add-position`,
+    screen: FullLoader(() => import('../Screens/MasterData/Positions/PositionForm'))
+  },
+  {
+    path: `${url}/position/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Positions/PositionForm'))
+  },
+  {
+    path: `${url}/positions`,
+    screen: FullLoader(() => import('../Screens/MasterData/Positions/Positions'))
+  },
+  {
+    path: `${url}/add-job-level`,
+    screen: FullLoader(() => import('../Screens/MasterData/JobLevels/JobLevelForm'))
+  },
+  {
+    path: `${url}/job-level/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/JobLevels/JobLevelForm'))
+  },
+  {
+    path: `${url}/job-levels`,
+    screen: FullLoader(() => import('../Screens/MasterData/JobLevels/JobLevels'))
+  },
+  {
+    path: `${url}/add-employee-sub-group`,
+    screen: FullLoader(() => import('../Screens/MasterData/EmployeeSubGroups/EmployeeSubGroupForm'))
+  },
+  {
+    path: `${url}/employee-sub-group/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/EmployeeSubGroups/EmployeeSubGroupForm'))
+  },
+  {
+    path: `${url}/employee-sub-groups`,
+    screen: FullLoader(() => import('../Screens/MasterData/EmployeeSubGroups/EmployeeSubGroups'))
+  },
+  {
+    path: `${url}/add-operational-level-1`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel1/OperationLevel1Form'))
+  },
+  {
+    path: `${url}/operational-level-1/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel1/OperationLevel1Form'))
+  },
+  {
+    path: `${url}/operational-level-1`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel1/OperationalLevel1'))
+  },
+  {
+    path: `${url}/add-operational-level-2`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel2/OperationalLevel2Form'))
+  },
+  {
+    path: `${url}/operational-level-2/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel2/OperationalLevel2Form'))
+  },
+  {
+    path: `${url}/operational-level-2`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel2/OperationalLevel2'))
+  },
+  {
+    path: `${url}/add-operational-level-3`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel3/OperationalLevel3Form'))
+  },
+  {
+    path: `${url}/operational-level-3`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel3/OperationalLevel3'))
+  },
+  {
+    path: `${url}/operational-level-3/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/OperationalLevel3/OperationalLevel3Form'))
+  },
+  {
+    path: `${url}/add-disability`,
+    screen: FullLoader(() => import('../Screens/MasterData/Disability/DisabilityForm'))
+  },
+  {
+    path: `${url}/disability/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Disability/DisabilityForm'))
+  },
+  {
+    path: `${url}/disabilities`,
+    screen: FullLoader(() => import('../Screens/MasterData/Disability/Disablities'))
+  },
+  {
+    path: `${url}/add-military`,
+    screen: FullLoader(() => import('../Screens/MasterData/MilitaryStatus/MilitaryForm'))
+  },
+  {
+    path: `${url}/military-status/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/MilitaryStatus/MilitaryForm'))
+  },
+  {
+    path: `${url}/military-status`,
+    screen: FullLoader(() => import('../Screens/MasterData/MilitaryStatus/MilitaryStatus'))
+  },
+  {
+    path: `${url}/add-title`,
+    screen: FullLoader(() => import('../Screens/MasterData/Titles/TitleForm'))
+  },
+  {
+    path: `${url}/title/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Titles/TitleForm'))
+  },
+  {
+    path: `${url}/titles`,
+    screen: FullLoader(() => import('../Screens/MasterData/Titles/Titles'))
+  },
+  {
+    path: `${url}/add-citizenship`,
+    screen: FullLoader(() => import('../Screens/MasterData/Citizenship/CitizenshipForm'))
+  },
+  {
+    path: `${url}/citizenship`,
+    screen: FullLoader(() => import('../Screens/MasterData/Citizenship/Citizenship'))
+  },
+  {
+    path: `${url}/citizenship/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Citizenship/CitizenshipForm'))
+  },
+  {
+    path: `${url}/add-religion`,
+    screen: FullLoader(() => import('../Screens/MasterData/Religions/ReligionForm'))
+  },
+  {
+    path: `${url}/religions`,
+    screen: FullLoader(() => import('../Screens/MasterData/Religions/Religions'))
+  },
+  {
+    path: `${url}/religion/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Religions/ReligionForm'))
+  },
+  {
+    path: `${url}/add-job-band`,
+    screen: FullLoader(() => import('../Screens/MasterData/JobBands/JobBandForm'))
+  },
+
+  {
+    path: `${url}/job-bands`,
+    screen: FullLoader(() => import('../Screens/MasterData/JobBands/JobBands'))
+  },
+
+  {
+    path: `${url}/job-band/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/JobBands/JobBandForm'))
+  },
+  {
+    path: `${url}/add-paygroup`,
+    screen: FullLoader(() => import('../Screens/MasterData/PayGroups/PayGroupForm'))
+  },
+  {
+    path: `${url}/paygroups`,
+    screen: FullLoader(() => import('../Screens/MasterData/PayGroups/PayGroups'))
+  },
+  {
+    path: `${url}/paygroup/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/PayGroups/PayGroupForm'))
+  },
+  {
+    path: `${url}/add-contract-type`,
+    screen: FullLoader(() => import('../Screens/MasterData/ContractTypes/ContractForm'))
+  },
+  {
+    path: `${url}/contract-types`,
+    screen: FullLoader(() => import('../Screens/MasterData/ContractTypes/ContractTypes'))
+  },
+  {
+    path: `${url}/contract-type/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/ContractTypes/ContractForm'))
+  },
+  {
+    path: `${url}/add-region`,
+    screen: FullLoader(() => import('../Screens/MasterData/Regions/RegionForm'))
+  },
+  {
+    path: `${url}/regions`,
+    screen: FullLoader(() => import('../Screens/MasterData/Regions/Regions'))
+  },
+  {
+    path: `${url}/region/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Regions/RegionForm'))
+  },
+  {
+    path: `${url}/add-payroll-area`,
+    screen: FullLoader(() => import('../Screens/MasterData/PayrollAreas/PayrollAreasForm'))
+  },
+  {
+    path: `${url}/payroll-areas`,
+    screen: FullLoader(() => import('../Screens/MasterData/PayrollAreas/PayrollAreas'))
+  },
+  {
+    path: `${url}/payroll-area/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/PayrollAreas/PayrollAreasForm'))
+  },
+  {
+    path: `${url}/add-marital-status`,
+    screen: FullLoader(() => import('../Screens/MasterData/MaritalStatus/MaritalStatusForm'))
+  },
+  {
+    path: `${url}/marital-status`,
+    screen: FullLoader(() => import('../Screens/MasterData/MaritalStatus/MaritalStatus'))
+  },
+  {
+    path: `${url}/marital-status/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/MaritalStatus/MaritalStatusForm'))
+  },
+  {
+    path: `${url}/countries`,
+    screen: FullLoader(() => import('../Screens/MasterData/Countries/Countries'))
+  },
+  {
+    path: `${url}/add-country`,
+    screen: FullLoader(() => import('../Screens/MasterData/Countries/CountryForm'))
+  },
+  {
+    path: `${url}/country/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Countries/CountryForm'))
+  },
+  {
+    path: `${url}/master`,
+    screen: FullLoader(() => import('../Screens/MasterData/Main'))
+  },
+  {
+    path: `${url}/add-nationality`,
+    screen: FullLoader(() => import('../Screens/MasterData/Nationality/NationalityForm'))
+  },
+  {
+    path: `${url}/nationalities`,
+    screen: FullLoader(() => import('../Screens/MasterData/Nationality/Nationalities'))
+  },
+  {
+    path: `${url}/nationality/:id`,
+    screen: FullLoader(() => import('../Screens/MasterData/Nationality/NationalityForm'))
   }
 ]
 
@@ -789,7 +1096,7 @@ class InnerRoutes extends React.Component {
   }
 
   redirectToCompany = () => {
-    this.props.history.push('/app/manage-company')
+    this.props.history('/app/manage-company')
   }
 
   render() {
@@ -807,22 +1114,21 @@ class InnerRoutes extends React.Component {
 
     return (
       <Layout {...this.props}>
-        <Switch>
+        <Routes>
           {getRoutes(url).map((route) => (
-            <Route key={route.path} exact {...route} />
+            <Route key={route.path} path={route.path} element={<route.component {...route.props} />} />
           ))}
 
           {getAsyncRoutes(url).map(({ path, access, ...restProps }) => (
             <Route
               key={path}
-              exact
               path={path}
-              render={(props) => <AsyncRoute routeAccess={access} {...props} {...restProps} />}
+              element={<AsyncRoute routeAccess={access} {...restProps} />}
             />
           ))}
 
-          <Route component={NotFound} />
-        </Switch>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </Layout>
     )
   }

@@ -1,6 +1,7 @@
 import { Tree } from 'antd'
-import React, { memo, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import _ from 'lodash'
+import { memo, useEffect, useState } from 'react'
+import { useNavigate  } from 'react-router-dom'
 import ModalBox from '../../../Components/ModalBox/ModalBox'
 import AppConfig from '../../../config'
 import apiClient from '../../../Util/apiClient'
@@ -13,13 +14,13 @@ function DriveTreeStructure() {
   const [treeData, setTreeData] = useState([])
   const [visible, setVisible] = useState(false)
   const [path, setPath] = useState('')
-  const history = useHistory()
+  const history = useNavigate()
 
   const onSelect = (keys, info) => {
     const { type, parentId } = info.node
 
     if (type === 'Folder') {
-      history.push(`/app/drive/${keys}`)
+      history(`/app/drive/${keys}`)
     }
 
     if (type === 'File') {
@@ -28,7 +29,7 @@ function DriveTreeStructure() {
       setVisible(true)
 
       SET_DATA('drive.selectedFile', info.node)
-      history.push(`/app/drive/${parentId}`)
+      history(`/app/drive/${parentId}`)
     }
   }
 
@@ -71,7 +72,8 @@ function DriveTreeStructure() {
   }, [])
 
   const onFilter = (params = {}) => {
-    apiClient.get('filestructure/get', { params }).then(({ data }) => {
+    const endpoint = !_.isEmpty(params) ? `'filestructure/get', ${{ params }}` : 'filestructure/get-by-parent'
+    apiClient.get(endpoint).then(({ data }) => {
       if (data.result) {
         setTreeData(flatToNested(data.result))
       }

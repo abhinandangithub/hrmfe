@@ -87,7 +87,7 @@ export default withFormik({
     }
     apiClient.put(`asset-inventory/update/${props.id}`, tag).then(({ status }) => {
       if (status === 200) {
-        history.push('/app/asset-inventories')
+        history('/app/asset-inventories')
       }
     })
   }

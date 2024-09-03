@@ -11,6 +11,7 @@ import BasicDetails from './BasicDetails'
 // import DocumentDetails from './DocumentDetails'
 import EducationDetails from './EducationDetails'
 import EmergencyDetails from './EmergencyDetails'
+import HiringDetails from './HiringDetails'
 import InsuranceDetails from './InsuranceDetails'
 import JobHistory from './JobHistory'
 import OfficialDetails from './OfficialDetails'
@@ -23,19 +24,17 @@ class EmployeeDetails extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      defaultTab: 'BasicDetails',
+      defaultTab: 'HiringDetails',
       loaderText: props.match?.params?.id ? 'Loading..' : false,
       employeeId: props.match?.params?.id,
       restrictPage: true
     }
-
-    console.log('this.state.userInfo', props)
+    console.log('props', props)
 
     const roleData = props.userInfo?.roleData
     const roleBase = ['Employee', 'Manager']
     const findrole = roleBase.find((x) => x === roleData?.name)
 
-    console.log('findrole', findrole)
     if (findrole) {
       this.state.restrictPage = true
     } else {
@@ -64,7 +63,7 @@ class EmployeeDetails extends React.Component {
   }
 
   onChangeEmployee = (employeeId) => {
-    this.props.history.push(`/app/edit-employee/${employeeId}`)
+    this.props.history(`/app/edit-employee/${employeeId}`)
     this.checkEmployee(employeeId)
     this.setState({ employeeId })
   }
@@ -81,7 +80,9 @@ class EmployeeDetails extends React.Component {
                 {this.props.t('Employee Details')}
                 <span style={{ color: '#000' }}>
                   {!isEmpty(currentEmployee)
-                    ? `(${currentEmployee?.employeeNo} - ${currentEmployee?.name})`
+                    ? `(${currentEmployee?.employeeNo} - ${
+                        currentEmployee?.name || currentEmployee?.firstName
+                      })`
                     : null}
                 </span>
               </h2>
@@ -103,15 +104,15 @@ class EmployeeDetails extends React.Component {
           ) : (
             <div className="employee-details">
               <Tabs defaultActiveKey={this.state.defaultTab} onChange={this.onChangeTab}>
-                <TabPane tab={this.props.t('Personal Details')} key="BasicDetails">
-                  <BasicDetails
+                <TabPane tab={this.props.t('Hiring Details')} key="HiringDetails">
+                  <HiringDetails
                     currentEmployee={currentEmployee}
-                    employeeId={employeeId}
-                    onChangeEmployee={this.onChangeEmployee}
                     restrictPage={this.state.restrictPage}
                     {...this.props}
+                    onChangeEmployee={this.onChangeEmployee}
                   />
                 </TabPane>
+
                 {/* <TabPane tab="Official Details" key="OfficialDetails">
                   <OfficialDetails
                   
@@ -124,6 +125,14 @@ class EmployeeDetails extends React.Component {
 
                 {employeeId && (
                   <>
+                    <TabPane tab={this.props.t('Contact Details')} key="BasicDetails">
+                      <BasicDetails
+                        currentEmployee={currentEmployee}
+                        employeeId={employeeId}
+                        restrictPage={this.state.restrictPage}
+                        {...this.props}
+                      />
+                    </TabPane>
                     <TabPane tab={this.props.t('Employment details')} key="OfficialDetails">
                       <OfficialDetails
                         currentEmployee={currentEmployee}
@@ -132,6 +141,7 @@ class EmployeeDetails extends React.Component {
                         {...this.props}
                       />
                     </TabPane>
+
                     <TabPane tab={this.props.t('Bank Details')} key="BankDetails">
                       <BankDetails
                         currentEmployee={currentEmployee}
@@ -179,7 +189,7 @@ class EmployeeDetails extends React.Component {
                                 {
                                   prefix: 'flaticon-back',
                                   label: 'Back to employee list',
-                                  onClick: () => this.state.history.push('/app/employees')
+                                  onClick: () => this.state.history('/app/employees')
                                 }
                               ]
                             : []

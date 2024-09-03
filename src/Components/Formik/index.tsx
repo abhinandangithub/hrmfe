@@ -18,6 +18,7 @@ const RichText = loadable(() => import('./RichText'))
 const Select = loadable(() => import('./Select'))
 const TextArea = loadable(() => import('./TextArea'))
 const ScanModal = loadable(() => import('./ScanModal'))
+const TimePicker = loadable(() => import('./TimePicker'))
 
 export {
   Field,
@@ -36,5 +37,7 @@ export {
   RichText,
   Select,
   TextArea,
-  ScanModal
+  ScanModal,
+  TimePicker
 }
+

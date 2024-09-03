@@ -5,7 +5,7 @@ import _, { Dictionary, get, set } from 'lodash'
 import moment, { MomentInput } from 'moment'
 import queryString from 'query-string'
 import React, { useEffect, useRef, useState } from 'react'
-import XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 import AppConfig, { cardColors } from '../config'
 import { TCurrency } from '../Reducers/types'
 import store from '../store/store'
@@ -242,6 +242,10 @@ export const validateAccess = (page: string | string[], withPath?: boolean) => {
       if (page === 'edit-employee') {
         return true
       }
+      if (page === 'purchase-leave-form' || page === 'cash-out-form') {
+        return true
+      }
+      accessData.push('time-reports-view')
       return accessData.includes(
         withPath ? page.substr(5, page.indexOf(':') > 0 ? page.indexOf('/:') - 5 : page.length) : page
       )
@@ -311,11 +315,18 @@ export const roundOf = (value?: TNumber, decimals = 2) =>
 
 export const parseAmount = (value?: TNumber, currency?: string, noFormat?: boolean) => {
   const newState = store.getState()
-  const defaultCurrency = currency || newState.users.companyInfo?.currency
-  const currencyData = newState.users.userInfo?.currencies?.find((v) => v.code === defaultCurrency) || {
+
+  // Ensure newState is defined
+  if (!newState) {
+    throw new Error('Failed to retrieve state from store.')
+  }
+
+  const defaultCurrency = currency || newState.users?.companyInfo?.currency
+  const currencyData = newState.users?.userInfo?.currencies?.find((v) => v.code === defaultCurrency) || {
     decimalLength: 2,
     format: ','
   }
+
   const amt = parseFloat(
     value && !Number.isNaN(value) ? roundOf(value, currencyData.decimalLength).toString() : '0'
   )?.toFixed(currencyData.decimalLength)
@@ -387,7 +398,7 @@ export const downloadPrintPDF = <T extends DownloadPrintPDF>(
   })
 
 export const textToBase64Barcode = (text: string, options: JsBarcode.Options) => {
-  const format = store.getState().users.companyInfo.configurations.barcodeFormat || 'CODE39'
+  const format = store.getState()?.users?.companyInfo.configurations.barcodeFormat || 'CODE39'
   const canvas = document.createElement('canvas')
   JsBarcode(canvas, text, { format, displayValue: false, width: 5, ...options })
 
@@ -410,7 +421,7 @@ export const insertAt = <T>(array: T[], index: number, newItem: T) => [
 
 export const getCardColor = (index: number) => cardColors[index % cardColors.length]
 
-export const getTax = (tax?: TNumber) => (tax === '' ? store.getState().users.companyInfo?.tax : Number(tax))
+export const getTax = (tax?: TNumber) => (tax === '' ? store.getState()?.users?.companyInfo?.tax : Number(tax))
 
 export const getAvatarName = (name: string) => {
   const splitName = name?.split(' ') || ''
@@ -470,7 +481,7 @@ export const convertToExcel = <Field extends string, T extends ExcelType<Field>>
 export const formatDate = (date: MomentInput, withTime: boolean) =>
   date ? moment(date).format(withTime ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD') : ''
 
-export const formatDateByTimezone = (d: MomentInput, timeZone = 'Etc/UTC', withTime: boolean) =>
+export const formatDateByTimezone = (d: MomentInput, withTime: boolean,timeZone = 'Etc/UTC',) =>
   moment(d)
     .tz(timeZone)
     .format(withTime ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD')

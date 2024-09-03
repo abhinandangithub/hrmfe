@@ -1,11 +1,13 @@
-import { Col, Popconfirm, Row } from 'antd'
+import { Col, message, Popconfirm, Row } from 'antd'
 import { withFormik } from 'formik'
-import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate  } from 'react-router-dom'
 import { Field, Form } from '../../../Components/Formik'
 import ModalBox from '../../../Components/ModalBox/ModalBox'
+import { useSelector } from '../../../Hooks/redux'
 import apiClient from '../../../Util/apiClient'
 import CreateFolder from './CreateFolder'
+import './Drive.scss'
 import DriveBreadcrumb from './DriveBreadcrumb'
 import FileUpload from './FileUpload'
 
@@ -14,8 +16,11 @@ function DriveHeader(props) {
   const [createFolder, setCreateFolder] = useState(false)
   const [okFile, setOkFile] = useState([])
   const [visible, setVisible] = useState(false)
-  const history = useHistory()
+  const history = useNavigate()
   // const [parentData, setParentData] = useState(null)
+  const [openModal, setOpenModal] = useState(false)
+  const [employeeId, setEmployeeId] = useState('')
+  const { userInfo } = useSelector((state) => state.users)
 
   const headers = {
     Accept: 'application/x-www-form-urlencoded',
@@ -51,7 +56,7 @@ function DriveHeader(props) {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      history.push(`/app/drive/search/${e.target.value}`)
+      history(`/app/drive/search/${e.target.value}`)
     }
   }
 
@@ -72,15 +77,35 @@ function DriveHeader(props) {
     })
   }
 
+  const onHandleOk = () => {
+    setOpenModal(false)
+    apiClient.post('filestructure/add/employee/folder', { employee: employeeId }).then((data) => {
+      if (data && data.data.message) {
+        message.success('Employee Folder Created')
+      }
+    })
+  }
+
   return (
     <>
       <div className="drive-header-section">
         <Form>
           <div className="drive-title border-bottom">
-            <Row justify="left">
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 9 }} lg={{ span: 16 }}>
+            <Row justify="left" style={{ justifyContent: 'space-between' }}>
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 9 }} lg={{ span: 8 }}>
                 <DriveBreadcrumb parentId={props.parentId} />
               </Col>
+              {userInfo.userType === 'Admin' && (
+                <Col xs={24} sm={24} md={12} lg={5} style={{ textAlign: 'end' }}>
+                  <button
+                    style={{ width: '200px' }}
+                    type="button"
+                    className="pds-button pds-button-primary "
+                    onClick={() => setOpenModal(true)}>
+                    <i className="flaticon-plus" /> Employee Root Folder
+                  </button>
+                </Col>
+              )}
               <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 7 }} lg={{ span: 8 }}>
                 <div className="form-fields">
                   <Field
@@ -107,6 +132,25 @@ function DriveHeader(props) {
           onOk={setOkFile}
           selectedData={typeof createFile === 'object' ? createFile : false}
         />
+      </ModalBox>
+      <ModalBox
+        title="Create Employee Root Folder"
+        visible={openModal}
+        onOk={onHandleOk}
+        onCancel={() => setOpenModal(false)}
+        destroyOnClose
+        okText="confirm">
+        <div className="form-field">
+          <Field
+            name="employee"
+            label="Employee"
+            as="paged-select"
+            endPoint="filestructure/get/employee/without-root-folder"
+            onChange={(event, value) => {
+              setEmployeeId(value)
+            }}
+          />
+        </div>
       </ModalBox>
       <ModalBox
         title="Create Folder"

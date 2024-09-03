@@ -1,24 +1,24 @@
 import { Col, Row } from 'antd'
-import { Form, withFormik } from 'formik' // Import withFormik and Form from Formik
+// import { withFormik } from 'formik' // Import withFormik and Form from Formik
 import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
-import * as Yup from 'yup'
-import { Field } from '../../../Components/Formik'
+// import * as Yup from 'yup'
+import { Field, Form } from '../../../Components/Formik'
 import apiClient from '../../../Util/apiClient'
 
-const Schema = Yup.object().shape({
-  name: Yup.string().required(),
-  relationship: Yup.string().required(),
-  homeTelephone: Yup.string()
-    .matches(/^\d{10}$/, 'Home telephone number must be exactly 10 digits')
-    .required('Home telephone number is required'),
-  mobile: Yup.string()
-    .matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits')
-    .required('Mobile number is required'),
-  workTelephone: Yup.string()
-    .matches(/^\d{10}$/, 'Work telephone number must be exactly 10 digits')
-    .required('Work telephone number is required')
-})
+// const Schema = Yup.object().shape({
+//   name: Yup.string().required(),
+//   relationship: Yup.string().required(),
+//   homeTelephone: Yup.string()
+//     .matches(/^\d{10}$/, 'Home telephone number must be exactly 10 digits')
+//     .required('Home telephone number is required'),
+//   mobile: Yup.string()
+//     .matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits')
+//     .required('Mobile number is required'),
+//   workTelephone: Yup.string()
+//     .matches(/^\d{10}$/, 'Work telephone number must be exactly 10 digits')
+//     .required('Work telephone number is required')
+// })
 
 const EmergencyDetailsForm = (props) => {
   const [options, setOptions] = useState({})
@@ -83,14 +83,4 @@ const EmergencyDetailsForm = (props) => {
   )
 }
 
-export default withFormik({
-  mapPropsToValues: () => ({
-    name: '',
-    relationship: '',
-    homeTelephone: '',
-    mobile: '',
-    workTelephone: ''
-  }),
-  handleSubmit: () => null,
-  validationSchema: Schema
-})(withTranslation()(EmergencyDetailsForm))
+export default withTranslation()(EmergencyDetailsForm)

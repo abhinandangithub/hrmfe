@@ -9,7 +9,6 @@ import apiClient from '../../Util/apiClient'
 // import { Collapse } from 'antd'
 // import { ThemeColor } from './avatar/types'
 // import CustomChip from './chip/index'
-
 import TableHeader from './TableHeader'
 
 function usePrevious(value: any) {
@@ -32,7 +31,7 @@ function TableBox(props: any) {
 
   const [rowCount, setRowCount] = useState(1)
 
-  const { tableConfig } = props
+  const { tableConfig, apiload } = props
 
   useEffect(() => {
     // Set the flag to true when the component mounts
@@ -48,6 +47,23 @@ function TableBox(props: any) {
     }
   }, [])
 
+  useEffect(() => {
+    if (apiload) {
+      // Set the flag to true when the component mounts
+      mountedRef.current = true
+
+      // Fetch data when the component mounts
+      onFilter(GET_DATA(tableConfig.setFilter))
+
+      // Clean up function to set the flag to false when the component unmounts
+      return () => {
+        mountedRef.current = false
+        setDataSource([]) // Optional: Clear dataSource on unmount
+      }
+    }
+
+  }, [apiload])
+
   const onFilter = (obj = {}) => {
     if (tableConfig.method === 'POST') {
       apiClient
@@ -57,7 +73,6 @@ function TableBox(props: any) {
           console.log('API response')
 
           if (!response || !response.data) {
-
             if (mountedRef.current) {
               setRowCount(0)
               setDataSource([])
@@ -67,7 +82,14 @@ function TableBox(props: any) {
 
           const { data } = response
           if (data?.result) {
-            data.result = data.result.map((obj: any) => ({ ...obj, id: obj._id }))
+            data.result = data.result.map((obj: any) => {
+              const objResult = { ...obj, id: obj._id }
+              if (obj.index) {
+                objResult._id += obj.index
+              }
+              console.log('objResult', objResult)
+              return objResult
+            })
 
             if (mountedRef.current) {
               SET_DATA(tableConfig.setFilter, { ...obj, ...data.pageData })
@@ -109,7 +131,14 @@ function TableBox(props: any) {
 
           const { data } = response
           if (data?.result) {
-            data.result = data.result.map((obj: any) => ({ ...obj, id: obj._id }))
+            data.result = data.result.map((obj: any) => {
+              const objResult = { ...obj, id: obj._id }
+              if (obj.index) {
+                objResult.id += obj.index
+              }
+
+              return objResult
+            })
 
             if (mountedRef.current) {
               SET_DATA(tableConfig.setFilter, { ...obj, ...data.pageData })
@@ -138,7 +167,6 @@ function TableBox(props: any) {
   }
 
   useEffect(() => {
-
     let pge = paginationModel.page
     if (paginationModel.page !== prevCount) {
       if (paginationModel.page > prevCount) {

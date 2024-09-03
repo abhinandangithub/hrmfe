@@ -1,5 +1,5 @@
 import { Select } from 'antd'
-import React, { PureComponent } from 'react'
+import { PureComponent } from 'react'
 
 const { Option } = Select
 
@@ -51,8 +51,8 @@ class SelectBox extends PureComponent {
 
   render() {
     const { label, options, value } = this.props
-    const style = { width: '100%' }
-    Object.assign(style, this.props.style || {})
+    const styleDefault = { width: '100%' }
+    Object.assign(styleDefault, this.props.styleDefault || {})
 
     return (
       <div className="custom-select-box">
@@ -66,7 +66,7 @@ class SelectBox extends PureComponent {
           mode={this.props.mode}
           placeholder={this.props.placeholder || ''}
           onChange={this.onChange}
-          style={style}
+          style={this.props.style || styleDefault}
           defaultValue={
             value && value !== '' && value === 0
               ? this.props.mode === 'multiple'

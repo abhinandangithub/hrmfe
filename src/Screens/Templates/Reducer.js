@@ -1,4 +1,4 @@
-import arrayMove from 'array-move'
+import * as arrayMove from 'array-move'
 import { UserType } from '../../Actions/ActionType'
 
 const initialState = {

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Button from '../../../Components/Button'
 import TableBox from '../../../Components/TableBox/TableBox'
 import AppConfig from '../../../config'
+import { useSelector } from '../../../Hooks/redux'
 import FilterLayout from '../../../Layout/FilterLayout'
 import apiClient from '../../../Util/apiClient'
 import { GET_DATA, SET_DATA } from '../../../Util/Util'
@@ -35,6 +36,8 @@ export default function Drive({
 }) {
   const [files, setFiles] = useState([])
   const [fileData, setFileData] = useState(false)
+  const { userInfo } = useSelector((state) => state.users)
+  const [showAddNewFolderButton, setShowAddNewFolderButton] = useState(false)
 
   const onDownload = async (path, name) => {
     const image = await fetch(`${API_URL}/${path}`)
@@ -57,7 +60,7 @@ export default function Drive({
         <div
           onClick={() => {
             if (r.type === 'Folder') {
-              history.push(`/app/drive/${r.id}`)
+              history(`/app/drive/${r.id}`)
             } else {
               setFileData(r)
             }
@@ -88,18 +91,47 @@ export default function Drive({
   ]
 
   const getData = () => {
+    apiClient.get('filestructure/get/employee/root-folder').then(({ data }) => {
+      if (data?.result) {
+        setShowAddNewFolderButton(true)
+      }
+    })
+
     if (keywords) {
       apiClient.get(`filestructure/search/${keywords}`).then(({ data }) => {
         if (data?.result) {
-          console.log(data.result)
-          setFiles(data.result)
+          if (userInfo.userType === 'Admin') {
+            setFiles(data.result)
+          } else {
+            setShowAddNewFolderButton(false)
+          }
         }
       })
-    } else {
-      const endpoint = id ? `filestructure/get-by-parent/${id}` : 'filestructure/get-by-parent'
+    } else if (userInfo.userType === 'Admin') {
+      const endpoint = id ? `filestructure/get-by-parent/${id}` : 'filestructure/get/employees/root-folders'
       apiClient.get(endpoint).then(({ data }) => {
         if (data && data.result) {
-          console.log('total data', data.result)
+          setFiles(data.result)
+          SET_DATA('drive.selectedFile', false)
+        }
+      })
+    } else if (userInfo.userType !== 'Admin' && !id) {
+      apiClient.get('filestructure/get/employee/root-folder').then(({ data }) => {
+        if (data && data.result) {
+          if (data.result[0]?.id) {
+            history(`/app/drive/${data.result[0].id}`)
+            apiClient.get(`filestructure/get-by-parent/${data.result[0].id}`).then(({ data }) => {
+              setFiles(data.result)
+              SET_DATA('drive.selectedFile', false)
+            })
+          } else {
+            setShowAddNewFolderButton(false)
+          }
+        }
+      })
+    } else if (userInfo.userType !== 'Admin' && id) {
+      apiClient.get(`filestructure/get-by-parent/${id}`).then(({ data }) => {
+        if (data && data.result) {
           setFiles(data.result)
           SET_DATA('drive.selectedFile', false)
         }
@@ -120,7 +152,9 @@ export default function Drive({
     <FilterLayout
       filter={
         <>
-          <CreateNew parentId={id} getData={getData} />
+          {(userInfo.userType === 'Admin' || showAddNewFolderButton) && (
+            <CreateNew parentId={id} getData={getData} />
+          )}
           <DriveTreeStructure parentId={id} history={history} />
         </>
       }>

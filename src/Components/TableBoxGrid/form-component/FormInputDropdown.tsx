@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import apiClient from '../../../Util/apiClient'
 import { FormInputProps } from './formInputProps'
 
-export const FormInputDropdown: React.FC<FormInputProps> = ({ name, control, label, select }) => {
+export const FormInputDropdown: React.FC<FormInputProps> = ({ name, control, label, select, required }) => {
   const [selectOption, setSelectOption] = useState<any[]>([])
   const { t } = useTranslation()
 
@@ -65,6 +65,7 @@ export const FormInputDropdown: React.FC<FormInputProps> = ({ name, control, lab
     ))
   return (
     <Controller
+
       name={name}
       control={control}
       render={({ field: { onChange, value } }) => (
@@ -77,7 +78,7 @@ export const FormInputDropdown: React.FC<FormInputProps> = ({ name, control, lab
             className="form-control custom-border mt-1"
             id={name}
             value={value}
-            onChange={onChange}>
+            onChange={onChange} required={required}>
             <option value=""> Please choose a option</option>
             {generateSingleOptions()}
           </select>

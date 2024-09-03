@@ -1,49 +1,121 @@
-import { Col, message, Row } from 'antd'
+import { EditOutlined } from '@ant-design/icons'
+import { Col, Row } from 'antd'
 import { withFormik } from 'formik'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
 import * as Yup from 'yup'
+import Button from '../../../Components/Button'
+import ButtonBox from '../../../Components/ButtonBox/ButtonBox'
 import FooterActions from '../../../Components/FooterActions'
-import { Field, FieldArray, Form } from '../../../Components/Formik'
+import ModalBox from '../../../Components/ModalBox/ModalBox'
+import TableBox from '../../../Components/TableBox/TableBox'
 import Panel from '../../../Layout/Panel'
 import PanelLayout from '../../../Layout/PanelLayout'
 import apiClient from '../../../Util/apiClient'
-import { EMPLOYEE_GROUP, EMPLOYEE_SUBGROUP, JOB_LEVEL, LOCATIONS, WAGE_MODE } from '../../../Util/Options'
 import { convertSelectOptions } from '../../../Util/Util'
-import SupportingDetails from './SupportingDetails'
+import ApproverDetailsForm from './ApproverDetailsForm'
+import OrganizationalDetailsForm from './OrganizationalDetailsForm'
+import PayrollDetailsForm from './PayrollDetailsForm'
+import PositionDetailsFrom from './PositionDetailsFrom'
 
 const Schema = Yup.object().shape({
-  division: Yup.string().required(),
-  department: Yup.string().required(),
-  reporter: Yup.string().required(),
-  manager: Yup.string().required(),
-  joiningDate: Yup.string().required(),
-  costCenter: Yup.string().required()
+  timeAndAbsenceApprover: Yup.string().nullable(),
+  approverLegal: Yup.string().nullable(),
+  reporter: Yup.string().nullable(),
+  manager: Yup.string().nullable(),
+  joiningDate: Yup.string().nullable(),
+  costCenter: Yup.string().nullable()
 })
 
 const OfficialDetails = (props) => {
-  const { values, setValues, submitForm, errors, employeeId, onChangeEmployee, history, restrictPage } = props
+  const {
+    values,
+    setValues,
+    employeeId,
+    restrictPage,
+    history,
+    currentEmployee,
+    handleValueChange,
+    resetForm,
+    errors,
+    companyInfo
+  } = props
 
-  const [editable, setEditable] = useState(false)
-  const [employeeCategoryOptions, setEmployeeCategoryOptions] = useState([])
-  const [payRoll, setPayRoll] = useState([])
+  const [toggle, setToggle] = useState(false)
+  const [toggle1, setToggle1] = useState(false)
+  const [toggle2, setToggle2] = useState(false)
+  const [toggle3, setToggle3] = useState(false)
+
+  const [userData, setUserData] = useState([])
+
+  const [editData, setEditData] = useState(null)
+
+  const [, setEmployeeCategoryOptions] = useState([])
+  const [, setPayRoll] = useState([])
+  const [positionDataSource, setpositionDataSource] = useState([])
+  const [organizationDataSource, setorganizationDataSource] = useState([])
+  const [payrollDataSource, setPayrollDataSource] = useState([])
+  const [approverDataSource, setapproverDataSource] = useState([])
+  const [, setWorkSchedules] = useState([{ label: '', value: '' }])
+  const [, setWorkSchedule] = useState()
 
   useEffect(() => {
     getDetails()
   }, [employeeId])
 
   const getDetails = () => {
+    apiClient.get('users/get-active-by-company').then(({ data }) => {
+      if (data && data.result) {
+        setUserData(
+          data.result.map((item) => ({
+            label: item.name,
+            value: item._id,
+            ...item
+          }))
+        )
+      }
+    })
+
     apiClient.get(`employees/get/${employeeId}`).then(({ data }) => {
       if (data && data.result) {
         const employeeData = data.result
+        if (employeeData.workSchedule) {
+          setWorkSchedule(employeeData.workScheduleData)
+        }
 
-        apiClient.get(`/employee-details/approvers/get/${employeeId}`).then(({ data }) => {
+        apiClient.get(`/employee-details/approvers/get-all/${employeeId}`).then(({ data }) => {
           if (data) {
-            setValues({ ...values, ...data.result, ...employeeData })
+            setapproverDataSource(data.result || [])
+            setValues({ ...values, ...data.result })
           }
         })
+
+        apiClient.get(`/employee-details/payroll-details/get/${employeeId}`).then(({ data }) => {
+          if (data) {
+            setPayrollDataSource(data.result || [])
+          }
+        })
+
+        apiClient.get(`/employee-details/org-details/get/${employeeId}`).then(({ data }) => {
+          if (data) {
+            console.log('org data', data.result)
+            setorganizationDataSource(data.result || [])
+          }
+        })
+
+        apiClient.get(`/employee-details/position-details/get/${employeeId}`).then(({ data }) => {
+          if (data) {
+            setpositionDataSource(data.result || [])
+          }
+        })
+
+        // apiClient.get(`companies/get/${employeeData.company}`).then(({ data }) => {
+        //   if (data && data.result) {
+        //     setTargetWorkingHours(data.result.configurations.workingHours ?? 40)
+        //   }
+        // })
       }
     })
 
@@ -60,315 +132,615 @@ const OfficialDetails = (props) => {
     })
   }
 
+  useEffect(() => {
+    apiClient.get('work-schedules/getAll').then(({ data }) => {
+      if (data && data.result) {
+        if (data.result?.length > 0) {
+          console.log('workSchedules data,result', data.result)
+          const workSchedules = data.result.map((el) => ({
+            label: `${el.scheduleId}-${el.name} ${el.shift}`,
+            value: el._id
+          }))
+          setWorkSchedules(workSchedules)
+        }
+      }
+    })
+    // get work-schedule list
+  }, [])
+
   // useEffect(() => {
   //   if (editable) {
   //     fetchDropdownValues()
   //   }
   // }, [props.editable])
 
-  const onEdit = () => {
-    if (values?.id) {
-      setEditable(true)
-    } else {
-      message.error('Please select and employee to edit')
+  const positionColumns = [
+    {
+      title: props.t('Valid From'),
+      dataIndex: 'validFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Valid To'),
+      dataIndex: 'validTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+
+    { title: props.t('Position Number'), dataIndex: 'positionNumber' },
+    {
+      title: props.t('Position Title / Designation'),
+      dataIndex: 'positionTitleData',
+      render: (text) => text?.positionTitle ?? ''
+    },
+    {
+      title: props.t('Cost Center'),
+      dataIndex: 'costCenterData',
+      render: (text) => text?.name ?? ''
+    },
+    {
+      title: props.t('Job Level'),
+      dataIndex: 'jobLevelData',
+      render: (text) => text?.jobLevel ?? ''
+    },
+    {
+      title: props.t('Job Band'),
+      dataIndex: 'jobBandData',
+      render: (text) => text?.jobBands ?? ''
+    },
+    {
+      title: props.t('Grade'),
+      dataIndex: 'gradeData',
+      render: (text) => text?.gradeName ?? ''
+    },
+    {
+      title: props.t('FTE'),
+      dataIndex: 'fte',
+      render: (text) => text ?? '' // Assuming 'fte' might also be nullable
+    },
+    {
+      title: props.t('Employee Target Working hours'),
+      dataIndex: 'employeeTargetWorkingHours',
+      render: (text) => text ?? '' // Assuming 'employeeTargetWorkingHours' might also be nullable
+    },
+    {
+      title: props.t('Role and Responsibility'),
+      dataIndex: 'roleAndResponsibility',
+      render: (text) => text ?? '' // Assuming 'roleAndResponsibility' might also be nullable
     }
-  }
+  ]
 
-  const onSave = () => {
-    submitForm()
-    console.log('errors', errors)
+  const organizationColumns = [
+    {
+      title: props.t('Valid From'),
+      dataIndex: 'validFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Valid To'),
+      dataIndex: 'validTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Organization Unit'),
+      dataIndex: 'organizationUnitData',
+      render: (text) => text?.organizationName || ''
+    },
+    { title: props.t('Division'), dataIndex: 'divisionData', render: (text) => text?.name || '' },
+    { title: props.t('Department'), dataIndex: 'departmentData', render: (text) => text?.name || '' },
+    {
+      title: props.t('Operational Manager'),
+      dataIndex: 'operationalManagerData',
+      render: (text) => text?.name || ''
+    },
+    { title: props.t('Matrix Manager'), dataIndex: 'matrixManagerData', render: (text) => text?.name || '' },
+    { title: props.t('HR Manager'), dataIndex: 'hrManagerData', render: (text) => text?.name || '' },
+    {
+      title: props.t('Operational level 1'),
+      dataIndex: 'operationalLevel1Data',
+      render: (text) => text?.operationalLevel1Name || ''
+    },
+    {
+      title: props.t('Operational level 2'),
+      dataIndex: 'operationalLevel2Data',
+      render: (text) => text?.operationalLevel2 || ''
+    },
+    {
+      title: props.t('Operational level 3'),
+      dataIndex: 'operationalLevel3Data',
+      render: (text) => text?.operationalLevel3Name || ''
+    }
+  ]
 
-    if (isEmpty(errors)) {
-      values.name = `${values.firstName} ${values.middleName || ''} ${values.lastName} `
-        .replace(/\s+/g, ' ')
-        .trim()
-      values.reporter = values.reporter === 'Self' ? null : values.reporter
-      values.manager = values.manager === 'Self' ? null : values.manager
-      values.division = values.division || null
-      values.department = values.department || null
-      // values.costCenter = values.costCenter || null
+  const payrollColumns = [
+    {
+      title: props.t('Valid From'),
+      dataIndex: 'validFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Valid To'),
+      dataIndex: 'validTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
 
-      if (employeeId) {
-        apiClient.put(`employees/update/${employeeId}`, values).then(({ data }) => {
-          if (data && data.result) {
-            apiClient
-              .put(`employee-details/approvers/update/${employeeId}`, {
-                levels: values.levels,
-                employee: employeeId,
-                status: values?.status
-              })
-              .then(() => {
-                getDetails()
-                setEditable(false)
-              })
-          }
-        })
-      } else {
-        apiClient.post('employees/add', values).then(({ data }) => {
-          if (data && data.result) {
-            onChangeEmployee(data.result.id)
-            setEditable(false)
-          }
-        })
+    { title: props.t('Payroll Area'), dataIndex: 'payrollAreaData', render: (text) => text.payrollAreaName },
+    { title: props.t('Pay Group'), dataIndex: 'payGroupData', render: (text) => text.payGroup },
+    { title: props.t('Wage Type'), dataIndex: 'wageTypeData', render: (text) => text.wageType },
+    { title: props.t('Location'), dataIndex: 'locationData', render: (text) => text.name },
+    { title: props.t('Region'), dataIndex: 'regionData', render: (text) => text.region },
+    {
+      title: props.t('Employee Group'),
+      dataIndex: 'employeeGroupData',
+      render: (text) => text?.employeeGroupId || ''
+    },
+    {
+      title: props.t('Employee Subgroup'),
+      dataIndex: 'employeeSubgroupData',
+      render: (text) => text?.employeeSubGroupText || ''
+    },
+    { title: props.t('Work schedule'), dataIndex: 'workSchedule' }
+  ]
+
+  const approverColumns = [
+    {
+      title: props.t('Valid From'),
+      dataIndex: 'validFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Valid To'),
+      dataIndex: 'validTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    { title: props.t('Time and absence approver'), dataIndex: 'timeAndAbsenceApprover' },
+    {
+      title: props.t('Approver Legal'),
+      dataIndex: 'approverLegal',
+      render: (text) => {
+        const user = userData.find((item) => text === item.value)
+        return user ? user.label : 'full'
       }
     }
+  ]
+
+  if (!restrictPage) {
+    positionColumns.push({
+      title: props.t('Action'),
+      dataIndex: 'custom_action',
+      render: (_, row) => (
+        <Button onClick={() => tablePosActions(row)} className="btn glow dropdown-toggle">
+          <EditOutlined />
+        </Button>
+      )
+    })
+
+    organizationColumns.push({
+      title: props.t('Action'),
+      dataIndex: 'custom_action',
+      render: (_, row) => (
+        <Button onClick={() => tableOrgActions(row)} className="btn glow dropdown-toggle">
+          <EditOutlined />
+        </Button>
+      )
+    })
+
+    payrollColumns.push({
+      title: props.t('Action'),
+      dataIndex: 'custom_action',
+      render: (_, row) => (
+        <Button onClick={() => tablePayrollActions(row)} className="btn glow dropdown-toggle">
+          <EditOutlined />
+        </Button>
+      )
+    })
+
+    approverColumns.push({
+      title: props.t('Action'),
+      dataIndex: 'custom_action',
+      render: (_, row) => (
+        <Button onClick={() => tableapproveActions(row)} className="btn glow dropdown-toggle">
+          <EditOutlined />
+        </Button>
+      )
+    })
+  }
+
+  const tablePosActions = (val) => {
+    setValues({ ...values, ...val })
+    setEditData(val)
+    setToggle(true)
+  }
+
+  const tableOrgActions = (val) => {
+    setValues({ ...values, ...val })
+    setEditData(val)
+    setToggle1(true)
+  }
+
+  const tablePayrollActions = (val) => {
+    setValues({ ...values, ...val })
+    setEditData(val)
+    setToggle2(true)
+  }
+
+  const tableapproveActions = (val) => {
+    setValues({ ...values, ...val })
+    setEditData(val)
+    setToggle3(true)
+  }
+
+  const handleAddNewDetails = () => {
+    console.log('companyInfo', companyInfo)
+    const findActive = positionDataSource.find((x) => x.isActive)
+    if (findActive) {
+      setValues({
+        ...values,
+        ...findActive,
+        employeeTargetWorkingHours: companyInfo?.configurations?.workingHours
+      })
+    } else {
+      setValues({
+        ...values,
+        employeeTargetWorkingHours: companyInfo?.configurations?.workingHours
+      })
+    }
+    setToggle(true)
+  }
+  const handleAddNewDetails1 = () => {
+    const findActive = organizationDataSource.find((x) => x.isActive)
+    if (findActive) {
+      setValues({ ...values, ...findActive })
+    }
+    setToggle1(true)
+  }
+  const handleAddNewDetails2 = () => {
+    const findActive = payrollDataSource.find((x) => x.isActive)
+    if (findActive) {
+      setValues({ ...values, ...findActive })
+    }
+    setToggle2(true)
+  }
+  const handleAddNewDetails3 = () => {
+    const findActive = approverDataSource.find((x) => x.isActive)
+    if (findActive) {
+      setValues({
+        ...values,
+        ...findActive
+      })
+    }
+    setToggle3(true)
+  }
+
+  const onSaveApprove = async () => {
+    try {
+      console.log('errors', errors)
+      if (isEmpty(errors)) {
+        console.log('values', values)
+        const param = {
+          validFrom: values.validFrom,
+          validTo: values.validTo,
+          timeAndAbsenceApprover: values.timeAndAbsenceApprover,
+          approverLegal: values.approverLegal,
+          employee: employeeId
+        }
+        let result
+        if (editData?.id) {
+          result = await apiClient.put(`employee-details/approvers/update/${editData?.id}`, param)
+        } else {
+          result = await apiClient.post('employee-details/approvers/add', param)
+        }
+        console.log('result', result)
+        if (result.data && result.data.result) {
+          setToggle3(false)
+          getDetails()
+          setEditData(null)
+        }
+      }
+    } catch {}
+  }
+
+  const onSavePayroll = async () => {
+    try {
+      console.log('errors', errors)
+      if (isEmpty(errors)) {
+        console.log('values', values)
+        const param = {
+          validFrom: values.validFrom,
+          validTo: values.validTo,
+          payrollArea: values.payrollArea,
+          payGroup: values.payGroup,
+          wageType: values.wageType,
+          location: values.location,
+          region: values.region,
+          employeeGroup: values.employeeGroup,
+          employeeSubgroup: values.employeeSubgroup,
+          workSchedule: values.workSchedule,
+          employee: employeeId
+        }
+        let result
+        if (editData?.id) {
+          result = await apiClient.put(`employee-details/payroll-details/update/${editData?.id}`, param)
+        } else {
+          result = await apiClient.post('employee-details/payroll-details/add', param)
+        }
+        console.log('result', result)
+        if (result.data && result.data.result) {
+          setToggle2(false)
+          getDetails()
+          setEditData(null)
+        }
+      }
+    } catch {}
+  }
+
+  const onSaveOrg = async () => {
+    console.log('values', values)
+    try {
+      console.log('errors', errors)
+      if (isEmpty(errors)) {
+        const param = {
+          validFrom: values.validFrom,
+          validTo: values.validTo,
+          organizationUnit: values.organizationUnit,
+          division: values.division,
+          department: values.department,
+          operationalManager: values.operationalManager,
+          matrixManager: values.matrixManager,
+          hrManager: values.hrManager,
+          operationalLevel1: values.operationalLevel1,
+          operationalLevel2: values.operationalLevel2,
+          operationalLevel3: values.operationalLevel3,
+          employee: employeeId
+        }
+        let result
+        if (editData?.id) {
+          result = await apiClient.put(`employee-details/org-details/update/${editData?.id}`, param)
+        } else {
+          result = await apiClient.post('employee-details/org-details/add', param)
+        }
+
+        if (result.data && result.data.result) {
+          setToggle1(false)
+          getDetails()
+          setEditData(null)
+        }
+      }
+    } catch {}
+  }
+
+  const onSavePos = async () => {
+    try {
+      console.log('errors', errors)
+      if (isEmpty(errors)) {
+        console.log('values', values)
+        const param = {
+          validFrom: values.validFrom,
+          validTo: values.validTo,
+          positionNumber: values.positionNumber,
+          positionTitle: values.positionTitle,
+          costCenter: values.costCenter,
+          jobLevel: values.jobLevel,
+          jobBand: values.jobBand,
+          grade: values.grade,
+          fte: values.fte,
+          employeeTargetWorkingHours: values.employeeTargetWorkingHours,
+          roleAndResponsibility: values.roleAndResponsibility,
+          employee: employeeId
+        }
+        let result
+        if (editData?.id) {
+          result = await apiClient.put(`employee-details/position-details/update/${editData?.id}`, param)
+        } else {
+          result = await apiClient.post('employee-details/position-details/add', param)
+        }
+
+        if (result.data && result.data.result) {
+          setToggle(false)
+          getDetails()
+          setEditData(null)
+        }
+      }
+    } catch {}
   }
 
   return (
-    <Form>
-      <PanelLayout className="mb-3">
-        <Panel title={props.t('Employment details')}>
-          {!editable && (
-            <div className="panel-with-border">
-              <Row justify="left" gutter={(12, 10)}>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Division')}</span>
-                  <p>{values?.divisionData?.name || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Department')}</span>
-                  <p>{values?.departmentData?.name || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Role')}</span>
-                  <p>{values?.roleData?.name || ''}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Grade')}</span>
-                  <p>{values?.gradeData?.name || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Designation')}</span>
-                  <p>{values?.designationData?.name}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Manager')}</span>
-                  <p>{values?.managerData?.name || ''}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Matrix manager')}</span>
-                  <p>{values?.reporterData?.name || ''}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Cost Center')}</span>
-                  <p>{values?.costCenterData?.name || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Timesheet View Access')}</span>
-                  <p>{values?.timesheetViewAccessData?.map((v) => v.name)?.join(', ') || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Role and Responsibility')}</span>
-                  <p>{values?.roleAndResponsibility || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Wage Type')}</span>
-                  <p>{values?.wageType || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Employee Category')}</span>
-                  <p>{values?.employeeCategory || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Joining Date')}</span>
-                  <p>{values?.joiningDate ? moment(values.joiningDate).format('DD-MMM-YYYY') : '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Exit Date')}</span>
-                  <p>{values?.exitDate ? moment(values.exitDate).format('DD-MMM-YYYY') : '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Payroll Template')}</span>
-                  <p>{values?.payrolltemplate || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Location')}</span>
-                  <p>{values?.payrolltemplate || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Job Level')}</span>
-                  <p>{values?.payrolltemplate || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Employee Group')}</span>
-                  <p>{values?.payrolltemplate || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Employee Sub Group')}</span>
-                  <p>{values?.payrolltemplate || '-'}</p>
-                </Col>
-              </Row>
-            </div>
-          )}
-          {editable && (
-            <Row justify="left" gutter={(12, 10)}>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="division" label="Division" as="paged-select" endPoint="divisions/get-active" />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field
-                    name="department"
-                    label="Department"
-                    as="paged-select"
-                    endPoint="department/get-active"
-                  />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="role" label="Role" as="paged-select" endPoint="roles/get-active" />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="grade" label="Grade" as="paged-select" endPoint="grades/get-active" />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field
-                    name="designation"
-                    label="Designation"
-                    as="paged-select"
-                    endPoint="designations/get-active"
-                  />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field
-                    name="manager"
-                    label="Manager"
-                    as="paged-select"
-                    endPoint="users/get-active-by-company"
-                    defaultOptions={[{ label: 'Self', value: 'Self' }]}
-                    optionValue="user"
-                  />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field
-                    name="reporter"
-                    label="Reporting To"
-                    as="paged-select"
-                    endPoint="users/get-active-by-company"
-                    defaultOptions={[{ label: 'Self', value: 'Self' }]}
-                    optionValue="user"
-                  />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field
-                    name="costCenter"
-                    label="Cost Center"
-                    as="paged-select"
-                    endPoint="cost-centers/get-active"
-                  />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field
-                    name="timesheetViewAccess"
-                    label="Timesheet View Access To"
-                    as="paged-select"
-                    mode="multiple"
-                    endPoint="users/get-active-by-company"
-                    optionValue="user"
-                  />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="roleAndResponsibility" label="Role and Responsibility" />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="wageType" label="Wage Type" as="select" options={WAGE_MODE} />
-                </div>
-              </Col>
-
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field
-                    name="employeeCategory"
-                    label="Employee Category"
-                    as="select"
-                    options={employeeCategoryOptions}
-                  />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="joiningDate" label="Joining Date" as="date" />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="exitDate" label="Exit Date" as="date" />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="payrollTemplate" label="Payroll Template" as="select" options={payRoll} />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="Location" label="Location" as="select" options={LOCATIONS} />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="Job Level" label="Job Level" as="select" options={JOB_LEVEL} />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field name="Employee Group" label="Employee Group" as="select" options={EMPLOYEE_GROUP} />
-                </div>
-              </Col>
-              <Col xs={24} sm={24} md={8} lg={8}>
-                <div className="form-field">
-                  <Field
-                    name="Employee Sub Group"
-                    label="Employee Sub Group"
-                    as="select"
-                    options={EMPLOYEE_SUBGROUP}
-                  />
-                </div>
-              </Col>
-            </Row>
-          )}
-        </Panel>
-
-        <Panel title={props.t('Approvers Detail')}>
+    <div>
+      <PanelLayout>
+        <Panel
+          title="Position Details"
+          button={
+            !restrictPage ? (
+              <div className="align-right">
+                <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
+                  <i className="flaticon-plus" /> {props.t('Add')}
+                </ButtonBox>
+              </div>
+            ) : null
+          }>
           <div className="panel-with-border">
             <Row justify="left" gutter={(12, 10)}>
               <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
-                <FieldArray
-                  name="levels"
-                  editable={editable}
-                  additionalValues={{ editable }}
-                  defaultValues={{
-                    name: '',
-                    approvers: []
-                  }}>
-                  {ApproverForm}
-                </FieldArray>
+                <div className="table-view">
+                  <TableBox
+                    columns={positionColumns}
+                    actionIndex="custom_action"
+                    cardHeaderIndex="status"
+                    cardFirstLabelIndex="docno"
+                    dataSource={positionDataSource}
+                  />
+                </div>
               </Col>
             </Row>
           </div>
         </Panel>
-
-        <SupportingDetails editable={editable} employeeId={employeeId} {...props} />
       </PanelLayout>
+
+      <PanelLayout>
+        <Panel
+          title="Organization Details"
+          button={
+            !restrictPage ? (
+              <div className="align-right">
+                <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails1}>
+                  <i className="flaticon-plus" /> {props.t('Add')}
+                </ButtonBox>
+              </div>
+            ) : null
+          }>
+          <div className="panel-with-border">
+            <Row justify="left" gutter={(12, 10)}>
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
+                <div className="table-view">
+                  <TableBox
+                    columns={organizationColumns}
+                    actionIndex="custom_action"
+                    cardHeaderIndex="status"
+                    cardFirstLabelIndex="docno"
+                    dataSource={organizationDataSource}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </div>
+        </Panel>
+      </PanelLayout>
+
+      <PanelLayout>
+        <Panel
+          title="Payroll Details"
+          button={
+            !restrictPage ? (
+              <div className="align-right">
+                <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails2}>
+                  <i className="flaticon-plus" /> {props.t('Add')}
+                </ButtonBox>
+              </div>
+            ) : null
+          }>
+          <div className="panel-with-border">
+            <Row justify="left" gutter={(12, 10)}>
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
+                <div className="table-view">
+                  <TableBox
+                    columns={payrollColumns}
+                    actionIndex="custom_action"
+                    cardHeaderIndex="status"
+                    cardFirstLabelIndex="docno"
+                    dataSource={payrollDataSource}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </div>
+        </Panel>
+      </PanelLayout>
+
+      <PanelLayout>
+        <Panel
+          title="Approver Details"
+          button={
+            !restrictPage ? (
+              <div className="align-right">
+                <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails3}>
+                  <i className="flaticon-plus" /> {props.t('Add')}
+                </ButtonBox>
+              </div>
+            ) : null
+          }>
+          <div className="panel-with-border">
+            <Row justify="left" gutter={(12, 10)}>
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
+                <div className="table-view">
+                  <TableBox
+                    columns={approverColumns}
+                    actionIndex="custom_action"
+                    cardHeaderIndex="status"
+                    cardFirstLabelIndex="docno"
+                    dataSource={approverDataSource}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </div>
+        </Panel>
+      </PanelLayout>
+
+      <ModalBox
+        title={`${props.t(editData ? 'Edit' : 'Add')} ${props.t('Position Details')}`}
+        visible={toggle}
+        onCancel={() => {
+          setToggle(false)
+          resetForm()
+          setEditData(null)
+        }}
+        width={700}
+        okText="Save"
+        onOk={onSavePos}
+        destroyOnClose>
+        <PositionDetailsFrom
+          currentEmployee={currentEmployee}
+          currentDetails={values}
+          handleValueChange={handleValueChange}
+          companyInfo={companyInfo}
+        />
+      </ModalBox>
+
+      <ModalBox
+        title={`${props.t(editData ? 'Edit' : 'Add')} ${props.t('Organizational Details')}`}
+        visible={toggle1}
+        onCancel={() => {
+          setToggle1(false)
+          resetForm()
+          setEditData(null)
+        }}
+        width={700}
+        okText="Save"
+        onOk={onSaveOrg}
+        destroyOnClose>
+        <OrganizationalDetailsForm
+          currentEmployee={currentEmployee}
+          currentDetails={values}
+          handleValueChange={handleValueChange}
+        />
+      </ModalBox>
+
+      <ModalBox
+        title={`${props.t(editData ? 'Edit' : 'Add')} ${props.t('Payroll Details')}`}
+        visible={toggle2}
+        onCancel={() => {
+          setToggle2(false)
+          resetForm()
+          setEditData(null)
+        }}
+        width={700}
+        okText="Save"
+        onOk={onSavePayroll}
+        destroyOnClose>
+        <PayrollDetailsForm
+          currentEmployee={currentEmployee}
+          currentDetails={values}
+          handleValueChange={handleValueChange}
+        />
+      </ModalBox>
+
+      <ModalBox
+        title={`${props.t(editData ? 'Edit' : 'Add')} ${props.t('Approver Details')}`}
+        visible={toggle3}
+        onCancel={() => {
+          setToggle3(false)
+          resetForm()
+          setEditData(null)
+        }}
+        width={700}
+        okText="Save"
+        onOk={onSaveApprove}
+        destroyOnClose>
+        <ApproverDetailsForm
+          currentEmployee={currentEmployee}
+          currentDetails={values}
+          handleValueChange={handleValueChange}
+        />
+      </ModalBox>
 
       <FooterActions
         leftActions={
@@ -377,161 +749,25 @@ const OfficialDetails = (props) => {
                 {
                   prefix: 'flaticon-back',
                   label: 'Back to employee list',
-                  onClick: () => history.push('/app/employees')
-                }
-              ]
-            : []
-        }
-        centerActions={[
-          {
-            prefix: 'flaticon-play',
-            label: 'Save',
-            dontShow: !editable,
-            onClick: onSave
-          }
-        ]}
-        rightActions={
-          !restrictPage
-            ? [
-                {
-                  prefix: 'flaticon-edit-1',
-                  label: 'Edit',
-                  dontShow: editable,
-                  onClick: onEdit
-                },
-                {
-                  prefix: 'flaticon-delete',
-                  label: 'Cancel',
-                  dontShow: !editable,
-                  onClick: () => setEditable(false)
+                  onClick: () => history('/app/employees')
                 }
               ]
             : []
         }
       />
-    </Form>
+    </div>
   )
 }
 
 export default withFormik({
   mapPropsToValues: () => ({
-    levels: [{ name: '', approvers: [] }],
-    employeeNo: '',
-    firstName: '',
-    attachments: [],
-    middleName: '',
-    lastName: '',
-    dob: '',
-    role: '',
-    manager: '',
-    reporter: '',
-    wageType: '',
-    timesheetViewAccess: [],
-    email: '',
-    jobTitle: '',
-    phone: '',
-    designation: null,
-    division: null,
-    department: null,
-    location: '',
-    level: '',
-    pfNo: '',
-    roleAndResponsibility: '',
-    costCenter: null,
-    functionalArea: '',
-    employeeCategory: '',
-    joiningDate: '',
-    status: 'Active',
-    bloodGroup: '',
-    drivingLicenseNo: '',
-    drivingLicenseExpiryDate: '',
-    nationality: '',
-    maritalStatus: '',
-    gender: '',
-    panCardNo: '',
-    alternateEmail: '',
-    alternatePhone: '',
-    currentAddress: {
-      buildingNo: '',
-      street: '',
-      additionalStreet: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      country: '',
-      neighbourhood: '',
-      additionalNo: ''
-    },
-    permanentAddress: {
-      buildingNo: '',
-      street: '',
-      additionalStreet: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      country: '',
-      neighbourhood: '',
-      additionalNo: ''
-    },
-    document: '',
-    validto: '',
-    ValidFrom: '',
-    number: '',
-    doctype: '',
-    curraddress: '',
-
-    passportNo: '',
-    nameAsPassport: '',
-    passportValidFrom: '',
-    passportValidTo: '',
-    passportIssuedCountry: '',
-    visa: 'No',
-    visaHeldForCountry: '',
-    typeOfVisa: '',
-    visaValidFrom: '',
-    visaValidTo: '',
-    typeOfVisaEntry: ''
+    timeAndAbsenceApprover: '',
+    approverLegal: '',
+    validFrom: new Date(),
+    validTo: new Date('9999-12-31'),
+    employee: '',
+    employeeTargetWorkingHours: ''
   }),
   validationSchema: Schema,
   handleSubmit: () => null
 })(withTranslation()(OfficialDetails))
-
-const ApproverForm = withTranslation()(({ i, editable, ...props }) => (
-  // <>
-  //   {editable && (
-  <Row gutter={[16, 16]} align="middle">
-    <Col xs={12} sm={12} md={8} lg={8}>
-      <div className="form-field">
-        <Field name={`levels[${i}].name`} label={props.t('Name / Description')} disabled={!editable} />
-      </div>
-    </Col>
-    <Col xs={12} sm={12} md={8} lg={8}>
-      <div className="form-field">
-        <Field
-          label={props.t('Approvers')}
-          mode="multiple"
-          as="paged-select"
-          endPoint="users/get-active-by-company"
-          optionValue="user"
-          name={`levels[${i}].approvers`}
-          disabled={!editable}
-        />
-      </div>
-    </Col>
-  </Row>
-  // )}
-  //   {!editable &&
-  //     values?.levels.map((item, i) => (
-  //       <Row gutter={[10, 5]} key={i}>
-  //         <Col xs={12} sm={12} md={8} lg={8}>
-  //           {item.name}
-  //         </Col>
-  //         <Col xs={12} sm={12} md={8} lg={16}>
-  //           {item.approvers.map((leaf, i) => (
-  //             <p key={i}>{leaf}</p>
-  //           ))}
-  //         </Col>
-  //       </Row>
-  //     ))}
-  // </>
-))

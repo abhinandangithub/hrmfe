@@ -3,7 +3,16 @@ import Grid from '@mui/material/Grid'
 import moment from 'moment'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { MASTER_OPTION_TYPES, STATUS, SWISS_STATES, YES_NO_OPTIONS } from '../../Util/Options'
+import {
+  JOB_LEVEL,
+  LEAVE_CATEGORY,
+  LOCATIONS,
+  MASTER_OPTION_TYPES,
+  SHIFT_OPTIONS,
+  STATUS,
+  SWISS_STATES,
+  YES_NO_OPTIONS
+} from '../../Util/Options'
 import { FormDateRangePicker } from './form-component/FormDateRangePicker'
 import { FormInputDropdown } from './form-component/FormInputDropdown'
 import { FormInputText } from './form-component/FormInputText'
@@ -212,7 +221,6 @@ const DivFilters = ({ filterData }: { filterData: (e: DivFilterForm) => void }) 
 
         <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
           <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
-
         </Grid>
       </Grid>
     </form>
@@ -973,6 +981,7 @@ const LeaveFilters = ({ filterData }: { filterData: (e: LeaveFilterForm) => void
       type: ''
     }
   })
+  const { t } = useTranslation()
 
   function resetForm() {
     reset()
@@ -986,22 +995,85 @@ const LeaveFilters = ({ filterData }: { filterData: (e: LeaveFilterForm) => void
     filterData(param)
   }
 
-  function search() {
-    handleSubmit(onSubmit)()
-  }
+  // function search() {
+  //   handleSubmit(onSubmit)()
+  // }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item sm={2} xs={12}>
-          <FormInputText name="calenderName" control={control} label="Search CalenderName" />
+          <FormInputDropdown
+            name="calenderName"
+            label="Calendar Year"
+            required
+            control={control}
+            select={{
+              type: 'API',
+              multiple: true,
+              endpoint: 'leave-types/get-year-ids',
+              keys: { key: 'name', value: 'name', object: 'calenderData' }
+            }}
+          />
         </Grid>
         <Grid item sm={2} xs={12}>
-          <FormInputText name="type" control={control} label="Search Type" />
+          <FormInputDropdown
+            name="category"
+            label="Leave Category"
+            control={control}
+            select={{ type: 'LOCAL', options: LEAVE_CATEGORY }}
+          />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="type" control={control} label="Leave Type" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputDropdown
+            name="location"
+            label="Leave Location"
+            control={control}
+            select={{ type: 'LOCAL', options: LOCATIONS }}
+          />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputDropdown
+            name="jobLevel"
+            label="Job Level"
+            control={control}
+            select={{ type: 'LOCAL', options: JOB_LEVEL }}
+          />
         </Grid>
 
-        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
-          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        <Grid item sm={2} xs={12} sx={{ marginTop: 3 }}>
+          <button
+            type="submit"
+            className="btn bg-white ml-3"
+            style={{
+              color: '#717171',
+              border: '1px solid rgb(221, 221, 221)',
+              textTransform: 'none',
+              boxShadow: 'none', // Initial state without shadow
+              transition: 'box-shadow 0.3s ease-in-out' // Smooth transition for the shadow
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'none'
+            }}>
+            <Icon icon="material-symbols:search" className="text-dark " />
+          </button>
+          <Button
+            type="button"
+            onClick={resetForm}
+            style={{
+              border: 'none',
+              color: '#319cc4',
+              textTransform: 'none'
+            }}>
+            <Icon icon="mdi:clear-circle-outline" className="m-1" />
+            {t('Clear Filter')}
+          </Button>
         </Grid>
       </Grid>
     </form>
@@ -1059,25 +1131,28 @@ const Terminaitonfilter = ({ filterData }: { filterData: (e: TerminaitonfilterFo
   )
 }
 interface Gradeform {
-  name: string
-  description: string
-  status: string
+  validFrom: string
+  validTo: string
+  gradeId: string
+  gradeName: string
 }
 const Gradesfilter = ({ filterData }: { filterData: (e: Gradeform) => void }) => {
   const { handleSubmit, control, reset } = useForm<Gradeform>({
     defaultValues: {
-      name: '',
-      description: '',
-      status: ''
+      validFrom: '',
+      validTo: '',
+      gradeId: '',
+      gradeName: ''
     }
   })
 
   function resetForm() {
     reset()
     filterData({
-      name: '',
-      description: '',
-      status: ''
+      validFrom: '',
+      validTo: '',
+      gradeId: '',
+      gradeName: ''
     })
   }
 
@@ -1094,13 +1169,16 @@ const Gradesfilter = ({ filterData }: { filterData: (e: Gradeform) => void }) =>
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item sm={2} xs={12}>
-          <FormInputText name="name" control={control} label="Search Name" />
+          <FormInputText name="validFrom" control={control} label="Search Valid From" />
         </Grid>
         <Grid item sm={2} xs={12}>
-          <FormInputText name="description" control={control} label="Search Description" />
+          <FormInputText name="validTo" control={control} label="Search Valid To" />
         </Grid>
         <Grid item sm={2} xs={12}>
-          <FormInputText name="status" control={control} label="Search Status" />
+          <FormInputText name="gradeId" control={control} label="Search Grade Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="gradeName" control={control} label="Search Grade Name" />
         </Grid>
 
         <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
@@ -2009,8 +2087,6 @@ const LeaveBalenceFilter = ({ filterData }: { filterData: (e: LeaveBalenceForm) 
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item sm={2} xs={12}>
-
-
           <FormInputDropdown
             name="calenderYear"
             label="Calender Year"
@@ -2022,7 +2098,6 @@ const LeaveBalenceFilter = ({ filterData }: { filterData: (e: LeaveBalenceForm) 
               keys: { key: 'id', value: 'name' }
             }}
           />
-
         </Grid>
         <Grid item sm={2} xs={12}>
           <FormInputText
@@ -2269,6 +2344,1393 @@ const TranslatorFilter = ({ filterData }: { filterData: (e: TranslatorForm) => v
   )
 }
 
+interface LocationForm {
+  locationId: string
+  name: string
+}
+
+const LocationFilter = ({ filterData }: { filterData: (e: LocationForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<LocationForm>({
+    defaultValues: {
+      locationId: '',
+      name: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      locationId: '',
+      name: ''
+    })
+  }
+
+  function onSubmit(param: LocationForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="locationId" control={control} label="Location Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="name" control={control} label="Location Name" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface WorkScheduleForm {
+  scheduleId: string
+  name: string
+  shift: string
+}
+
+const WorkScheduleFilter = ({ filterData }: { filterData: (e: WorkScheduleForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<WorkScheduleForm>({
+    defaultValues: {
+      scheduleId: '',
+      name: '',
+      shift: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      scheduleId: '',
+      name: '',
+      shift: ''
+    })
+  }
+
+  function onSubmit(param: WorkScheduleForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="scheduleId" control={control} label="Search Schedule Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="name" control={control} label="Search Name" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputDropdown
+            name="shift"
+            label="Select Default"
+            control={control}
+            select={{ type: 'LOCAL', options: SHIFT_OPTIONS }}
+          />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface EmployeeGroupFilterForm {
+  validFrom: string
+  validTo: string
+  employeeGroupId: string
+  employeeGroupText: string
+}
+
+const EmployeeGroupFilters = ({ filterData }: { filterData: (e: EmployeeGroupFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<EmployeeGroupFilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      employeeGroupId: '',
+      employeeGroupText: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      employeeGroupId: '',
+      employeeGroupText: ''
+    })
+  }
+
+  function onSubmit(param: EmployeeGroupFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="employeeGroupId" control={control} label="Employee Group Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="employeeGroupText" control={control} label="Employee Group Text" />
+        </Grid>
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface GenderFilterForm {
+  genderId: string
+  genderText: string
+}
+
+const GenderFilters = ({ filterData }: { filterData: (e: GenderFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<GenderFilterForm>({
+    defaultValues: {
+      genderId: '',
+      genderText: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      genderId: '',
+      genderText: ''
+    })
+  }
+
+  function onSubmit(param: GenderFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="genderId" control={control} label="Search Gender Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="genderText" control={control} label="Search GenderText" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface WageTypeFilterForm {
+  validFrom: string
+  validTo: string
+  wageTypeId: string
+  wageType: string
+}
+
+const WageTypeFilters = ({ filterData }: { filterData: (e: WageTypeFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<WageTypeFilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      wageTypeId: '',
+      wageType: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      wageTypeId: '',
+      wageType: ''
+    })
+  }
+
+  function onSubmit(param: WageTypeFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="wageTypeId" control={control} label="Wage Type Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="wageType" label="Wage Type" control={control} />
+        </Grid>
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface OrganizationFilterForm {
+  validFrom: string
+  validTo: string
+  organizationId: string
+  organizationName: string
+}
+
+const OrganizationUnitFilters = ({ filterData }: { filterData: (e: OrganizationFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<OrganizationFilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      organizationId: '',
+      organizationName: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      organizationId: '',
+      organizationName: ''
+    })
+  }
+
+  function onSubmit(param: OrganizationFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="organizationId" control={control} label="Organization Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="organizationName" control={control} label="Organization Name" />
+        </Grid>
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface PositionFilterForm {
+  validFrom: string
+  validTo: string
+  positionId: string
+  positionTitle: string
+  orgUnit: string
+}
+
+const PositionFilters = ({ filterData }: { filterData: (e: PositionFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<PositionFilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      positionId: '',
+      positionTitle: '',
+      orgUnit: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      positionId: '',
+      positionTitle: '',
+      orgUnit: ''
+    })
+  }
+
+  function onSubmit(param: PositionFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="positionId" control={control} label="Position Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="positionTitle" control={control} label="Position Title" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="orgUnit" control={control} label="Org Unit" />
+        </Grid>
+        <Grid item sm={2} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface JobLevelFilterForm {
+  validFrom: string
+  validTo: string
+  jobLevelId: string
+  jobLevel: string
+}
+
+const JobLevelFilter = ({ filterData }: { filterData: (e: JobLevelFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<JobLevelFilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      jobLevelId: '',
+      jobLevel: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      jobLevelId: '',
+      jobLevel: ''
+    })
+  }
+
+  function onSubmit(param: JobLevelFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="jobLevelId" control={control} label="Job Level Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="jobLevel" label="Job Level" control={control} />
+        </Grid>
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface EmployeeSubGroupFilterForm {
+  validFrom: string
+  validTo: string
+  employeeGroupId: string
+  employeeSubGroupId: string
+  employeeSubGroupText: string
+}
+
+const EmployeeSubGroupFilters = ({ filterData }: { filterData: (e: EmployeeSubGroupFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<EmployeeSubGroupFilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      employeeGroupId: '',
+      employeeSubGroupId: '',
+      employeeSubGroupText: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      employeeGroupId: '',
+      employeeSubGroupId: '',
+      employeeSubGroupText: ''
+    })
+  }
+
+  function onSubmit(param: EmployeeSubGroupFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="employeeGroupId" control={control} label="Employee Group Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="employeeSubGroupId" control={control} label="Employee Sub Group Id " />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="employeeSubGroupText" label="Employee Sub Group Text" control={control} />
+        </Grid>
+        <Grid item sm={2} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface OperationalLevel1FilterForm {
+  validFrom: string
+  validTo: string
+  operationalLevel1Id: string
+  operationalLevel1Name: string
+}
+
+const OperationalLevel1Filter = ({
+  filterData
+}: {
+  filterData: (e: OperationalLevel1FilterForm) => void
+}) => {
+  const { handleSubmit, control, reset } = useForm<OperationalLevel1FilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      operationalLevel1Id: '',
+      operationalLevel1Name: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      operationalLevel1Id: '',
+      operationalLevel1Name: ''
+    })
+  }
+
+  function onSubmit(param: OperationalLevel1FilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="operationalLevel1Id" control={control} label="Operational Level 1 ID" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="operationalLevel1Name" control={control} label="Operational Level 1 Name" />
+        </Grid>
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface OperationLevel2Form {
+  validFrom: string
+  validTo: string
+  operationalLevel1Id: string
+  operationalLevel2Id: string
+  operationalLevel2: string
+}
+
+const OperationLevel2Filters = ({ filterData }: { filterData: (e: OperationLevel2Form) => void }) => {
+  const { handleSubmit, control, reset } = useForm<OperationLevel2Form>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      operationalLevel1Id: '',
+      operationalLevel2Id: '',
+      operationalLevel2: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      operationalLevel1Id: '',
+      operationalLevel2Id: '',
+      operationalLevel2: ''
+    })
+  }
+
+  function onSubmit(param: OperationLevel2Form) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Search valid From" type="Date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Search valid To" type="Date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="operationalLevel1Id" control={control} label="Search Operational Level 1 Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="operationalLevel2Id" control={control} label="Search Operational Level 2 Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="operationalLevel2" control={control} label="Search Operational Level 2" />
+        </Grid>
+
+        <Grid item sm={2} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface OperationalLevel3FilterForm {
+  validFrom: string
+  validTo: string
+  operationalLevel1Id: string
+  operationalLevel2Id: string
+  operationalLevel3Id: string
+  operationalLevel3Name: string
+}
+
+const OperationalLevel3Filters = ({
+  filterData
+}: {
+  filterData: (e: OperationalLevel3FilterForm) => void
+}) => {
+  const { handleSubmit, control, reset } = useForm<OperationalLevel3FilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      operationalLevel1Id: '',
+      operationalLevel2Id: '',
+      operationalLevel3Id: '',
+      operationalLevel3Name: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      operationalLevel1Id: '',
+      operationalLevel2Id: '',
+      operationalLevel3Id: '',
+      operationalLevel3Name: ''
+    })
+  }
+
+  function onSubmit(param: OperationalLevel3FilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12} lg={2}>
+          <FormInputText name="validFrom" control={control} label="Search Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12} lg={2}>
+          <FormInputText name="validTo" control={control} label="Search Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12} lg={2}>
+          <FormInputText name="operationalLevel1Id" control={control} label="Search Operational Level 1 Id" />
+        </Grid>
+        <Grid item sm={2} xs={12} lg={2}>
+          <FormInputText name="operationalLevel2Id" control={control} label="Search Operational Level 2 Id" />
+        </Grid>
+        <Grid item sm={2} xs={12} lg={2}>
+          <FormInputText name="operationalLevel3Id" control={control} label="Search Operational Level 3 Id" />
+        </Grid>
+        <Grid item sm={2} xs={12} lg={2}>
+          <FormInputText
+            name="operationalLevel3Name"
+            control={control}
+            label="Search Operational Level 3 Name"
+          />
+        </Grid>
+        <Grid item sm={3} xs={12} lg={6}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface DisabilityForm {
+  disabilityId: string
+  disabilityName: string
+}
+
+const DisabilityFilters = ({ filterData }: { filterData: (e: DisabilityForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<DisabilityForm>({
+    defaultValues: {
+      disabilityId: '',
+      disabilityName: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      disabilityId: '',
+      disabilityName: ''
+    })
+  }
+
+  function onSubmit(param: DisabilityForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="disabilityId" control={control} label="Search Disability ID" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="disabilityName" label="Disablitiy Name" control={control} />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface MilitaryForm {
+  validFrom: string
+  validTo: string
+  militaryStatusId: string
+  militaryStatusName: string
+}
+
+const MilitaryFilters = ({ filterData }: { filterData: (e: MilitaryForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<MilitaryForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      militaryStatusId: '',
+      militaryStatusName: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      militaryStatusId: '',
+      militaryStatusName: ''
+    })
+  }
+
+  function onSubmit(param: MilitaryForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Search valid From" type="Date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Search valid To" type="Date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="militaryStatusId" control={control} label="Search Military Status Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="militaryStatusName" control={control} label="Search Military Status Name" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface CitizenshipFilterForm {
+  citizenshipId: string
+  citizenship: string
+}
+
+const CitizenshipFilters = ({ filterData }: { filterData: (e: CitizenshipFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<CitizenshipFilterForm>({
+    defaultValues: {
+      citizenshipId: '',
+      citizenship: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      citizenshipId: '',
+      citizenship: ''
+    })
+  }
+
+  function onSubmit(param: CitizenshipFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="citizenshipId" control={control} label="Search Citizenship Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="citizenship" control={control} label="Search Citizenship" />
+        </Grid>
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface TitleFilterForm {
+  titleId: string
+  titleName: string
+}
+
+const TitleFilters = ({ filterData }: { filterData: (e: TitleFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<TitleFilterForm>({
+    defaultValues: {
+      titleId: '',
+      titleName: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      titleId: '',
+      titleName: ''
+    })
+  }
+
+  function onSubmit(param: TitleFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="titleId" control={control} label="Search Title ID" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="titleName" control={control} label="Search Title Name" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface ReligionFilterForm {
+  religionId: string
+  religionName: string
+}
+
+const ReligionFilters = ({ filterData }: { filterData: (e: ReligionFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<ReligionFilterForm>({
+    defaultValues: {
+      religionId: '',
+      religionName: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      religionId: '',
+      religionName: ''
+    })
+  }
+
+  function onSubmit(param: ReligionFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="religionId" control={control} label="Search Religion Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="religionName" control={control} label="Search Religion" />
+        </Grid>
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface JobBandsFilterForm {
+  jobBandsId: string
+  jobBands: string
+}
+
+const JobBandsFilter = ({ filterData }: { filterData: (e: JobBandsFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<JobBandsFilterForm>({
+    defaultValues: {
+      jobBandsId: '',
+      jobBands: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      jobBandsId: '',
+      jobBands: ''
+    })
+  }
+
+  function onSubmit(param: JobBandsFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="jobBandsId" control={control} label="Search Job Bands Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="jobBands" label="Job Band Level" control={control} />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface PayGroupFilterForm {
+  payGroupId: string
+  payGroup: string
+}
+
+const PayGroupFilters = ({ filterData }: { filterData: (e: PayGroupFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<PayGroupFilterForm>({
+    defaultValues: {
+      payGroupId: '',
+      payGroup: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      payGroupId: '',
+      payGroup: ''
+    })
+  }
+
+  function onSubmit(param: PayGroupFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="payGroupId" control={control} label="Search PayGroup Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="payGroup" control={control} label="Search PayGroup" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface ContractForm {
+  contractTypeId: string
+  contractType: string
+}
+
+const ContractFilters = ({ filterData }: { filterData: (e: ContractForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<ContractForm>({
+    defaultValues: {
+      contractTypeId: '',
+      contractType: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      contractTypeId: '',
+      contractType: ''
+    })
+  }
+
+  function onSubmit(param: ContractForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="contractTypeId" control={control} label="Search Contract Type ID" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="contractType" control={control} label="Search Contract Type" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface RegionFilterForm {
+  regionId: string
+  region: string
+}
+
+const RegionFilters = ({ filterData }: { filterData: (e: RegionFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<RegionFilterForm>({
+    defaultValues: {
+      regionId: '',
+      region: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      regionId: '',
+      region: ''
+    })
+  }
+
+  function onSubmit(param: RegionFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="regionId" control={control} label="Region ID" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="payGroup" control={control} label="Search Region" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface PayrollAreasFilterForm {
+  validFrom: string
+  validTo: string
+  payrollAreaId: string
+  payrollAreaName: string
+}
+
+const PayrollAreasFilters = ({ filterData }: { filterData: (e: PayrollAreasFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<PayrollAreasFilterForm>({
+    defaultValues: {
+      validFrom: '',
+      validTo: '',
+      payrollAreaId: '',
+      payrollAreaName: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      validFrom: '',
+      validTo: '',
+      payrollAreaId: '',
+      payrollAreaName: ''
+    })
+  }
+
+  function onSubmit(param: PayrollAreasFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validFrom" control={control} label="Search Valid From" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="validTo" control={control} label="Search Valid To" type="date" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="payrollAreaId" control={control} label="Search Payroll Area Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="payrollAreaName" control={control} label="Search Payroll Area Name" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface MaritalStatusFilterForm {
+  maritalStatusId: string
+  maritalstatus: string
+}
+
+const MaritalStatusFilters = ({ filterData }: { filterData: (e: MaritalStatusFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<MaritalStatusFilterForm>({
+    defaultValues: {
+      maritalStatusId: '',
+      maritalstatus: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      maritalStatusId: '',
+      maritalstatus: ''
+    })
+  }
+
+  function onSubmit(param: MaritalStatusFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="maritalStatusId" control={control} label="Search Marital Status Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="maritalstatus" label="Marital Status" control={control} />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface CountryFilterForm {
+  countryName: string
+  countryCode: string
+}
+
+const CountryFilter = ({ filterData }: { filterData: (e: CountryFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<CountryFilterForm>({
+    defaultValues: {
+      countryName: '',
+      countryCode: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      countryName: '',
+      countryCode: ''
+    })
+  }
+
+  function onSubmit(param: CountryFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="countryCode" control={control} label="Search Country Code" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="countryName" label="Chooose Country Name" control={control} />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface NationalityFilterForm {
+  nationalityId: string
+  nationalityName: string
+}
+
+const NationalityFilter = ({ filterData }: { filterData: (e: NationalityFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<NationalityFilterForm>({
+    defaultValues: {
+      nationalityId: '',
+      nationalityName: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      nationalityId: '',
+      nationalityName: ''
+    })
+  }
+
+  function onSubmit(param: NationalityFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="nationalityId" control={control} label="Search Country Id" />
+        </Grid>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="nationalityName" control={control} label="Search Country Code" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
+interface CurrencyFilterForm {
+  name: string
+  code: string
+}
+
+const CurrencyFilters = ({ filterData }: { filterData: (e: CurrencyFilterForm) => void }) => {
+  const { handleSubmit, control, reset } = useForm<CurrencyFilterForm>({
+    defaultValues: {
+      name: '',
+      code: ''
+    }
+  })
+
+  function resetForm() {
+    reset()
+    filterData({
+      name: '',
+      code: ''
+    })
+  }
+
+  function onSubmit(param: CurrencyFilterForm) {
+    filterData(param)
+  }
+
+  function search() {
+    handleSubmit(onSubmit)()
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid item sm={2} xs={12}>
+          <FormInputText name="name" control={control} label="Search Name" />
+        </Grid>
+
+        <Grid item sm={3} xs={12} sx={{ marginTop: 3 }}>
+          <FilterButton resetForm={() => resetForm()} searchForm={() => search()} />
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
+
 const TableFilter = (props: TableFilterProps) => {
   const project = () => {
     switch (props.page) {
@@ -2346,6 +3808,77 @@ const TableFilter = (props: TableFilterProps) => {
         return <CustomTemplateFilter filterData={(e: CustomTemplateForm) => props.applyFilter(e)} />
       case 'TRANSLATOR':
         return <TranslatorFilter filterData={(e: TranslatorForm) => props.applyFilter(e)} />
+      case 'LOCATION':
+        return <LocationFilter filterData={(e: LocationForm) => props.applyFilter(e)} />
+      case 'WORK_SCHEDULE':
+        return <WorkScheduleFilter filterData={(e: WorkScheduleForm) => props.applyFilter(e)} />
+      case 'EMPLOYEEGROUP':
+        return <EmployeeGroupFilters filterData={(e: EmployeeGroupFilterForm) => props.applyFilter(e)} />
+      case 'GENDER':
+        return <GenderFilters filterData={(e: GenderFilterForm) => props.applyFilter(e)} />
+      case 'WAGETYPE':
+        return <WageTypeFilters filterData={(e: WageTypeFilterForm) => props.applyFilter(e)} />
+      case 'ORGANIZATION_UNITS':
+        return <OrganizationUnitFilters filterData={(e: OrganizationFilterForm) => props.applyFilter(e)} />
+      case 'POSITIONS':
+        return <PositionFilters filterData={(e: PositionFilterForm) => props.applyFilter(e)} />
+      case 'JOBLEVEL':
+        return <JobLevelFilter filterData={(e: JobLevelFilterForm) => props.applyFilter(e)} />
+      case 'EMPLOYEESUBGROUP':
+        return (
+          <EmployeeSubGroupFilters filterData={(e: EmployeeSubGroupFilterForm) => props.applyFilter(e)} />
+        )
+      case 'OPERATIONAL_LEVEL1':
+        return (
+          <OperationalLevel1Filter filterData={(e: OperationalLevel1FilterForm) => props.applyFilter(e)} />
+        )
+      case 'OPERATIONLEVEL2':
+        return <OperationLevel2Filters filterData={(e: OperationLevel2Form) => props.applyFilter(e)} />
+
+      case 'OPERATIONAL_LEVEL_3':
+        return (
+          <OperationalLevel3Filters filterData={(e: OperationalLevel3FilterForm) => props.applyFilter(e)} />
+        )
+
+      case 'DISABILITY':
+        return <DisabilityFilters filterData={(e: DisabilityForm) => props.applyFilter(e)} />
+
+      case 'MILITARY':
+        return <MilitaryFilters filterData={(e: MilitaryForm) => props.applyFilter(e)} />
+
+      case 'CITIZENSHIP':
+        return <CitizenshipFilters filterData={(e: CitizenshipFilterForm) => props.applyFilter(e)} />
+
+      case 'TITLE':
+        return <TitleFilters filterData={(e: TitleFilterForm) => props.applyFilter(e)} />
+      case 'RELIGION':
+        return <ReligionFilters filterData={(e: ReligionFilterForm) => props.applyFilter(e)} />
+
+      case 'JOB_BANDS':
+        return <JobBandsFilter filterData={(e: JobBandsFilterForm) => props.applyFilter(e)} />
+
+      case 'PAY_GROUP':
+        return <PayGroupFilters filterData={(e: PayGroupFilterForm) => props.applyFilter(e)} />
+
+      case 'CONTRACT':
+        return <ContractFilters filterData={(e: ContractForm) => props.applyFilter(e)} />
+      case 'REGION':
+        return <RegionFilters filterData={(e: RegionFilterForm) => props.applyFilter(e)} />
+
+      case 'PAYROLL_AREAS':
+        return <PayrollAreasFilters filterData={(e: PayrollAreasFilterForm) => props.applyFilter(e)} />
+
+      case 'MARITAL_STATUS':
+        return <MaritalStatusFilters filterData={(e: MaritalStatusFilterForm) => props.applyFilter(e)} />
+
+      case 'COUNTRY':
+        return <CountryFilter filterData={(e: CountryFilterForm) => props.applyFilter(e)} />
+
+      case 'NATIONALITY':
+        return <NationalityFilter filterData={(e: NationalityFilterForm) => props.applyFilter(e)} />
+      case 'CURRENCY':
+        return <CurrencyFilters filterData={(e: CurrencyFilterForm) => props.applyFilter(e)} />
+
       default:
         return <h1>No project match</h1>
     }

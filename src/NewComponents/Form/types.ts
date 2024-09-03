@@ -45,6 +45,7 @@ type BaseFormTypes<TFieldName extends string = string> = {
 
 export type TInput<TFieldName extends string = string> = {
   delay?: number
+  // @ts-ignore
   innerRef?: Ref<Input>
   placeholder?: string
   max?: number

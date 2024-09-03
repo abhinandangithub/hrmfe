@@ -1,12 +1,12 @@
 import { withFormik } from 'formik'
 import _ from 'lodash'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import { GET_DATA, removeEmptyKeys, SET_DATA } from '../../../Util/Util'
 
 function Filter(props) {
-  const history = useHistory()
+  const history = useNavigate()
   const { validateForm, values, onFilter, resetForm } = props
 
   const onSubmit = async () => {
@@ -26,7 +26,7 @@ function Filter(props) {
 
   return (
     <>
-      <Button onClick={() => history.push('/app/paymaster/add')} variant="primary" className="btn-block">
+      <Button onClick={() => history('/app/paymaster/add')} variant="primary" className="btn-block">
         <i className="flaticon-plus" /> Employee Pay Setup
       </Button>
       <Form>

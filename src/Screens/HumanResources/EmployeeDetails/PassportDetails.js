@@ -1,232 +1,255 @@
-import { CaretRightOutlined } from '@ant-design/icons'
-import { Col, Collapse, Row } from 'antd'
+import { EditOutlined } from '@ant-design/icons'
+import { Col, Row } from 'antd'
+import { withFormik } from 'formik'
+import { isEmpty } from 'lodash'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Field } from '../../../Components/Formik'
+import * as Yup from 'yup'
+import Button from '../../../Components/Button'
+import ButtonBox from '../../../Components/ButtonBox/ButtonBox'
+import ModalBox from '../../../Components/ModalBox/ModalBox'
+import TableBox from '../../../Components/TableBox/TableBox'
+import Panel from '../../../Layout/Panel'
+import PanelLayout from '../../../Layout/PanelLayout'
 import apiClient from '../../../Util/apiClient'
+import PassportForm from './PassportForm'
 
-const { Panel } = Collapse
+const Schema = Yup.object().shape({
+  validFrom: Yup.date()
+    .default(() => new Date())
+    .required('Valid From date is required')
+    .nullable(),
+  validTo: Yup.date()
+    .default(() => new Date('9999-12-31'))
+    .nullable()
+})
 
 const PassportDetails = (props) => {
-  const { values, editable } = props
-  const [options, setOptions] = useState({})
+  const { resetForm, currentEmployee, handleValueChange, employeeId, setValues, values, errors } = props
+  const [toggle, setToggle] = useState(false)
+  const [passportData, setpassportData] = useState([])
+  const [editData, setEditData] = useState(null)
+  const [modalTitle, setModalTitle] = useState('Add')
+  const [activeData, setActiveData] = useState(null)
 
   useEffect(() => {
-    if (editable) {
-      fetchDropdownValues()
-    }
-  }, [editable])
+    getDetails()
+  }, [employeeId])
 
-  const fetchDropdownValues = () => {
-    apiClient
-      .get('options/get-by-types', {
-        params: { type: ['TypeOfVisa', 'TypeOfVisaEntry'] }
-      })
-      .then(({ data }) => {
-        if (data && data.result) {
-          setOptions(data.result)
+  useEffect(() => {
+    const findActive = passportData.find((x) => x.isActive)
+    setActiveData(findActive)
+  }, [passportData])
+
+  const getDetails = () => {
+    apiClient.get(`employee-details/passport-details/get/${employeeId}`).then(({ data }) => {
+      if (data && data.result) {
+        setpassportData(data.result)
+        setValues({ ...values, ...data.result, employee: employeeId })
+      }
+    })
+  }
+
+  const tablePosActions = (val) => {
+    setModalTitle('Edit')
+    setValues({ ...values, ...val })
+    setEditData(val)
+    setToggle(true)
+  }
+
+  const columns = [
+    {
+      title: props.t('Valid From'),
+      dataIndex: 'validFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Valid To'),
+      dataIndex: 'validTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Passport issued Country'),
+      dataIndex: 'passportIssuedCountry'
+    },
+    {
+      title: props.t('Passport No'),
+      dataIndex: 'passportNo'
+    },
+    {
+      title: props.t('Name As In Passport'),
+      dataIndex: 'nameAsInPassport'
+    },
+    {
+      title: props.t('Passport Valid From'),
+      dataIndex: 'passportValidFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Passport Valid To'),
+      dataIndex: 'passportValidTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Issue On'),
+      dataIndex: 'issueOn',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Visa held for country'),
+      dataIndex: 'visaHeldForCountry'
+    },
+    {
+      title: props.t('Type of Visa'),
+      dataIndex: 'typeOfVisa'
+    },
+    {
+      title: props.t('Type Of Visa Entry'),
+      dataIndex: 'typeOfVisaEntry'
+    },
+    {
+      title: props.t('Visa Valid From'),
+      dataIndex: 'visaValidFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Visa Valid To'),
+      dataIndex: 'visaValidTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Permit Country'),
+      dataIndex: 'permitCountry'
+    },
+    {
+      title: props.t('Permit No'),
+      dataIndex: 'permitNo'
+    },
+    {
+      title: props.t('Date of entry'),
+      dataIndex: 'dateOfEntry',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Issued On'),
+      dataIndex: 'issuedOn',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Action'),
+      dataIndex: 'custom_action',
+      render: (_, row) => (
+        <Button onClick={() => tablePosActions(row)} className="btn glow dropdown-toggle">
+          <EditOutlined />
+        </Button>
+      )
+    }
+  ]
+
+  const handleModal = () => {
+    setModalTitle('Add')
+    setValues({ ...values, ...activeData })
+    setToggle(true)
+  }
+
+  const onSavePos = async () => {
+    try {
+      console.log('errors', errors)
+      if (isEmpty(errors)) {
+        console.log('values', values)
+        const param = {
+          validFrom: values.validFrom,
+          validTo: values.validTo,
+          passportNo: values.passportNo,
+          passportIssuedCountry: values.passportIssuedCountry,
+          nameAsInPassport: values.nameAsInPassport,
+          passportValidFrom: values.passportValidFrom,
+          passportValidTo: values.passportValidTo,
+          issueOn: values.issueOn,
+          visaHeldForCountry: values.visaHeldForCountry,
+          typeOfVisa: values.typeOfVisa,
+          typeOfVisaEntry: values.typeOfVisaEntry,
+          visaValidFrom: values.visaValidFrom,
+          visaValidTo: values.visaValidTo,
+          attachments: values.attachments,
+          permitCountry: values.permitCountry,
+          permitNo: values.permitNo,
+          dateOfEntry: values.dateOfEntry,
+          issuedOn: values.issuedOn,
+          employee: employeeId
         }
-      })
+        let result
+        if (editData?.id) {
+          result = await apiClient.put(`employee-details/passport-details/update/${editData?.id}`, param)
+        } else {
+          result = await apiClient.post('employee-details/passport-details/add', param)
+        }
+
+        if (result.data && result.data.result) {
+          setToggle(false)
+          getDetails()
+          setEditData(null)
+        }
+      }
+    } catch {}
   }
 
   return (
-    <Collapse
-      collapsible="header"
-      expandIconPosition="right"
-      expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 270 : 90} />}
-      bordered>
-      <Panel style={{ fontSize: 16, fontWeight: 'bold' }} header={props.t('Passport / Visa Details')} key="4">
-        {!editable && (
-          <div className="basic-details">
+    <>
+      <PanelLayout>
+        <Panel
+          title="Passport / Visa Details"
+          button={
+            <div className="align-right">
+              <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleModal}>
+                <i className="flaticon-plus" /> {props.t('Add')}
+              </ButtonBox>
+            </div>
+          }>
+          <div className="panel-with-border">
             <Row justify="left" gutter={(12, 10)}>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Passport issued Country')}</span>
-                <p>{values.passportIssuedCountry || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Passport No')}</span>
-                <p>{values.passportNo || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Name As In Passport')}</span>
-                <p>{values.nameAsPassport || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Passport Valid From')}</span>
-                <p>
-                  {values.passportValidFrom ? moment(values.passportValidFrom).format('DD-MMM-YYYY') : '-'}
-                </p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Passport Valid To')}</span>
-                <p>{values.passportValidTo ? moment(values.passportValidTo).format('DD-MMM-YYYY') : '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Issue On')}</span>
-                <p>{values.issueon || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Visa held for country')}</span>
-                <p>{values.visaHeldForCountry || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Type of Visa')}</span>
-                <p>{values.typeOfVisa || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Type Of Visa Entry')}</span>
-                <p>{values?.typeOfVisaEntry || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Visa Valid From')}</span>
-                <p>{values.visaValidFrom ? moment(values.visaValidFrom).format('DD-MMM-YYYY') : '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Visa Valid To')}</span>
-                <p>{values.visaValidTo ? moment(values.visaValidTo).format('DD-MMM-YYYY') : '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Permit Country')}</span>
-                <p>{values?.permitcountry || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Permit No')}</span>
-                <p>{values?.permitno || '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Date of entry')}</span>
-                <p>{values.dateofentry ? moment(values.dateofentry).format('DD-MMM-YYYY') : '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Valid From')}</span>
-                <p>{values.validfrom ? moment(values.validfrom).format('DD-MMM-YYYY') : '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Valid To')}</span>
-                <p>{values.validto ? moment(values.validto).format('DD-MMM-YYYY') : '-'}</p>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <span>{props.t('Issued On')}</span>
-                <p>{values.issuedon ? moment(values.issuedon).format('DD-MMM-YYYY') : '-'}</p>
-              </Col>
-            </Row>
-          </div>
-        )}
-        {editable && (
-          <div>
-            <Row justify="left" gutter={(12, 10)}>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="passportIssuedCountry" label="Passport issued Country" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="passportNo" label="Passport No" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="nameAsPassport" label="Name As In Passport" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="passportValidFrom" label="Passport Valid From" as="date" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="passportValidTo" label="Passport Valid To" as="date" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="issueon" label="Issue on" as="date" />
-                </div>
-              </Col>
-
-              {/* <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-              <div className="form-field">
-                <Field name="visa" label="Visa" as="select" options={YES_NO_OPTIONS} />
-              </div>
-            </Col> */}
-
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="visaHeldForCountry" label="Visa held for country" />
-                </div>
-              </Col>
-
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field
-                    name="typeOfVisa"
-                    label="Type of Visa"
-                    as="select"
-                    options={options.TypeOfVisa || []}
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
+                <div className="table-view">
+                  <TableBox
+                    columns={columns}
+                    actionIndex="custom_action"
+                    cardHeaderIndex="status"
+                    cardFirstLabelIndex="docno"
+                    dataSource={passportData}
                   />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field
-                    name="typeOfVisaEntry"
-                    label="Type Of Visa Entry"
-                    as="select"
-                    options={options.TypeOfVisaEntry || []}
-                  />
-                </div>
-              </Col>
-
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="visaValidFrom" label="Visa Valid From" as="date" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="visaValidTo" label="Visa Valid To" as="date" />
-                </div>
-              </Col>
-
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="permitcountry" label="Permit Country" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="permitno" label="Permit No" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="dateofentry" label="Date of entry" as="date" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="validfrom" label="Valid From" as="date" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="validto" label="Valid To" as="date" />
-                </div>
-              </Col>
-              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 8 }} lg={{ span: 8 }}>
-                <div className="form-field">
-                  <Field name="issuedon" label="Issued on" as="date" />
                 </div>
               </Col>
             </Row>
           </div>
-        )}
-      </Panel>
-    </Collapse>
+        </Panel>
+      </PanelLayout>
+      <ModalBox
+        title={`${props.t(modalTitle)} ${props.t('Passport Details')}`}
+        visible={toggle}
+        onCancel={() => {
+          setToggle(false)
+          resetForm()
+        }}
+        width={700}
+        okText="Save"
+        onOk={onSavePos}
+        destroyOnClose>
+        <PassportForm
+          currentEmployee={currentEmployee}
+          currentDetails={values}
+          handleValueChange={handleValueChange}
+        />
+      </ModalBox>
+    </>
   )
 }
 
-export default withTranslation()(PassportDetails)
+export default withFormik({
+  mapPropsToValues: () => ({
+    validFrom: new Date(),
+    validTo: new Date('9999-12-31')
+  }),
+  validationSchema: Schema,
+  handleSubmit: () => null
+})(withTranslation()(PassportDetails))

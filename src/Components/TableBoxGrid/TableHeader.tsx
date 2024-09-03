@@ -21,9 +21,8 @@ import moment from 'moment'
 import React from 'react'
 import { ExportAsExcel, ExportAsPdf } from 'react-export-table'
 import { useTranslation } from 'react-i18next'
-import TableFilter from './TableFilter'
 import Icon from './icon/index'
-
+import TableFilter from './TableFilter'
 
 interface TableHeaderProps {
   toggle: () => void
@@ -104,9 +103,10 @@ const TableHeader = (props: TableHeaderProps) => {
             case 'DATE_SUB_NODE': {
               const fieldNm1: any = column.field
               const subnode: any = column.subField
-              tempObj[fieldNm1] = lineData[fieldNm1] && lineData[fieldNm1][subnode]
-                ? moment(lineData[fieldNm1][subnode]).format('YYYY-MM-DD')
-                : ''
+              tempObj[fieldNm1] =
+                lineData[fieldNm1] && lineData[fieldNm1][subnode]
+                  ? moment(lineData[fieldNm1][subnode]).format('YYYY-MM-DD')
+                  : ''
               break
             }
 
@@ -115,13 +115,25 @@ const TableHeader = (props: TableHeaderProps) => {
               const fieldNm2: any = column.field
               const subfil1 = column.showField
               const tableHead = subfil1 + rand
-              tempObj[tableHead] = lineData[fieldNm2] && lineData[fieldNm2][subfil1] ? lineData[fieldNm2][subfil1] : ''
+              tempObj[tableHead] =
+                lineData[fieldNm2] && lineData[fieldNm2][subfil1] ? lineData[fieldNm2][subfil1] : ''
 
               break
             }
             case 'TRANSLATOR': {
               const fieldNm1: any = column.field
-              tempObj[fieldNm1] = lineData[fieldNm1] && lineData[fieldNm1][lang] ? lineData[fieldNm1][lang] : ''
+              tempObj[fieldNm1] =
+                lineData[fieldNm1] && lineData[fieldNm1][lang] ? lineData[fieldNm1][lang] : ''
+              break
+            }
+            case 'ARRAY_FROM_TO': {
+              const fieldNm: any = column.field
+              const arrayLi = lineData[fieldNm]
+              if (arrayLi?.length) {
+                const temparr = arrayLi.map((x: any) => `${x.from} - ${x.to}`)
+                tempObj[fieldNm] = temparr?.toString() || ''
+              }
+
               break
             }
             default:

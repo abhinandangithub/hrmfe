@@ -2,13 +2,13 @@ import { withFormik } from 'formik'
 import _ from 'lodash'
 import moment from 'moment'
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import { Field, Form } from '../../../Components/Formik'
 import { GET_DATA, removeEmptyKeys, SET_DATA, validateAccess } from '../../../Util/Util'
 
 function Filter(props) {
-  const history = useHistory()
+  const history = useNavigate()
 
   const onSubmitForm = async () => {
     props.validateForm().then((err) => {
@@ -38,7 +38,7 @@ function Filter(props) {
   return (
     <>
       {validateAccess('add-termination') && (
-        <Button onClick={() => history.push('/app/add-termination')} variant="primary" className="btn-block">
+        <Button onClick={() => history('/app/add-termination')} variant="primary" className="btn-block">
           <i className="flaticon-plus" />
           Add Terminations
         </Button>

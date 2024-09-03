@@ -1,6 +1,6 @@
 import { SettingOutlined } from '@ant-design/icons'
 import React, { useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate  } from 'react-router-dom'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
 import apiClient from '../../../Util/apiClient'
@@ -9,7 +9,7 @@ import ClientFilter from './ClientFilter'
 
 export default function Clients() {
   const [clients, setClients] = useState([])
-  const history = useHistory()
+  const history = useNavigate()
 
   const onFilter = (params = {}) => {
     apiClient.get('clients/getAll', { params }).then(({ data }) => {
@@ -59,7 +59,7 @@ export default function Clients() {
             <div className="btn-group">
               <button
                 type="button"
-                onClick={() => history.push(`/app/edit-client/${row.id}`)}
+                onClick={() => history(`/app/edit-client/${row.id}`)}
                 className="btn glow dropdown-toggle">
                 {' '}
                 <SettingOutlined />

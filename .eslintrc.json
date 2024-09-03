@@ -33,6 +33,9 @@
   ],
   "root": true,
   "rules": {
+    "semi": "off",
+    "react/function-component-definition": "off",
+    "react/no-unused-class-component-methods": "off",
     "react/no-unused-prop-types": 0,
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
@@ -155,11 +158,7 @@
     "react/no-array-index-key": "off",
     "react/prop-types": 0,
     "react/react-in-jsx-scope": "off",
-    "react/require-default-props": 0,
-    "semi": [
-      "error",
-      "never"
-    ]
+    "react/require-default-props": 0
   },
   "settings": {
     "import/resolver": {

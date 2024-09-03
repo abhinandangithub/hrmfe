@@ -102,7 +102,7 @@ export default function AbsenceLeaveGeneration(props) {
       title: 'Employee No',
       dataIndex: 'empno'
       //   render: (v, r) => (
-      //     <div onClick={() => props.history.push(`/app/payrolls/${r.id}`)}>
+      //     <div onClick={() => props.history(`/app/payrolls/${r.id}`)}>
       //       <a>{v}</a>
       //     </div>
       //   )
@@ -180,7 +180,7 @@ export default function AbsenceLeaveGeneration(props) {
   const onViewPayrolls = () => {
     if (selectedRows.length > 0) {
       const ids = selectedRows.map((val) => val.id)
-      props.history.push(`/app/payrolls/${ids.join(',')}`)
+      props.history(`/app/payrolls/${ids.join(',')}`)
     } else {
       message.error('Please select a row')
     }

@@ -47,7 +47,7 @@ function LeaveReport({ userInfo, values }) {
               return (
                 <div
                   style={{ backgroundColor: 'orange', height: '20px', width: '20px' }}
-                  onClick={() => history.push('/app/inbox')}
+                  onClick={() => history('/app/inbox')}
                 />
               )
             }
@@ -153,10 +153,17 @@ function LeaveReport({ userInfo, values }) {
             Employee Name
           </Col>
           <Col xs={3}>
-            <Field
+            {/* <Field
               name="userId"
               as="Select"
               mode="multiple"
+              endPoint="users/get-active-by-company"
+              optionValue="user"
+            /> */}
+            <Field
+              name="userId"
+              // label="Inventory Taken by"
+              as="paged-select"
               endPoint="users/get-active-by-company"
               optionValue="user"
             />

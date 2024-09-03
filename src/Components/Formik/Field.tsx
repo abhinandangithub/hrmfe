@@ -40,52 +40,54 @@ const TextArea = FieldLoader(() => import(/* webpackPrefetch: true */ './TextAre
 
 type TFieldAs =
   | ({
-      as: 'auto-complete'
-    } & Partial<TAutoComplete>)
+    as: 'auto-complete'
+  } & Partial<TAutoComplete>)
   | ({
-      as: 'checkbox'
-    } & Partial<TCheckbox>)
+    as: 'checkbox'
+  } & Partial<TCheckbox>)
   | ({
-      as: 'radio-group'
-    } & Partial<TRadioGroup>)
+    as: 'radio-group'
+  } & Partial<TRadioGroup>)
   | ({
-      as: 'date'
-    } & Partial<TDatePicker>)
+    as: 'date'
+  } & Partial<TDatePicker>)
   | ({
-      as: 'date-range'
-    } & Partial<TDateRangePicker>)
+    as: 'date-range'
+  } & Partial<TDateRangePicker>)
   | ({
-      as: 'textarea'
-    } & Partial<TTextArea>)
+    as: 'textarea'
+  } & Partial<TTextArea>)
   | ({
-      as: 'select'
-    } & Partial<TSelect>)
+    as: 'select'
+  } & Partial<TSelect>)
   | ({
-      as: 'paged-select'
-    } & Partial<TPagedSelect>)
+    as: 'paged-select'
+  } & Partial<TPagedSelect>)
   | ({
-      as: 'input-chip'
-    } & Partial<TInputChip>)
+    as: 'input-chip'
+  } & Partial<TInputChip>)
   | ({
-      as: 'rich-text'
-    } & Partial<TRichText>)
+    as: 'rich-text'
+  } & Partial<TRichText>)
   | ({
-      as: 'duration'
-    } & Partial<TDurationPicker>)
+    as: 'duration'
+  } & Partial<TDurationPicker>)
   | ({
-      as: 'attachment'
-    } & Partial<TAttachment>)
+    as: 'attachment'
+  } & Partial<TAttachment>)
   | ({
-      as?: 'input'
-    } & Partial<TInput>)
+    as?: 'input'
+  } & Partial<TInput>)
 
 type TField = {
-  disable: any
+  step?: any
+  mode?: any
+  disable?: any
   name: string
   fast?: boolean
 } & TFieldAs
 
-function Field({ name, disable, fast, as = 'input', ...props }: TField) {
+function Field({ name, disable, mode, fast, as = 'input', ...props }: TField) {
   const { values, errors, touched, setFieldValue } = useFormikContext<FormikState<FormikValues>>()
 
   let Component
@@ -129,6 +131,7 @@ function Field({ name, disable, fast, as = 'input', ...props }: TField) {
         }
       })()}
       name={name}
+      mode={mode}
       disable={disable}
       error={getIn(touched, name) && getIn(errors, name)}
       value={getIn(values, name)}

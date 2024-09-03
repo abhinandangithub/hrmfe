@@ -55,7 +55,7 @@ function AssetInventoryForm({
         })
         .then(({ status, data }) => {
           if (status === 200) {
-            history.push(`/app/view-asset-inventory/${data.result._id}`)
+            history(`/app/view-asset-inventory/${data.result._id}`)
           }
         })
     }

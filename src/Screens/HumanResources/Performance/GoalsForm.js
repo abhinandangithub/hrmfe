@@ -45,7 +45,7 @@ const GoalsForm = (props) => {
           {
             prefix: 'flaticon-back',
             label: 'Back to Goals List',
-            onClick: () => props.history.push('/app/goals')
+            onClick: () => props.history('/app/goals')
           }
         ]}
         centerActions={[

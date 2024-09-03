@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Col, Modal, Row } from 'antd'
 import { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import ButtonBox from '../../../Components/ButtonBox/ButtonBox'
 import TableBox from '../../../Components/TableBox/TableBox'
@@ -12,7 +12,7 @@ import NewAssetFilter from './NewAssetFilter'
 
 export default function NewAssets() {
   const [selectedRows, setSelectedRows] = useState([])
-  const history = useHistory()
+  const history = useNavigate()
   const [newAssets, setNewAssets] = useState([])
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function NewAssets() {
         dataIndex: 'custom_action',
         render: (text, row) => (
           <div className="btn-group">
-            <Button onClick={() => history.push(`/app/edit-new-asset/${row.id}`)} className="btn-glow">
+            <Button onClick={() => history(`/app/edit-new-asset/${row.id}`)} className="btn-glow">
               <EditOutlined />
             </Button>
           </div>
@@ -149,7 +149,7 @@ export default function NewAssets() {
     <FilterLayout
       addButton={{
         title: 'Add Asset',
-        onClick: () => history.push('/app/add-new-asset'),
+        onClick: () => history('/app/add-new-asset'),
         access: 'add-new-asset'
       }}
       filterData={GET_DATA('newAssets.filterData')}

@@ -4,18 +4,18 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
 import TableBox from '../../../Components/TableBoxGrid/TableBox'
 import { validateAccess } from '../../../Util/Util'
 
 export default function AssetTransfers() {
-  const history = useHistory()
+  const history = useNavigate()
   const { t } = useTranslation()
 
   function tableAction(param: any) {
     if (param.TYPE === 'EDIT') {
-      history.push(`/app/edit-asset-transfer/${param.id}`)
+      history(`/app/edit-asset-transfer/${param.id}`)
     }
   }
   const AssetJson: any = {
@@ -268,7 +268,7 @@ export default function AssetTransfers() {
   const emitData = (param: any) => {
     switch (param.TYPE) {
       case 'NEW':
-        return history.push('/app/add-asset-transfer')
+        return history('/app/add-asset-transfer')
       default:
         console.log('test')
         break

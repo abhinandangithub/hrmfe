@@ -1,12 +1,12 @@
 import { Row } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import apiClient from '../../../Util/apiClient'
 import ComponentFileRender from './ComponentFileRender'
 import './Drive.scss'
 
 export default function DriveFileOverview(props) {
   const [files, setFiles] = useState([])
-  const endpoint = props.id ? `filestructure/get-files/${props.id}` : 'filestructure/get-files'
+  const endpoint = props.id ? `filestructure/get-files/${props.id}` : 'filestructure/get-by-parent'
 
   const getData = () => {
     apiClient.get(endpoint).then(({ data }) => {

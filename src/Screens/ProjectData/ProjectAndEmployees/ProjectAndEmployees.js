@@ -1,6 +1,6 @@
 import { EditOutlined } from '@ant-design/icons'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import Button from '../../../Components/Button'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
@@ -10,7 +10,7 @@ import ProjectAndEmployeeFilter from './ProjectAndEmployeeFilter'
 
 export default function Projects() {
   const [projects, setProjects] = useState([])
-  const history = useHistory()
+  const history = useNavigate()
 
   const getData = (params) => {
     apiClient.get('projects/getAllProjectAndEmployees', { params }).then(({ data }) => {
@@ -47,7 +47,7 @@ export default function Projects() {
         render: (text, row) => (
           <div className="btn-group">
             <Button
-              onClick={() => history.push(`/app/edit-project-employee/${row.id}`)}
+              onClick={() => history(`/app/edit-project-employee/${row.id}`)}
               className="dropdown-toggle">
               <EditOutlined />
             </Button>

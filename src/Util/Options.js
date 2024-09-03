@@ -18,6 +18,13 @@ export const INVOICE_ENTRY_ITEM = [
   { label: 'Description', value: 'Description' }
 ]
 
+export const MARITALSTATUS_OPTIONS = [
+  { value: 'Single', label: 'Single' },
+  { value: 'Married', label: 'Married' },
+  { value: 'Widowed', label: 'Widowed' },
+  { value: 'Divorced', label: 'Divorced' }
+]
+
 export const KIND_OPTIONS = [
   { label: 'Invoice', value: 'INV' },
   { label: 'Proforma Invoice', value: 'PRO' },
@@ -90,7 +97,29 @@ export const MASTER_OPTION_TYPES = [
   { label: 'CRM Sources', value: 'crm' },
   { label: 'Material Attribute', value: 'MaterialAttribute' },
   { label: 'Trade Term', value: 'TradeTerm' },
-  { label: 'Cycle Count Reason', value: 'CycleCountReason' }
+  { label: 'Cycle Count Reason', value: 'CycleCountReason' },
+  { label: 'Employee Group', value: 'EmployeeGroup' },
+  { label: 'Employee Sub Group', value: 'EmployeeSubGroup' },
+  { label: 'Citizenship', value: 'Citizenship' },
+  { label: 'Disability', value: 'Disability' },
+  { label: 'Job Band', value: 'JobBand' },
+  { label: 'Wage Types', value: 'WageType' },
+  { label: 'Job Level', value: 'JobLevel' },
+  { label: 'Pay Group', value: 'PayGroup' },
+  { label: 'Grade', value: 'Grade' },
+  { label: 'Region', value: 'Region' },
+  { label: 'Religion', value: 'Religion' },
+  { label: 'Contract Type', value: 'ContractType' },
+  { label: 'Military Status', value: 'MilitaryStatus' },
+  { label: 'Operational Level 1', value: 'OperationalLevel1' },
+  { label: 'Operational Level 2', value: 'OperationalLevel2' },
+  { label: 'Operational Level 3', value: 'OperationalLevel3' },
+  { label: 'Payroll Area', value: 'PayrollArea' },
+  { label: 'Organization Unit', value: 'OrganizationUnit' },
+  { label: 'Position', value: 'Position' },
+  { label: 'Title', value: 'Title' },
+  { label: 'Country', value: 'Country' },
+  { label: 'CountryCode', value: 'CountryCode' }
 ]
 
 export const INVOICE_STATUS_OPTIONS = [
@@ -2748,47 +2777,47 @@ export const DEPENDENT_DOC_TYPES = [
 export const GRADE = [
   {
     label: 'Grade O',
-    value: 1
+    value: 'Grade O'
   },
   {
     label: 'Grade A+',
-    value: 2
+    value: 'Grade A+'
   },
   {
     label: 'Grade A',
-    value: 3
+    value: 'Grade A'
   },
   {
     label: 'Grade B+',
-    value: 4
+    value: 'Grade B+'
   },
   {
     label: 'Grade B',
-    value: '5'
+    value: 'Grade B'
   },
   {
     label: 'Grade C+',
-    value: 6
+    value: 'Grade C+'
   },
   {
     label: 'Grade C',
-    value: 7
+    value: 'Grade C'
   },
   {
     label: 'Grade D+',
-    value: 8
+    value: 'Grade D+'
   },
   {
     label: 'Grade D',
-    value: 9
+    value: 'Grade D'
   },
   {
     label: 'Grade E+',
-    value: 10
+    value: 'Grade E+'
   },
   {
     label: 'Grade E',
-    value: 11
+    value: 'Grade E'
   }
 ]
 
@@ -2811,6 +2840,28 @@ export const LEAVE_TYPES = [
   {
     label: 'Full Day',
     value: 'Full day'
+  }
+]
+
+export const LEAVE_CATEGORY = [
+  {
+    label: 'Time Off',
+    value: 'Time Off'
+  },
+  {
+    label: 'Leave of Absence',
+    value: 'Leave of Absence'
+  }
+]
+
+export const LEAVE_BUCKET = [
+  {
+    label: 'Annual Leave',
+    value: 'Annual Leave'
+  },
+  {
+    label: 'Unpaid',
+    value: 'Unpaid'
   }
 ]
 
@@ -3293,6 +3344,121 @@ export const DOCUMENT_CHARGE_TYPES = [
   { label: 'Discount', value: 'Discount' }
 ]
 
+export const DISABILITY_OPTIONS = [
+  { label: 'Autism', value: 'Autism' },
+  { label: 'Deaf-Blindness', value: 'Deaf-Blindness' },
+  { label: 'Deafness', value: 'Deafness' },
+  { label: 'Developmental Delay', value: 'Developmental Delay' },
+  { label: 'Emotional Disturbance', value: 'Emotional Disturbance' },
+  { label: 'Hearing Impairment', value: 'Hearing Impairment' },
+  { label: 'Mental Retardation', value: 'Mental Retardation' },
+  { label: 'Multiple Disabilities', value: 'Multiple Disabilities' },
+  { label: 'Orthopedic Impairment', value: 'Orthopedic Impairment' },
+  { label: 'Other Health Impairment', value: 'Other Health Impairment' },
+  { label: 'Specific Learning Disability', value: 'Specific Learning Disability' },
+  { label: 'Speech or Language Impairment', value: 'Speech or Language Impairment' },
+  { label: 'Traumatic Brain Injury', value: 'Traumatic Brain Injury' },
+  { label: 'Visual Impairment Including Blindness', value: 'Visual Impairment Including Blindness' }
+]
+
+export const CITIZENSHIP = [
+  {
+    label: 'Family Citizenship',
+    value: 'Family Citizenship'
+  },
+  {
+    label: 'Citizenship by Birth',
+    value: 'Citizenship by Birth'
+  },
+  {
+    label: 'Naturalisation',
+    value: 'Naturalisation'
+  },
+  {
+    label: 'Citizenship by Marriage',
+    value: 'Citizenship by Marriage'
+  },
+  {
+    label: 'Economic Citizenship',
+    value: 'Economic Citizenship'
+  }
+]
+
+export const RELIGION = [
+  {
+    label: 'Judaism',
+    value: 'Judaism'
+  },
+  {
+    label: 'Buddhism',
+    value: 'Buddhism'
+  },
+  {
+    label: 'Hinduism',
+    value: 'Hinduism'
+  },
+  {
+    label: 'Christianity',
+    value: 'Christianity'
+  },
+  {
+    label: 'Islam',
+    value: 'Islam'
+  },
+  {
+    label: 'Sikhism',
+    value: 'Sikhism'
+  },
+  {
+    label: 'Jainism',
+    value: 'Jainism'
+  },
+  {
+    label: 'Confucianism',
+    value: 'Confucianism'
+  },
+  {
+    label: 'Taoism',
+    value: 'Taoism'
+  },
+  {
+    label: 'Shinto',
+    value: 'Shinto'
+  },
+  {
+    label: 'Baháʼí Faith',
+    value: 'Baháʼí Faith'
+  },
+  {
+    label: 'Folk religions',
+    value: 'Folk religions'
+  },
+  {
+    label: 'Animism',
+    value: 'Animism'
+  },
+  {
+    label: 'Atheism',
+    value: 'Atheism'
+  },
+  {
+    label: 'Catholic patients',
+    value: 'Catholic patients'
+  },
+  {
+    label: 'Monotheism',
+    value: 'Monotheism'
+  },
+  {
+    label: 'Polytheism',
+    value: 'Polytheism'
+  },
+  {
+    label: 'Zoroastrianism',
+    value: 'Zoroastrianism'
+  }
+]
+
 export const JOURNAL_VOUCHER = [
   { label: 'Journal Voucher', value: 'JORVOU' },
   { label: 'Bank Asset', value: 'BACAST' },
@@ -3414,6 +3580,41 @@ export const getTransactionCodeName = (code) => {
   }
 }
 
+export const PAY_GROUP = [
+  {
+    label: 'Salaried Employees',
+    value: 'Salaried Employees'
+  },
+  {
+    label: 'Hourly Employees',
+    value: 'Hourly Employees'
+  },
+  {
+    label: 'Seasonal Hourly Employees',
+    value: 'Seasonal Hourly Employees'
+  }
+]
+
+export const REGION_OPTIONS = [
+  { value: 'North America', label: 'North America' },
+  { value: 'South America', label: 'South America' },
+  { value: 'Europe', label: 'Europe' },
+  { value: 'Asia', label: 'Asia' },
+  { value: 'Africa', label: 'Africa' },
+  { value: 'Australia', label: 'Australia' },
+  { value: 'Antarctica', label: 'Antarctica' }
+]
+
+export const JOBBANDS_OPTIONS = [
+  { value: '1', label: '1' },
+  { value: '2', label: '2' },
+  { value: '3', label: '3' },
+  { value: '4', label: '4' },
+  { value: '5', label: '5' },
+  { value: '6', label: '6' },
+  { value: '7', label: '7' }
+]
+
 export const LOCATIONS = [
   { label: 'Bangalore', value: 'Bangalore' },
   { label: 'Chennai', value: 'Chennai' },
@@ -3421,7 +3622,7 @@ export const LOCATIONS = [
 ]
 
 export const JOB_LEVEL = [
-  { label: 'Associate (T1)', value: 'Bangalore' },
+  { label: 'Associate (T1)', value: 'Associate (T1)' },
   { label: 'Specialist (T2)', value: 'Specialist (T2)' },
   { label: 'Senior Specialist (T3)', value: 'Senior Specialist (T3)' }
 ]
@@ -3441,4 +3642,21 @@ export const EMPLOYEE_SUBGROUP = [
   { label: 'Hourly Wage', value: 'Hourly Wage' },
   { label: 'Salary Packaging', value: 'Salary Packaging' },
   { label: 'Bi-Weekly Salaried', value: 'Bi-Weekly Salaried' }
+]
+
+export const SHIFT_OPTIONS = [
+  { label: 'One Shift', value: 'One Shift' },
+  { label: 'Two Shift', value: 'Two Shift' },
+  { label: 'Three Shift', value: 'Three Shift' },
+  { label: 'Weekend Shift', value: 'Weekend Shift' }
+]
+
+export const DAYS_OPTIONS = [
+  { label: 'Mon', value: 'Mon' },
+  { label: 'Tue', value: 'Tue' },
+  { label: 'Wed', value: 'Wed' },
+  { label: 'Thu', value: 'Thu' },
+  { label: 'Fri', value: 'Fri' },
+  { label: 'Sat', value: 'Sat' },
+  { label: 'Sun', value: 'Sun' }
 ]

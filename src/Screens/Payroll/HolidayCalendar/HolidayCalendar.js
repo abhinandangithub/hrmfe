@@ -2,7 +2,7 @@ import { FunnelPlotOutlined, SettingOutlined } from '@ant-design/icons'
 import { Button, Col, Layout, Row } from 'antd'
 import moment from 'moment'
 import React from 'react'
-import { withRouter } from 'react-router-dom'
+
 import { getHolidayList } from '../../../Actions/UserAction'
 import LoaderBox from '../../../Components/LoaderBox/LoaderBox'
 import TableBox from '../../../Components/TableBox/TableBox'
@@ -70,7 +70,7 @@ class Holidaycalendar extends React.Component {
           <div className="btn-group">
             <button
               type="button"
-              onClick={() => this.props.history.push(`/app/edit-holiday-calendar/${row._id}`)}
+              onClick={() => this.props.history(`/app/edit-holiday-calendar/${row._id}`)}
               className="btn glow dropdown-toggle">
               <SettingOutlined />
             </button>
@@ -99,7 +99,7 @@ class Holidaycalendar extends React.Component {
           <div className="filter-section">
             <button
               type="button"
-              onClick={() => this.props.history.push('/app/add-holiday-calendar')}
+              onClick={() => this.props.history('/app/add-holiday-calendar')}
               className="btn-glow btn-block primary">
               <i className="flaticon-plus" />
               Add Holiday Calendar
@@ -153,7 +153,7 @@ class Holidaycalendar extends React.Component {
                   <div className="add-new-invoice-button">
                     <button
                       type="button"
-                      onClick={() => this.props.history.push('/app/add-holiday-calendar')}
+                      onClick={() => this.props.history('/app/add-holiday-calendar')}
                       className="btn-glow btn-block primary">
                       Add Holiday calendar
                     </button>
@@ -177,4 +177,4 @@ class Holidaycalendar extends React.Component {
   }
 }
 
-export default withRouter(Holidaycalendar)
+export default Holidaycalendar

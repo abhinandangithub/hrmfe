@@ -7,7 +7,7 @@ import FooterActions from '../../../Components/FooterActions'
 import TableBox from '../../../Components/TableBox/TableBox'
 import PanelLayout from '../../../Layout/PanelLayout'
 import TableLayout from '../../../Layout/TableLayout'
-import { history } from '../../../Routes'
+import { useNavigate } from 'react-router-dom';
 import apiClient from '../../../Util/apiClient'
 import InventoryCard from './InventoryCard'
 
@@ -90,7 +90,7 @@ function ViewInventory({
       }
     })
   }
-
+  history = useNavigate()
   useEffect(() => {
     getData()
   }, [])
@@ -103,7 +103,7 @@ function ViewInventory({
     }
     apiClient.put(`asset-inventory/update-id/${id}`, value).then(({ status }) => {
       if (status === 200) {
-        history.push('/app/asset-inventories')
+        history('/app/asset-inventories')
       }
     })
   }

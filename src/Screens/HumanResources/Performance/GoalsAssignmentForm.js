@@ -46,7 +46,7 @@ const GoalsAssignmentForm = (props) => {
           {
             prefix: 'flaticon-back',
             label: 'Back to Assign Goals List',
-            onClick: () => props.history.push('/app/goal-assignment')
+            onClick: () => props.history('/app/goal-assignment')
           }
         ]}
         centerActions={[

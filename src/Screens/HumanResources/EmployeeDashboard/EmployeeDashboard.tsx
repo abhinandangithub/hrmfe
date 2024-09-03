@@ -2,7 +2,7 @@ import { EditOutlined } from '@ant-design/icons'
 import { Col, Row } from 'antd'
 import { ColumnType } from 'antd/lib/table'
 import { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate  } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Button from '../../../Components/Button'
 import TableBox from '../../../Components/TableBox/TableBox'
@@ -45,7 +45,7 @@ export default function EmployeeDashboard() {
 
   const { t } = useTranslation()
 
-  const history = useHistory()
+  const history = useNavigate()
 
   const getData = (params?: TRecord) => {
     const filterCache: TRecord = GET_DATA('employeeLoans.filterData') || {}
@@ -106,7 +106,7 @@ export default function EmployeeDashboard() {
         dataIndex: 'custom_action',
         render: (text, row) => (
           <div className="btn-group">
-            <Button onClick={() => history.push(`/app/edit-employee-loan/${row.id}`)} className="btn-glow">
+            <Button onClick={() => history(`/app/edit-employee-loan/${row.id}`)} className="btn-glow">
               <EditOutlined />
             </Button>
           </div>

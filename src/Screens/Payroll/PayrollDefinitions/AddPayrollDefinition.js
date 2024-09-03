@@ -2,7 +2,7 @@ import { EllipsisOutlined } from '@ant-design/icons'
 import { Col, message, Popover, Row } from 'antd'
 import { withFormik } from 'formik'
 import { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate , useParams } from 'react-router-dom'
 import * as Yup from 'yup'
 import { getCountries } from '../../../Actions/UserAction'
 import FooterActions from '../../../Components/FooterActions'
@@ -13,7 +13,7 @@ import { STATUS } from '../../../Util/Options'
 import ProfitLossTemplate from './ProfitLossTemplate'
 
 const AddPayrollDefinition = ({ values, setValues }) => {
-  const history = useHistory()
+  const history = useNavigate()
   const { id } = useParams()
   const [dataSource, setDataSource] = useState([
     {
@@ -150,7 +150,7 @@ const AddPayrollDefinition = ({ values, setValues }) => {
           message.success('Payroll Defintion created successfully')
           setDataSource(data.result?.profitAndLoss)
           setValues({ ...data.result })
-          history.push('/app/payroll-definitions')
+          history('/app/payroll-definitions')
         }
       } catch (error) {
         console.error('ADD_PAYROLL_DEFINITION_ERROR', error)

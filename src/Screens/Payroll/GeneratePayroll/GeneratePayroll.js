@@ -2,7 +2,7 @@ import { FunnelPlotOutlined } from '@ant-design/icons'
 import { Button, Col, Layout, Row } from 'antd'
 import moment from 'moment'
 import React from 'react'
-import { withRouter } from 'react-router-dom'
+
 import { generatePayroll } from '../../../Actions/UserAction'
 import ModalBox from '../../../Components/ModalBox/ModalBox'
 import TableBox from '../../../Components/TableBox/TableBox'
@@ -89,7 +89,7 @@ class GeneratePayroll extends React.Component {
           {/* <div className="filter-section">
               <button
                 type="button"
-                onClick={() => this.props.history.push('/app/add-holiday-calendar')}
+                onClick={() => this.props.history('/app/add-holiday-calendar')}
                 className="btn-glow btn-block primary">
                 Add Holiday Calendar
               </button>
@@ -142,7 +142,7 @@ class GeneratePayroll extends React.Component {
                   <div className="add-new-invoice-button">
                     <button
                       type="button"
-                      onClick={() => this.props.history.push('/app/add-holiday-calendar')}
+                      onClick={() => this.props.history('/app/add-holiday-calendar')}
                       className="btn-glow btn-block primary">
                       Add Holiday calendarsss
                     </button>
@@ -175,4 +175,4 @@ class GeneratePayroll extends React.Component {
   }
 }
 
-export default withRouter(GeneratePayroll)
+export default GeneratePayroll

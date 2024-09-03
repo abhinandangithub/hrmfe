@@ -1,6 +1,6 @@
 import { createBrowserHistory } from 'history'
 import { memo } from 'react'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import {  Route, Routes,Navigate } from 'react-router-dom'
 import { FullLoader } from '../Components/LoaderBox/Loader'
 import NotFound from './NotFound'
 
@@ -74,23 +74,20 @@ const routes = [
   }
 ]
 
-function Routes() {
+function RoutesComponent() {
   return (
-    <Switch>
+    <Routes>
       {routes.map(({ path, screen, exact = true, headerFooter = true, metaObj }) => (
         <Route
           key={path}
-          exact={exact}
           path={path}
-          render={(props) => (
-            <RouteWrapper {...props} headerFooter={headerFooter} metaObj={metaObj} screen={screen} />
-          )}
+          element={<RouteWrapper headerFooter={headerFooter} metaObj={metaObj} screen={screen} />}
         />
       ))}
-      <Redirect from="/app" to="/login" />
-      <Route component={NotFound} />
-    </Switch>
+      <Route path="/app" element={<Navigate to="/login" />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   )
 }
 
-export default memo(Routes)
+export default memo(RoutesComponent)

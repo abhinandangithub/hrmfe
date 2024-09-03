@@ -3,6 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { addTimeEntry, updateTimeEntry } from '../../../Actions/UserAction'
 import InputBox from '../../../Components/InputBox/InputBox'
+import ModalBox from '../../../Components/ModalBox/ModalBox'
 import { convertMinutesToHours, getStartAndEndWeek, TIME_ENABLED_STATUS } from '../../../Util/Util'
 import '../Week.scss'
 
@@ -15,8 +16,18 @@ class WeekList extends React.Component {
       visible: false,
       isSubmit: false,
       type: '',
-      loading: false
+      loading: false,
+      openAdd: false,
+      viewHourEntry: []
     }
+  }
+
+  componentDidMount() {
+    const { projectData, weeks, timeEntries } = this.props
+    console.log(weeks)
+    console.log(projectData, timeEntries)
+
+    // timeEntries.find()
   }
 
   onSelectDate = (selectedDate) => {
@@ -25,6 +36,10 @@ class WeekList extends React.Component {
 
   onChangeText = (value, type) => {
     this.setState({ [type]: value })
+  }
+
+  onCancel = () => {
+    this.setState({ openAdd: false })
   }
 
   onBlurHours = (value, type, selectedDate) => {
@@ -119,16 +134,58 @@ class WeekList extends React.Component {
     }
   }
 
+  checkValidation = (day) => {
+    const timeEntry = this.props.timeEntries
+    const findEntry = timeEntry.filter((x) => x.type === '2')
+
+    if (findEntry?.length) {
+      const splitDay = day.split('-')
+
+      const testDate = splitDay[2] * 1
+      const testMonth = splitDay[1] * 1
+      const testYr = splitDay[0] * 1
+
+      const findExactDay = findEntry.find(
+        (y) => y.date === testDate && y.month === testMonth && y.year === testYr
+      )
+
+      if (findExactDay) {
+        const filterExact = findEntry.filter(
+          (y) => y.date === testDate && y.month === testMonth && y.year === testYr
+        )
+        return (
+          <a
+            // className="small-font"
+            style={{ fontSize: '12px' }}
+            onClick={() =>
+              this.setState((prevState) => {
+                console.log('prevState', prevState)
+                return {
+                  ...prevState,
+                  openAdd: true,
+                  viewHourEntry: filterExact
+                }
+              })
+            }>
+            View Hour Entry
+          </a>
+        )
+      }
+    }
+  }
+
   render() {
     const { projectData, weeks } = this.props
+    // console.log('weeeek', weeks, projectData)
+    // console.log('timeEntries', this.props.timeEntries)
     const clientName =
       projectData.clientData && projectData.clientData.name
         ? projectData.clientData.name
         : this.props.companyInfo.name
 
     return (
-      <tr className="week-view-entry">
-        <td className="name">
+      <tr className="week-view-entry align-items-center" style={{ height: '100px' }}>
+        <td className="name" style={{ verticalAlign: 'top' }}>
           <div className="project-client">
             <span className="project">{projectData.label}</span>
             <span className="client">({clientName})</span>
@@ -145,29 +202,64 @@ class WeekList extends React.Component {
                 ? 'timer_count'
                 : 'time'
             }
-            className="day">
+            className="day"
+            style={{ verticalAlign: 'top' }}>
             {TIME_ENABLED_STATUS.indexOf(this.props.weekStatus) >= 0 ? (
-              <InputBox
-                id={`${day}-${projectData.project}`}
-                value={
-                  this.state[`${day}-${projectData.project}`] ||
-                  (projectData[day] ? convertMinutesToHours(projectData[day]) : '')
-                }
-                onChangeText={this.onChangeText}
-                onBlur={(value, type) => this.onBlurHours(value, type, day)}
-                disabled={
-                  this.props.companyInfo?.configurations?.timeEntryFutureDate === 'Yes'
-                    ? false
-                    : moment() <= moment(day)
-                }
-              />
+              <div>
+                <InputBox
+                  id={`${day}-${projectData.project}`}
+                  value={
+                    this.state[`${day}-${projectData.project}`] ||
+                    (projectData[day] ? convertMinutesToHours(projectData[day]) : '')
+                  }
+                  onChangeText={this.onChangeText}
+                  onBlur={(value, type) => this.onBlurHours(value, type, day)}
+                  disabled={
+                    this.props.companyInfo?.configurations?.timeEntryFutureDate === 'Yes'
+                      ? false
+                      : moment() <= moment(day)
+                  }
+                />
+                {this.checkValidation(day)}
+              </div>
             ) : (
               convertMinutesToHours(projectData[day])
             )}
           </td>
         ))}
-        <td className="total">{convertMinutesToHours(projectData.projectTotalMinutes)}</td>
-        <td className="delete js-end-of-week-row " />
+        <td className="total" style={{ verticalAlign: 'top' }}>
+          {convertMinutesToHours(projectData.projectTotalMinutes)}
+        </td>
+        {/* <td className="delete js-end-of-week-row " /> */}
+        <ModalBox
+          title="Enter time for"
+          visible={this.state.openAdd}
+          footer={null}
+          onCancel={() => this.onCancel()}
+          destroyOnClose>
+          <table className="table table-bordered">
+            <thead>
+              <tr>
+                <td>Date</td>
+                <td>From</td>
+                <td>To</td>
+                <td>Hour</td>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.viewHourEntry.map((x) =>
+                x.hourEntry.map((a, i) => (
+                  <tr key={i}>
+                    <td>{`${x.date}-${x.month}-${x.year}`}</td>
+                    <td>{a.fromHour}</td>
+                    <td>{a.toHour}</td>
+                    <td>{a.totalHoursPerField}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </ModalBox>
       </tr>
     )
   }

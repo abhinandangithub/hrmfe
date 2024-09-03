@@ -1,226 +1,328 @@
-import { CaretRightOutlined } from '@ant-design/icons'
-import { Col, Collapse, Row, Space } from 'antd'
+import { EditOutlined } from '@ant-design/icons'
+import { Col, Row } from 'antd'
+import { withFormik } from 'formik'
+import { isEmpty } from 'lodash'
+import moment from 'moment'
+import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Field } from '../../../Components/Formik'
-import { COUNTRIES } from '../../../Util/Options'
+import * as Yup from 'yup'
+import Button from '../../../Components/Button'
+import ButtonBox from '../../../Components/ButtonBox/ButtonBox'
+import ModalBox from '../../../Components/ModalBox/ModalBox'
+import TableBox from '../../../Components/TableBox/TableBox'
+import Panel from '../../../Layout/Panel'
+import PanelLayout from '../../../Layout/PanelLayout'
+import apiClient from '../../../Util/apiClient'
+import CurrentAddressForm from './CurrentAddressForm'
+import PermanentAddressForm from './PermanentAddressForm'
+// import { Field } from '../../../Components/Formik'
+// import { COUNTRIES } from '../../../Util/Options'
 
-const { Panel } = Collapse
+const Schema = Yup.object().shape({
+  buildingNo: Yup.string().required(),
+  street: Yup.string().required(),
+  additionalStreet: Yup.string().required(),
+  city: Yup.string().required(),
+  state: Yup.string().required(),
+  country: Yup.string().required(),
+  currentAddress: Yup.boolean(),
+  permanentAddress: Yup.boolean(),
+  postalCode: Yup.string().required(),
+
+  neighborhood: Yup.string().nullable(),
+  additionalNo: Yup.string().nullable(),
+  validFrom: Yup.date()
+    .default(() => new Date())
+    .required('Valid From date is required')
+    .nullable(),
+  validTo: Yup.date()
+    .default(() => new Date('9999-12-31'))
+    .nullable()
+})
 
 const ContactDetails = (props) => {
-  const { values = {}, editable } = props
+  const {
+    values = {},
+    resetForm,
+    currentEmployee,
+    handleValueChange,
+    submitForm,
+    errors,
+    employeeId,
+    setValues
+  } = props
+  const [toggle, setToggle] = useState(false)
+  const [toggle1, setToggle1] = useState(false)
+  const [addressData, setAddressData] = useState(null)
+  const [currentAddressData, setCurrentAddressData] = useState([])
+  const [permAddressData, setPermAddressData] = useState([])
+  const [activeData, setActiveData] = useState(null)
+  const [activePerData, setActivePerData] = useState(null)
+
+  useEffect(() => {
+    getDetails()
+  }, [employeeId])
+
+  useEffect(() => {
+    const findActive = currentAddressData.find((x) => x.isActive)
+    const findPerActive = permAddressData.find((x) => x.isActive)
+
+    if (findActive) {
+      setActiveData(findActive)
+    }
+    if (findPerActive) {
+      setActivePerData(findPerActive)
+    }
+  }, [currentAddressData, permAddressData])
+
+  const getDetails = () => {
+    apiClient.get(`employee-details/contact-details/get/${employeeId}`).then(({ data }) => {
+      if (data && data.result) {
+        const curAdd = data.result.filter((x) => x.currentAddress)
+        setCurrentAddressData(curAdd)
+        const perAdd = data.result.filter((x) => x.permanentAddress)
+        setPermAddressData(perAdd)
+
+        setValues({ ...values, ...data.result, employee: employeeId })
+      }
+    })
+  }
+
+  const columns = [
+    {
+      title: props.t('Valid From'),
+      dataIndex: 'validFrom',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Valid To'),
+      dataIndex: 'validTo',
+      render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '')
+    },
+    {
+      title: props.t('Building No'),
+      dataIndex: 'buildingNo'
+    },
+    {
+      title: props.t('Street'),
+      dataIndex: 'street'
+    },
+    {
+      title: props.t('Additional Street'),
+      dataIndex: 'additionalStreet'
+    },
+    {
+      title: props.t('City'),
+      dataIndex: 'city'
+    },
+    {
+      title: props.t('State'),
+      dataIndex: 'state'
+    },
+    {
+      title: props.t('PostalCode'),
+      dataIndex: 'postalCode'
+    },
+    {
+      title: props.t('Country'),
+      dataIndex: 'country'
+    },
+    {
+      title: props.t('Neighborhood'),
+      dataIndex: 'neighborhood'
+    },
+    {
+      title: props.t('Additional No'),
+      dataIndex: 'additionalNo'
+    },
+    {
+      title: props.t('Action'),
+      dataIndex: 'custom_action',
+      render: (_, row) => (
+        <Button onClick={() => tableActions(row)} className="btn glow dropdown-toggle">
+          <EditOutlined />
+        </Button>
+      )
+    }
+  ]
+
+  const tableActions = (val) => {
+    setValues({ ...values, ...val })
+    console.log('val', val)
+    setAddressData(val)
+    if (val.currentAddress) {
+      setToggle(true)
+    }
+    if (val.permanentAddress) {
+      setToggle1(true)
+    }
+  }
+
+  const handleCurrentAdd = () => {
+    setValues({ ...values, ...activeData })
+    setToggle(true)
+  }
+
+  const handlePermanentAdd = () => {
+    setValues({ ...values, ...activePerData })
+    setToggle1(true)
+  }
+
+  const onSave = async (type) => {
+    console.log('type', type)
+    try {
+      // Validate form
+      await submitForm() // This should trigger Formik's validation
+      console.log('errors', errors)
+      if (isEmpty(errors)) {
+        console.log('values', values)
+        const param = {
+          validFrom: values.validFrom,
+          validTo: values.validTo,
+          buildingNo: values.buildingNo,
+          street: values.street,
+          additionalStreet: values.additionalStreet,
+          city: values.city,
+          state: values.state,
+          country: values.country,
+          currentAddress: type === 'CURRENT',
+          permanentAddress: type === 'PER',
+          postalCode: values.postalCode,
+          neighborhood: values.neighborhood,
+          additionalNo: values.additionalNo,
+          employee: employeeId
+        }
+        let result
+        if (addressData?.id) {
+          result = await apiClient.put(`employee-details/contact-details/update/${addressData?.id}`, param)
+        } else {
+          result = await apiClient.post('employee-details/contact-details/add', param)
+        }
+        console.log('result', result)
+        if (result.data && result.data.result) {
+          if (type === 'CURRENT') {
+            setToggle(false)
+          } else if (type === 'PER') {
+            setToggle1(false)
+          }
+          setAddressData(null)
+          getDetails()
+        }
+      }
+    } catch {}
+  }
 
   return (
-    <Space direction="vertical" size="large" className="w-100">
-      <Collapse
-        collapsible="header"
-        expandIconPosition="right"
-        expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 270 : 90} />}
-        bordered>
-        <Panel style={{ fontSize: 16, fontWeight: 'bold' }} header={props.t('Current Address')} key="2">
-          {!editable && (
-            <div className="basic-details">
-              <Row justify="left" gutter={(12, 10)}>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Building No')}</span>
-                  <p>{values.currentAddress?.buildingNo || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('street')}</span>
-                  <p>{values.currentAddress?.street || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Additional Street')}</span>
-                  <p>{values.currentAddress?.additionalStreet || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('City')}</span>
-                  <p>{values.currentAddress?.city || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('State')}</span>
-                  <p>{values.currentAddress?.state || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('PostalCode')}</span>
-                  <p>{values.currentAddress?.postalCode || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Country')}</span>
-                  <p>{values.currentAddress?.country || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Neighborhood')}</span>
-                  <p>{values.currentAddress?.neighborhood || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Additional No')}</span>
-                  <p>{values.currentAddress?.additionalNo || '-'}</p>
-                </Col>
-              </Row>
+    <>
+      <PanelLayout>
+        <Panel
+          title="Current Address"
+          button={
+            <div className="align-right">
+              <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleCurrentAdd}>
+                <i className="flaticon-plus" /> {props.t('Add')}
+              </ButtonBox>
             </div>
-          )}
-          {editable && (
-            <div>
-              <Row justify="left" gutter={(12, 10)}>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.buildingNo" label="Building No" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.street" label="Street" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.additionalStreet" label="Additional Street" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.city" label="City" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.state" label="State" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.postalCode" label="Postal Code" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.country" label="Country" as="select" options={COUNTRIES} />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.neighborhood" label="Neighborhood" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="currentAddress.additionalNo" label="Additional No" />
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          )}
+          }>
+          <div className="panel-with-border">
+            <Row justify="left" gutter={(12, 10)}>
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
+                <div className="table-view">
+                  <TableBox
+                    columns={columns}
+                    actionIndex="custom_action"
+                    cardHeaderIndex="status"
+                    cardFirstLabelIndex="docno"
+                    dataSource={currentAddressData}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </div>
         </Panel>
-      </Collapse>
+        <Panel
+          title="Permanent Address"
+          button={
+            <div className="align-right">
+              <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handlePermanentAdd}>
+                <i className="flaticon-plus" /> {props.t('Add')}
+              </ButtonBox>
+            </div>
+          }>
+          <div className="panel-with-border">
+            <Row justify="left" gutter={(12, 10)}>
+              <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
+                <div className="table-view">
+                  <TableBox
+                    columns={columns}
+                    actionIndex="custom_action"
+                    cardHeaderIndex="status"
+                    cardFirstLabelIndex="docno"
+                    dataSource={permAddressData}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </div>
+        </Panel>
+      </PanelLayout>
+      <ModalBox
+        title={`${props.t(addressData ? 'Edit' : 'Add')} ${props.t('Current Address')}`}
+        visible={toggle}
+        onCancel={() => {
+          setToggle(false)
+          resetForm()
+          setAddressData(null)
+        }}
+        width={700}
+        okText="Save"
+        onOk={() => onSave('CURRENT')}
+        destroyOnClose>
+        <CurrentAddressForm
+          currentEmployee={currentEmployee}
+          currentDetails={values}
+          handleValueChange={handleValueChange}
+        />
+      </ModalBox>
 
-      <Collapse
-        collapsible="header"
-        expandIconPosition="right"
-        expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 270 : 90} />}
-        bordered>
-        <Panel style={{ fontSize: 16, fontWeight: 'bold' }} header={props.t('Permanent Address')} key="3">
-          {!editable && (
-            <div className="basic-details">
-              <Row justify="left" gutter={(12, 10)}>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Building No')}</span>
-                  <p>{values.permanentAddress?.buildingNo || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('street')}</span>
-                  <p>{values.permanentAddress?.street || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Additional Street')}</span>
-                  <p>{values.permanentAddress?.additionalStreet || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('City')}</span>
-                  <p>{values.permanentAddress?.city || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('State')}</span>
-                  <p>{values.permanentAddress?.state || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('PostalCode')}</span>
-                  <p>{values.permanentAddress?.postalCode || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Country')}</span>
-                  <p>{values.permanentAddress?.country || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Neighborhood')}</span>
-                  <p>{values.permanentAddress?.neighborhood || '-'}</p>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <span>{props.t('Additional No')}</span>
-                  <p>{values.permanentAddress?.additionalNo || '-'}</p>
-                </Col>
-              </Row>
-            </div>
-          )}
-          {editable && (
-            <div className="position-relative ">
-              <div
-                className="same-as-shipping-container mt-3"
-                onClick={() => props.setFieldValue('permanentAddress', values.currentAddress)}>
-                <i className="flaticon-plus" /> Same as Current Address
-              </div>
-              <Row justify="left" gutter={(12, 10)}>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.buildingNo" label="Building No" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.street" label="Street" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.additionalStreet" label="Additional Street" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.city" label="City" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.state" label="State" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.postalCode" label="Postal Code" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.country" label="Country" as="select" options={COUNTRIES} />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.neighborhood" label="Neighborhood" />
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={8} lg={8}>
-                  <div className="form-field">
-                    <Field name="permanentAddress.additionalNo" label="Additional No" />
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          )}
-        </Panel>
-      </Collapse>
-    </Space>
+      <ModalBox
+        title={`${props.t(addressData ? 'Edit' : 'Add')} ${props.t('Permanent Address')}`}
+        visible={toggle1}
+        onCancel={() => {
+          setToggle1(false)
+          resetForm()
+          setAddressData(null)
+        }}
+        width={700}
+        okText="Save"
+        onOk={() => onSave('PER')}
+        destroyOnClose>
+        <PermanentAddressForm
+          currentEmployee={currentEmployee}
+          currentDetails={values}
+          handleValueChange={handleValueChange}
+        />
+      </ModalBox>
+    </>
   )
 }
 
-export default withTranslation()(ContactDetails)
+export default withFormik({
+  mapPropsToValues: () => ({
+    buildingNo: '',
+    street: '',
+    additionalStreet: '',
+    city: '',
+    state: '',
+    country: '',
+    currentAddress: false,
+    permanentAddress: false,
+    postalCode: '',
+    neighborhood: '',
+    additionalNo: '',
+    validFrom: new Date(),
+    validTo: new Date('9999-12-31')
+  }),
+  validationSchema: Schema,
+  handleSubmit: () => null
+})(withTranslation()(ContactDetails))

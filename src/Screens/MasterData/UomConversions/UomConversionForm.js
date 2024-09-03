@@ -124,7 +124,7 @@ function UomConversionForm({
               {
                 prefix: 'flaticon-back',
                 label: 'Back',
-                onClick: () => history.push('/app/uom-conversions')
+                onClick: () => history('/app/uom-conversions')
               }
             ]}
             centerActions={[
@@ -165,13 +165,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`uom-conversions/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/uom-conversions')
+          history('/app/uom-conversions')
         }
       })
     } else {
       apiClient.post('uom-conversions/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/uom-conversions')
+          history('/app/uom-conversions')
         }
       })
     }

@@ -1,13 +1,13 @@
 import { SettingOutlined } from '@ant-design/icons'
 import { Popconfirm, Popover } from 'antd'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate  } from 'react-router-dom'
 import TableBox from '../../../Components/TableBox/TableBox'
 import FilterLayout from '../../../Layout/FilterLayout'
 import TableLayout from '../../../Layout/TableLayout'
 import GoalsAssignmentFilter from './GoalsAssignmentFilter'
 
 export default function GoalsAssignment() {
-  const history = useHistory()
+  const history = useNavigate()
 
   const columns = [
     {
@@ -68,7 +68,7 @@ export default function GoalsAssignment() {
     <FilterLayout
       addButton={{
         title: 'Assign New Goal',
-        onClick: () => history.push('/app/assign-goal'),
+        onClick: () => history('/app/assign-goal'),
         access: 'add-goals'
       }}
       filter={<GoalsAssignmentFilter />}>

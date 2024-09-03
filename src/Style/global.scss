@@ -1279,6 +1279,14 @@ a.btn-glow.primary {
   }
 }
 
+#totalHoursStyle {
+  // width: 110px;
+  color: var(--primary);
+  font-size: 20px;
+  font-weight: bold;
+  padding: 5.2px 20px;
+}
+
 // form fields
 .form-fields label,
 .ant-modal-content .form-field label {

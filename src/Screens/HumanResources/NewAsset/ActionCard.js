@@ -7,7 +7,7 @@ export default function ActionCard(props) {
     <div
       className={clsx('action-card', props.item.disabled && 'bg-muted')}
       style={{ backgroundColor: props.item.color }}
-      onClick={() => !props.item.disabled && history.push(props.item.link)}>
+      onClick={() => !props.item.disabled && history(props.item.link)}>
       {props.item.name}
     </div>
   )

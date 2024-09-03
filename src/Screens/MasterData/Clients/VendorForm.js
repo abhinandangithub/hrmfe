@@ -98,7 +98,7 @@ function ClientForm({
         if (data?.result && data.result.type === 'Vendor') {
           setValues({ ...values, ...data.result })
         } else {
-          history.push('/app/vendors')
+          history('/app/vendors')
         }
       })
     }
@@ -531,13 +531,13 @@ export default withFormik({
       data.banks = data.banks.filter((v) => v.bankAccountNo)
       apiClient.put(`clients/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/vendors')
+          history('/app/vendors')
         }
       })
     } else {
       apiClient.post('clients/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/vendors')
+          history('/app/vendors')
         }
       })
     }

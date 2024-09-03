@@ -300,7 +300,7 @@ export default withFormik({
     } else {
       apiClient.post('companies/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/manage-company')
+          history('/app/manage-company')
         }
       })
     }

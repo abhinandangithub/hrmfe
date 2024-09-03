@@ -235,7 +235,7 @@ const DocumentDetails = (props) => {
           {
             prefix: 'flaticon-back',
             label: 'Back to employee list',
-            onClick: () => history.push('/app/employees')
+            onClick: () => history('/app/employees')
           }
         ]}
       />

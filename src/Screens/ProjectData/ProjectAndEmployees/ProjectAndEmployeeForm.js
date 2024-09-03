@@ -131,13 +131,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`projects/updateProjectAndEmployeeById/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/project-employees')
+          history('/app/project-employees')
         }
       })
     } else {
       apiClient.post('projects/addProjectAndEmployee', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/project-employees')
+          history('/app/project-employees')
         }
       })
     }

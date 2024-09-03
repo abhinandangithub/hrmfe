@@ -164,7 +164,7 @@ function Payrolls(props) {
             <div className="add-new-invoice-button">
               <button
                 type="button"
-                onClick={() => props.history.push('/app/add-country')}
+                onClick={() => props.history('/app/add-country')}
                 className="btn-glow btn-block primary">
                 {props.t('Add new country')}
               </button>

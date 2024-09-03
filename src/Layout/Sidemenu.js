@@ -48,7 +48,7 @@ export default class Sidemenu extends React.PureComponent {
                 title={this.props.collapsed ? '' : menu.name}>
                 {menu.subMenus.map((subMenu, subMenuInd) => (
                   <Menu.Item
-                    onClick={() => (subMenu.route ? this.props.history.push(`${url}/${subMenu.route}`) : {})}
+                    onClick={() => (subMenu.route ? this.props.history(`${url}/${subMenu.route}`) : {})}
                     key={`submenu${subMenuInd}`}
                     icon={<i className={subMenu.icon} style={{ paddingRight: 10 }} />}>
                     {subMenu.name}
@@ -60,7 +60,7 @@ export default class Sidemenu extends React.PureComponent {
 
           return (
             <Menu.Item
-              onClick={() => (menu.route ? this.props.history.push(`${url}/${menu.route}`) : {})}
+              onClick={() => (menu.route ? this.props.history(`${url}/${menu.route}`) : {})}
               key={`menu${menuInd}`}
               icon={<i className={menu.icon} style={{ paddingRight: 10 }} />}>
               {this.props.collapsed ? '' : menu.name}

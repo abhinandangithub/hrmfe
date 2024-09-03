@@ -2,7 +2,7 @@ import { SettingOutlined } from '@ant-design/icons'
 import { Col, message, Popconfirm, Popover, Row } from 'antd'
 import { withFormik } from 'formik'
 import { isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
 import * as Yup from 'yup'
 import ButtonBox from '../../../Components/ButtonBox/ButtonBox'
@@ -22,7 +22,7 @@ const Schema = Yup.object().shape({
 const SkillDetails = (props) => {
   const [toggle, setToggle] = useState(false)
   const [skillDetails, setSkillDetails] = useState([])
-  const { currentEmployee, values, setValues, submitForm, errors, resetForm } = props
+  const { currentEmployee, values, setValues, submitForm, errors, resetForm, restrictPage } = props
 
   useEffect(() => {
     if (currentEmployee?.id) {
@@ -140,15 +140,20 @@ const SkillDetails = (props) => {
   return (
     <Form>
       <PanelLayout>
-        <Panel title={props.t('Skill Details')}>
+        <Panel
+          title={props.t('Skill Details')}
+          button={
+            !restrictPage ? (
+              <div className="align-right">
+                <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
+                  <i className="flaticon-plus" /> {props.t('Add')}
+                </ButtonBox>
+              </div>
+            ) : null
+          }>
           <div className="panel-with-border">
             <Row justify="left" gutter={(12, 10)}>
               <Col xs={{ span: 24 }} sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 24 }}>
-                <div className="mb-3 align-right">
-                  <ButtonBox style={{ marginRight: 10 }} type="success" onClick={handleAddNewDetails}>
-                    <i className="flaticon-plus" /> {props.t('Add')}
-                  </ButtonBox>
-                </div>
                 <div className="table-view">
                   <TableBox
                     columns={columns}

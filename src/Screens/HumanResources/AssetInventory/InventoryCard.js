@@ -13,7 +13,7 @@ export default function InventoryCard(props) {
         key={i}
         className="inventory-card"
         style={{ backgroundColor: item.color }}
-        onClick={() => history.push(item.link)}>
+        onClick={() => history(item.link)}>
         {item.title}
         <div className="value">{item.value}</div>
       </Col>
@@ -24,7 +24,7 @@ export default function InventoryCard(props) {
     <div
       className="inventory-card flex-fill"
       style={{ backgroundColor: props.item.color }}
-      onClick={() => history.push(props.item.link)}>
+      onClick={() => history(props.item.link)}>
       {props.item.title}
       <div className="value"> {props.item.value}</div>
     </div>

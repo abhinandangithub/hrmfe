@@ -4,6 +4,7 @@ import type { DatePickerProps, RangePickerProps } from 'antd/lib/date-picker'
 import type { InputProps, TextAreaProps } from 'antd/lib/input'
 import type { RadioGroupProps } from 'antd/lib/radio'
 import type { SelectProps, SelectValue } from 'antd/lib/select'
+import type { TimePickerProps } from 'antd/lib/time-picker'
 import type { Moment } from 'moment'
 import type { RangeValue } from 'rc-picker/lib/interface'
 import type { OptionData, OptionsType } from 'rc-select/lib/interface'
@@ -32,6 +33,7 @@ export type ScanInputTypes = {
 }
 
 type BaseFormikTypes = {
+  mode: any
   name: string
   label?: string
   error?: string
@@ -41,6 +43,7 @@ type BaseFormikTypes = {
 } & AltInputTypes
 
 export type TInput = {
+  step: any
   disable: any
   placeholder?: string
   max?: number
@@ -118,6 +121,12 @@ export type TDatePicker = {
   onBlur?: (name: string, value: Moment | null) => void
 } & BaseFormikTypes &
   Omit<DatePickerProps, 'onChange' | 'onBlur'>
+
+export type TTimePicker = {
+  onChange?: (name: string, value: Moment | null) => void
+  onBlur?: (name: string, value: Moment | null) => void
+} & BaseFormikTypes &
+  Omit<TimePickerProps, 'onChange' | 'onBlur'>
 
 export type TDateRangePicker = {
   onChange?: (name: string, value: RangeValue<Moment>) => void

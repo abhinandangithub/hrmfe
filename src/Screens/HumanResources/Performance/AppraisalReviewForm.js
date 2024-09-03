@@ -48,7 +48,7 @@ const AppraisalReviewForm = (props) => {
           {
             prefix: 'flaticon-back',
             label: 'Back to Appraisal Review',
-            onClick: () => props.history.push('/app/appraisal-Rating')
+            onClick: () => props.history('/app/appraisal-Rating')
           }
         ]}
         centerActions={[

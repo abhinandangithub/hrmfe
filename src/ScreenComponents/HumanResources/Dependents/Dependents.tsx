@@ -45,6 +45,7 @@ const Dependents = (props: TProps) => {
     <>
       <PanelLayout>
         <DependentsDetails
+          restrictPage={restrictPage}
           dependents={dependents}
           currentEmployee={currentEmployee}
           getDependents={getDependents}
@@ -57,12 +58,12 @@ const Dependents = (props: TProps) => {
         leftActions={
           !restrictPage
             ? [
-                {
-                  prefix: 'flaticon-back',
-                  label: 'Back to employee list',
-                  onClick: () => history.push('/app/employees')
-                }
-              ]
+              {
+                prefix: 'flaticon-back',
+                label: 'Back to employee list',
+                onClick: () => history('/app/employees')
+              }
+            ]
             : []
         }
       />

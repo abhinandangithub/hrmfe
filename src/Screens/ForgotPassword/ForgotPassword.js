@@ -68,7 +68,7 @@ export default class ForgotPassword extends React.PureComponent {
       apiClient.put('users/resetPassword', { email, otp, password }).then(({ data }) => {
         if (data && data.result) {
           message.success('Password reset done')
-          this.props.history.push('/login')
+          this.props.history('/login')
         }
       })
     } else {

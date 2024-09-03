@@ -335,13 +335,13 @@ export default withFormik({
     if (id) {
       apiClient.put(`language/update/${id}`, data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/translate')
+          history('/app/translate')
         }
       })
     } else {
       apiClient.post('language/add', data).then(({ data }) => {
         if (data && data.result) {
-          history.push('/app/translate')
+          history('/app/translate')
         }
       })
     }

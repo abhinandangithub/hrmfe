@@ -84,4 +84,4 @@ const InsuranceDetailForm = (props) => {
   )
 }
 
-export default withTranslation(InsuranceDetailForm)
+export default withTranslation()(InsuranceDetailForm)

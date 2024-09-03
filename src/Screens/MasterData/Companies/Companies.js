@@ -1,205 +1,309 @@
-import { FunnelPlotOutlined, SettingOutlined } from '@ant-design/icons'
-import { Button, Col, Layout, Row } from 'antd'
-import React from 'react'
+/* eslint-disable no-unused-vars */
+import { Icon } from '@iconify/react'
+import { ButtonBase } from '@mui/material'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate  } from 'react-router-dom'
 import { getCompanies } from '../../../Actions/UserAction'
-import ModalBox from '../../../Components/ModalBox/ModalBox'
-import TableBox from '../../../Components/TableBox/TableBox'
-import { validateAccess } from '../../../Util/Util'
-import CompanyFilter from './CompanyFilter'
-import CompanyForm from './CompanyForm'
+import RowOptions from '../../../Components/TableBoxGrid/RowOptions'
+import TableBox from '../../../Components/TableBoxGrid/TableBox'
 
-const { Sider, Content } = Layout
+// const { Sider, Content } = Layout
 
-export default class Companies extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      // collapsed: false,
-      // sample: '',
-      // sample_select: '',
-      viewType: 'table',
-      companies: [],
-      filterview: 'filter'
-    }
-  }
+const Companies = () => {
+  const history = useNavigate()
+  const { t } = useTranslation()
+  // const [viewType, setViewType] = useState('table')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [companies, setCompanies] = useState([])
+  // const [filterView, setFilterView] = useState('filter')
+  // const [open, setOpen] = useState(false)
+  // const [selectedCompany, setSelectedCompany] = useState(null)
 
-  componentDidMount() {
+  useEffect(() => {
     getCompanies().then((companies) => {
       if (companies) {
-        this.setState({ companies })
+        setCompanies(companies)
       }
     })
-  }
-  // responsive filter starts
+  }, [])
 
-  responsiveFilter = () => {
-    const x = document.getElementById('mobile-sider-menu')
-
-    if (x.style.display === 'block') {
-      x.style.display = 'none'
-      this.setState({ filterview: 'filter' })
-    } else {
-      x.style.display = 'block'
-      this.setState({ filterview: 'filter' })
+  function tableAction(param) {
+    if (param.TYPE === 'EDIT') {
+      history(`/app/edit-company/${param.id}`)
     }
   }
-  // responsive filter ends
 
-  onChangeText = (value, type) => {
-    this.setState({ [type]: value })
-  }
+  const countryJson = {
+    title: 'Company Overview',
+    page: 'Company',
+    endpoint: 'companies/getAll',
+    setFilter: 'country.filterData',
 
-  onCancel = (company, type) => {
-    if (type === 'Add') {
-      const companies = [...this.state.companies, company]
-      this.setState({ open: false, selectedCompany: false, companies })
-    } else if (type === 'Update') {
-      const companies = this.state.companies.map((val) => (val.id === company.id ? company : val))
-      this.setState({ open: false, selectedCompany: false, companies })
-    }
+    table: {
+      header: [
+        {
+          flex: 0.25,
+          minWidth: 280,
+          field: 'name',
+          headerClassName: 'super-app-theme--header',
 
-    this.setState({ open: false, selectedCompany: false })
-  }
+          headerName: t('Name'),
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { name, id } = row
 
-  render() {
-    const columns = [
-      {
-        title: 'Name',
-        dataIndex: 'name'
-      },
-      {
-        title: 'Code',
-        dataIndex: 'code'
-      },
-      {
-        title: 'Currency',
-        dataIndex: 'currency'
-      },
-      {
-        title: 'VAT',
-        dataIndex: 'vat',
-        render: (text) => `${text}%`
-      },
-      validateAccess('edit-company')
-        ? {
-            title: 'Action',
-            dataIndex: 'custom_action',
-            render: (text, row) => (
-              <div className="btn-group">
-                <button
-                  type="button"
-                  onClick={() => this.props.history.push(`/app/edit-company/${row.id}`)}
-                  className="btn glow dropdown-toggle">
-                  {' '}
-                  <SettingOutlined />
-                </button>
-              </div>
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <ButtonBase
+                    onClick={() => {
+                      tableAction({ TYPE: 'EDIT', id })
+                    }}>
+                    <Typography
+                      noWrap
+                      sx={{
+                        fontWeight: 500,
+                        textDecoration: 'none',
+                        color: 'text.secondary',
+                        '&:hover': { color: 'primary.main' }
+                      }}>
+                      {name}
+                    </Typography>
+                  </ButtonBase>
+                </Box>
+              </Box>
             )
           }
-        : {}
-    ]
+        },
+        {
+          flex: 0.25,
+          minWidth: 280,
+          field: 'code',
+          headerClassName: 'super-app-theme--header',
 
-    return (
-      <Layout className="app-sidebar">
-        <div className="mobile-filter">
-          <button type="button" className="btn btn-glow">
-            {this.state.filterview === 'filter' ? (
-              <FunnelPlotOutlined onClick={this.responsiveFilter} />
-            ) : (
-              <FunnelPlotOutlined onClick={this.responsiveFilter} />
-            )}
-          </button>
-        </div>
-        <Sider width={230} trigger={null} collapsible collapsed={false} id="mobile-sider-menu">
-          {/* search filter starts  */}
+          headerName: t('Code'),
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { postalCode, id } = row
 
-          <CompanyFilter
-            {...this.props}
-            onFilter={this.onFilter}
-            onOpen={() => this.setState({ open: true })}
-          />
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <ButtonBase
+                    onClick={() => {
+                      tableAction({ TYPE: 'EDIT', id })
+                    }}>
+                    <Typography
+                      noWrap
+                      sx={{
+                        fontWeight: 500,
+                        textDecoration: 'none',
+                        color: 'text.secondary',
+                        '&:hover': { color: 'primary.main' }
+                      }}>
+                      {postalCode}
+                    </Typography>
+                  </ButtonBase>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        {
+          flex: 0.25,
+          minWidth: 280,
+          field: 'currency',
+          headerClassName: 'super-app-theme--header',
 
-          {/* search filter ends */}
-        </Sider>
-        <Layout className="site-layout">
-          <Content className="site-layout-background">
-            <div className="top-filter-options">
-              <Row>
-                <Col
-                  xs={{ span: 12, order: 1 }}
-                  sm={{ span: 12, order: 1 }}
-                  md={{ span: 12, order: 1 }}
-                  lg={{ span: 12, order: 1 }}>
-                  <h2>Company Overview</h2>
-                </Col>
+          headerName: t('Currency'),
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { currency, id } = row
 
-                <Col
-                  xs={{ span: 12, order: 2 }}
-                  sm={{ span: 12, order: 2 }}
-                  md={{ span: 12, order: 2 }}
-                  lg={{ span: 12, order: 2 }}>
-                  <div className="exports-and-settings">
-                    <ul>
-                      <li>
-                        <Button
-                          type="standard"
-                          className="ant-dropdown-link"
-                          onClick={() => this.setState({ viewType: 'table' })}>
-                          <i className="flaticon-table no-margin" />
-                        </Button>
-                      </li>
-                      <li>
-                        <Button
-                          type="standard"
-                          className="ant-dropdown-link"
-                          onClick={() => this.setState({ viewType: 'card' })}>
-                          <i className="flaticon-grid no-margin" />
-                        </Button>
-                      </li>
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <ButtonBase
+                    onClick={() => {
+                      tableAction({ TYPE: 'EDIT', id })
+                    }}>
+                    <Typography
+                      noWrap
+                      sx={{
+                        fontWeight: 500,
+                        textDecoration: 'none',
+                        color: 'text.secondary',
+                        '&:hover': { color: 'primary.main' }
+                      }}>
+                      {currency}
+                    </Typography>
+                  </ButtonBase>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        {
+          flex: 0.15,
+          minWidth: 280,
+          field: 'vat',
+          headerName: t('VAT'),
+          headerClassName: 'super-app-theme--header',
 
-                      <li>
-                        <Button type="standard" className="ant-dropdown-link" onClick={this.showModal}>
-                          <i className="flaticon-settings no-margin" />
-                        </Button>
-                      </li>
-                    </ul>
-                  </div>
-                </Col>
-                <Col
-                  xs={{ span: 24, order: 3 }}
-                  sm={{ span: 24, order: 3 }}
-                  md={{ span: 24, order: 3 }}
-                  lg={{ span: 0, order: 3 }}>
-                  <div className="add-new-invoice-button">
-                    <button
-                      type="button"
-                      onClick={() => this.props.history.push('/app/add-company')}
-                      className="btn-glow btn-block primary">
-                      Add new company
-                    </button>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <TableBox
-              viewType={this.state.viewType}
-              dataSource={this.state.companies}
-              columns={columns}
-              actionIndex="custom_action"
-              cardHeaderIndex="status"
-              cardFirstLabelIndex="docno"
+          disableColumnMenu: true,
+          renderCell: ({ row }: any) => {
+            const { tax, taxFormat } = row
+
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontWeight: 500,
+                      textDecoration: 'none',
+                      color: 'text.secondary'
+                    }}>
+                    {`${tax} ${taxFormat}`}
+                  </Typography>
+                </Box>
+              </Box>
+            )
+          }
+        },
+        {
+          flex: 0.1,
+          minWidth: 100,
+          sortable: false,
+          headerClassName: 'super-app-theme--header',
+
+          disableColumnMenu: true,
+          field: 'actions',
+          headerName: '',
+          renderHeader: () => (
+            <Icon
+              icon="lets-icons:setting-line-duotone-line"
+              fontSize="1.5rem"
+              className=""
+              style={{ marginLeft: '3px' }}
             />
-          </Content>
-        </Layout>
-        <ModalBox
-          title="Add Company"
-          visible={this.state.open}
-          footer={null}
-          onCancel={() => this.onCancel()}
-          destroyOnClose>
-          <CompanyForm onCancel={this.onCancel} selectedCompany={this.state.selectedCompany} />
-        </ModalBox>
-      </Layout>
-    )
+          ),
+          renderCell: ({ row }: any) => <RowOptions id={row.id} tableAction={(e: any) => tableAction(e)} />
+        }
+      ],
+      dataSource: []
+    },
+    export: {
+      header: ['Name', 'Code', 'Currency', 'VAT'],
+      data: ['name', 'countryCode', 'currency', 'tax'],
+      btnTitle: 'Add Company'
+    },
+    filters: null
   }
+
+  const emitData = (param: any) => {
+    switch (param.TYPE) {
+      case 'NEW':
+        return history('/app/add-company')
+      default:
+        console.log('test')
+        break
+    }
+    console.log('param', param)
+  }
+
+  return (
+    <Grid container spacing={6} sx={{ height: '100%', padding: 2 }}>
+      <Grid item xs={12} sx={{ pb: 5 }}>
+        <TableBox tableConfig={countryJson} emitData={emitData} />
+      </Grid>
+    </Grid>
+    // <Layout className="app-sidebar">
+    //   <div className="mobile-filter">
+    //     <button type="button" className="btn btn-glow">
+    //       <FunnelPlotOutlined onClick={responsiveFilter} />
+    //     </button>
+    //   </div>
+    //   <Sider width={230} trigger={null} collapsible collapsed={false} id="mobile-sider-menu">
+    //     <CompanyFilter {...props} onFilter={() => {}} onOpen={() => setOpen(true)} />
+    //   </Sider>
+    //   <Layout className="site-layout">
+    //     <Content className="site-layout-background">
+    //       <div className="top-filter-options">
+    //         <Row>
+    //           <Col
+    //             xs={{ span: 12, order: 1 }}
+    //             sm={{ span: 12, order: 1 }}
+    //             md={{ span: 12, order: 1 }}
+    //             lg={{ span: 12, order: 1 }}>
+    //             <h2>Company Overview</h2>
+    //           </Col>
+    //           <Col
+    //             xs={{ span: 12, order: 2 }}
+    //             sm={{ span: 12, order: 2 }}
+    //             md={{ span: 12, order: 2 }}
+    //             lg={{ span: 12, order: 2 }}>
+    //             <div className="exports-and-settings">
+    //               <ul>
+    //                 <li>
+    //                   <Button
+    //                     type="standard"
+    //                     className="ant-dropdown-link"
+    //                     onClick={() => setViewType('table')}>
+    //                     <i className="flaticon-table no-margin" />
+    //                   </Button>
+    //                 </li>
+    //                 <li>
+    //                   <Button
+    //                     type="standard"
+    //                     className="ant-dropdown-link"
+    //                     onClick={() => setViewType('card')}>
+    //                     <i className="flaticon-grid no-margin" />
+    //                   </Button>
+    //                 </li>
+    //                 <li>
+    //                   <Button type="standard" className="ant-dropdown-link" onClick={() => setOpen(true)}>
+    //                     <i className="flaticon-settings no-margin" />
+    //                   </Button>
+    //                 </li>
+    //               </ul>
+    //             </div>
+    //           </Col>
+    //           <Col
+    //             xs={{ span: 24, order: 3 }}
+    //             sm={{ span: 24, order: 3 }}
+    //             md={{ span: 24, order: 3 }}
+    //             lg={{ span: 0, order: 3 }}>
+    //             <div className="add-new-invoice-button">
+    //               <button
+    //                 type="button"
+    //                 onClick={() => props.history('/app/add-company')}
+    //                 className="btn-glow btn-block primary">
+    //                 Add new company
+    //               </button>
+    //             </div>
+    //           </Col>
+    //         </Row>
+    //       </div>
+    //       <TableBox
+    //         viewType={viewType}
+    //         dataSource={companies}
+    //         columns={columns}
+    //         actionIndex="custom_action"
+    //         cardHeaderIndex="status"
+    //         cardFirstLabelIndex="docno"
+    //       />
+    //     </Content>
+    //   </Layout>
+    //   <ModalBox title="Add Company" visible={open} footer={null} onCancel={() => onCancel()} destroyOnClose>
+    //     <CompanyForm onCancel={onCancel} selectedCompany={selectedCompany} />
+    //   </ModalBox>
+    // </Layout>
+  )
 }
+
+export default Companies
